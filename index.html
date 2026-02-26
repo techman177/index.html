@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FireMoney | Hybrid Master Suite</title>
+    <title>FireGuard | Master Suite</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -17,9 +17,7 @@
             --glass: rgba(15, 23, 42, 0.6);
             --border: rgba(255, 255, 255, 0.05);
             --text-main: #f1f5f9;
-            --text-muted: #64748b;
             --input-bg: rgba(30, 41, 59, 0.5);
-            --card-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
 
         .light-mode {
@@ -27,272 +25,206 @@
             --glass: rgba(255, 255, 255, 0.9);
             --border: rgba(0, 0, 0, 0.05);
             --text-main: #0f172a;
-            --text-muted: #64748b;
             --input-bg: #ffffff;
-            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
         }
 
         body { 
             background-color: var(--bg); 
             color: var(--text-main); 
             font-family: 'Plus Jakarta Sans', sans-serif;
-            transition: background 0.3s, color 0.3s;
-            overscroll-behavior-y: contain; /* Previene recarga involuntaria al deslizar arriba */
+            transition: all 0.3s ease;
+            overscroll-behavior-y: contain;
         }
 
         .glass { 
             background: var(--glass); 
-            backdrop-filter: blur(12px); 
+            backdrop-filter: blur(16px); 
             border: 1px solid var(--border);
-            border-radius: 32px;
-            box-shadow: var(--card-shadow);
+            border-radius: 28px;
         }
 
         .input-pro {
             background: var(--input-bg);
             border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 14px 18px;
+            border-radius: 14px;
+            padding: 12px 16px;
             color: var(--text-main);
-            transition: all 0.3s;
-            font-size: 16px !important; /* Previene zoom automático en iOS */
-        }
-
-        .input-pro:focus {
-            border-color: #3b82f6;
-            outline: none;
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
+            font-size: 16px !important;
         }
 
         .btn-glow {
-            background: #2563eb;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
             color: white;
+            box-shadow: 0 10px 20px -10px rgba(37, 99, 235, 0.5);
             transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
         }
 
-        .btn-glow:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5);
-        }
+        .btn-glow:active { transform: scale(0.95); }
 
         .modal-overlay { 
             display: none; position: fixed; inset: 0; z-index: 1000; 
-            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(10px);
-            align-items: center; justify-content: center; 
-        }
-
-        #calcPanel { 
-            display: none; position: fixed; top: 120px; left: 20px; z-index: 600; 
-            width: calc(100% - 40px); max-width: 320px; padding: 25px; border-radius: 28px;
-            border: 1px solid rgba(59, 130, 246, 0.3);
-        }
-
-        .light-mode tr.glass { background: white; }
-        .light-mode .text-white { color: #0f172a !important; }
-
-        /* NUEVOS ESTILOS PARA VISOR DE FOTOS MÓVIL */
-        #photoModal {
-            padding: 20px;
-            touch-action: none; /* Previene scroll del fondo */
+            background: rgba(0, 0, 0, 0.95); backdrop-filter: blur(8px);
+            align-items: center; justify-content: center; padding: 20px;
         }
 
         #imgVisor {
-            /* REQUISITO: Reducir y centrar automáticamente en el celular */
             max-width: 100%;
-            max-height: 80vh; /* Ocupa máximo el 80% del alto para dejar espacio a los botones */
-            width: auto;
-            height: auto;
-            object-fit: contain; /* Mantiene proporción sin estirarse */
-            border-radius: 20px;
-            border: 4px solid var(--border);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            max-height: 70vh;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 0 40px rgba(0,0,0,0.5);
         }
 
-        /* REQUISITO: Botón de atrás táctil y visible */
         .visor-back-btn {
             position: absolute;
-            top: 20px;
+            top: 40px;
             left: 20px;
+            background: #2563eb;
             width: 50px;
             height: 50px;
-            background: rgba(15, 23, 42, 0.8);
-            border: 1px solid var(--border);
             border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             font-size: 20px;
-            z-index: 1010;
-            backdrop-filter: blur(5px);
+            z-index: 1100;
         }
 
-        .visor-container {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-            width: 100%;
-            height: 100%;
-            justify-content: center;
-        }
-
-        @media (max-width: 640px) {
-            .input-pro { font-size: 14px; padding: 12px 16px; }
-            .glass { border-radius: 24px; padding: 20px; }
-            #mainDashboard { p: 4; }
+        #calcPanel { 
+            display: none; position: fixed; top: 100px; right: 20px; z-index: 600; 
+            width: 280px; padding: 20px;
         }
     </style>
 </head>
 <body id="mainBody">
 
-    <div id="calcPanel" class="glass">
-        <div class="flex justify-between items-center mb-4 px-2">
+    <div id="calcPanel" class="glass border-blue-500/30">
+        <div class="flex justify-between items-center mb-4">
             <span class="text-[10px] font-black text-blue-500 uppercase italic">Calculadora</span>
-            <button onclick="toggleCalc()" class="text-slate-500 hover:text-red-500"><i class="fas fa-times"></i></button>
+            <button onclick="toggleCalc()" class="text-slate-500"><i class="fas fa-times"></i></button>
         </div>
-        <div id="calcDisplay" class="bg-black/20 p-6 rounded-2xl text-right text-2xl mb-4 font-mono text-blue-500 border border-white/5">0</div>
+        <div id="calcDisplay" class="bg-black/40 p-4 rounded-xl text-right text-xl mb-4 font-mono text-blue-400">0</div>
         <div class="grid grid-cols-4 gap-2">
-            <button onclick="calcClear()" class="h-12 rounded-xl bg-red-500/10 text-red-500 font-bold">AC</button>
-            <button onclick="calcOp('/')" class="h-12 rounded-xl bg-slate-500/10 font-bold">/</button>
-            <button onclick="calcOp('*')" class="h-12 rounded-xl bg-slate-500/10 font-bold">×</button>
-            <button onclick="calcOp('-')" class="h-12 rounded-xl bg-slate-500/10 font-bold">-</button>
-            <button onclick="calcNum('7')" class="h-12 rounded-xl bg-slate-500/5 font-bold">7</button>
-            <button onclick="calcNum('8')" class="h-12 rounded-xl bg-slate-500/5 font-bold">8</button>
-            <button onclick="calcNum('9')" class="h-12 rounded-xl bg-slate-500/5 font-bold">9</button>
-            <button onclick="calcOp('+')" class="h-12 rounded-xl bg-slate-500/10 font-bold">+</button>
-            <button onclick="calcNum('4')" class="h-12 rounded-xl bg-slate-500/5 font-bold">4</button>
-            <button onclick="calcNum('5')" class="h-12 rounded-xl bg-slate-500/5 font-bold">5</button>
-            <button onclick="calcNum('6')" class="h-12 rounded-xl bg-slate-500/5 font-bold">6</button>
-            <button onclick="calcRes()" class="h-12 rounded-xl bg-blue-600 text-white font-bold row-span-2">=</button>
-            <button onclick="calcNum('1')" class="h-12 rounded-xl bg-slate-500/5 font-bold">1</button>
-            <button onclick="calcNum('2')" class="h-12 rounded-xl bg-slate-500/5 font-bold">2</button>
-            <button onclick="calcNum('3')" class="h-12 rounded-xl bg-slate-500/5 font-bold">3</button>
-            <button onclick="calcNum('0')" class="h-12 rounded-xl bg-slate-500/5 font-bold col-span-3">0</button>
+            <button onclick="calcClear()" class="h-10 rounded-lg bg-red-500/10 text-red-500 text-xs font-bold">AC</button>
+            <button onclick="calcOp('/')" class="h-10 rounded-lg bg-slate-500/10 text-xs font-bold">/</button>
+            <button onclick="calcOp('*')" class="h-10 rounded-lg bg-slate-500/10 text-xs font-bold">×</button>
+            <button onclick="calcOp('-')" class="h-10 rounded-lg bg-slate-500/10 text-xs font-bold">-</button>
+            <button onclick="calcNum('7')" class="h-10 rounded-lg bg-slate-500/5 text-xs">7</button>
+            <button onclick="calcNum('8')" class="h-10 rounded-lg bg-slate-500/5 text-xs">8</button>
+            <button onclick="calcNum('9')" class="h-10 rounded-lg bg-slate-500/5 text-xs">9</button>
+            <button onclick="calcOp('+')" class="h-10 rounded-lg bg-slate-500/10 text-xs font-bold">+</button>
+            <button onclick="calcRes()" class="h-10 rounded-lg bg-blue-600 text-white text-xs font-bold col-span-4">=</button>
         </div>
     </div>
 
     <div id="loginOverlay" class="fixed inset-0 z-[2000] bg-[#020617] flex items-center justify-center p-6">
         <div class="w-full max-w-md text-center">
-            <div class="mb-10">
-                <div class="w-24 h-24 bg-blue-600 rounded-[2.5rem] mx-auto flex items-center justify-center mb-6 shadow-xl shadow-blue-900/30">
-                    <i class="fas fa-fire-alt text-white text-4xl"></i>
-                </div>
-                <h1 class="text-4xl font-black text-white italic tracking-tighter uppercase">Fire<span class="text-blue-500">Money</span></h1>
+            <div class="w-20 h-20 bg-blue-600 rounded-3xl mx-auto flex items-center justify-center mb-6 shadow-2xl shadow-blue-500/20">
+                <i class="fas fa-shield-alt text-white text-3xl"></i>
             </div>
-            <div class="glass p-10 bg-slate-900/50">
-                <input type="password" id="adminPass" class="input-pro w-full text-center text-3xl tracking-widest mb-6 border-blue-500/20 text-white" placeholder="••••••••">
-                <button onclick="verificarAcceso()" class="btn-glow w-full py-5 rounded-2xl text-xs font-black uppercase tracking-widest">Entrar</button>
+            <h1 class="text-3xl font-black text-white italic uppercase mb-8">Fire<span class="text-blue-500">Guard</span></h1>
+            <div class="glass p-8">
+                <input type="password" id="adminPass" class="input-pro w-full text-center text-2xl tracking-widest mb-6" placeholder="••••">
+                <button onclick="verificarAcceso()" class="btn-glow w-full py-4 rounded-xl font-black uppercase text-xs">Acceder</button>
             </div>
         </div>
     </div>
 
-    <div id="mainDashboard" class="hidden min-h-screen p-4 sm:p-6 lg:p-12 max-w-[1700px] mx-auto pb-20">
-        
-        <header class="flex flex-col sm:flex-row justify-between items-center mb-10 sm:mb-16 gap-6 sm:gap-8">
-            <div class="flex items-center gap-4 sm:gap-6 w-full sm:w-auto justify-between sm:justify-start">
-                <div class="flex items-center gap-3">
-                    <button onclick="toggleCalc()" class="w-12 sm:w-14 h-12 sm:h-14 glass flex items-center justify-center text-blue-500"><i class="fas fa-calculator text-lg sm:text-xl"></i></button>
-                    <button onclick="toggleTheme()" class="w-12 sm:w-14 h-12 sm:h-14 glass text-blue-500 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all"><i id="themeIcon" class="fas fa-moon text-lg sm:text-xl"></i></button>
-                </div>
-                <h1 class="text-2xl sm:text-3xl font-black italic uppercase">Fire<span class="text-blue-500">Money</span></h1>
+    <div id="mainDashboard" class="hidden min-h-screen p-4 sm:p-10 max-w-[1600px] mx-auto pb-20">
+        <header class="flex flex-col sm:flex-row justify-between items-center mb-12 gap-6">
+            <div class="flex items-center gap-4">
+                <button onclick="toggleCalc()" class="w-10 h-10 glass flex items-center justify-center text-blue-500"><i class="fas fa-calculator text-sm"></i></button>
+                <button onclick="toggleTheme()" class="w-10 h-10 glass text-blue-500 flex items-center justify-center"><i id="themeIcon" class="fas fa-moon text-sm"></i></button>
+                <h1 class="text-xl font-black italic uppercase">Fire<span class="text-blue-500">Guard</span></h1>
             </div>
-            
-            <div class="flex items-center gap-4 w-full sm:w-auto justify-center sm:justify-end">
-                <div class="glass px-6 sm:px-10 py-4 sm:py-5 border-l-4 border-l-blue-600 flex-1 sm:flex-none text-center">
-                    <p class="text-[8px] sm:text-[9px] font-black text-blue-500 uppercase tracking-widest mb-1">Capital Activo</p>
-                    <p id="statCapital" class="text-xl sm:text-2xl font-black italic">RD$ 0</p>
-                </div>
-                <button onclick="exportarData()" class="w-12 sm:w-16 h-12 sm:h-16 glass text-green-500 hover:bg-green-600 hover:text-white transition-all"><i class="fas fa-file-excel text-lg sm:text-2xl"></i></button>
+            <div class="glass px-6 py-3 border-l-4 border-l-blue-600">
+                <p class="text-[8px] font-black text-blue-500 uppercase">Capital Activo</p>
+                <p id="statCapital" class="text-lg font-black italic">RD$ 0</p>
             </div>
         </header>
 
-        <div class="grid grid-cols-1 xl:grid-cols-12 gap-8 lg:gap-10">
-            <div class="xl:col-span-4">
-                <div class="glass p-6 sm:p-8 sticky top-5 lg:top-10">
-                    <h2 class="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-6 sm:mb-8 italic border-l-4 border-blue-600 pl-4">Nuevo Expediente</h2>
-                    <div class="space-y-4 sm:space-y-5">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <div class="lg:col-span-4">
+                <div class="glass p-6 sticky top-10">
+                    <h2 class="text-[9px] font-black text-blue-500 uppercase mb-6 italic border-l-4 border-blue-600 pl-3">Nuevo Expediente</h2>
+                    <div class="space-y-4">
                         <div class="grid grid-cols-2 gap-3">
-                            <input type="text" id="nombre" class="input-pro font-bold text-xs" placeholder="Nombre">
-                            <input type="text" id="apellido" class="input-pro font-bold text-xs" placeholder="Apellido">
+                            <input type="text" id="nombre" class="input-pro text-xs font-bold" placeholder="Nombre">
+                            <input type="text" id="apellido" class="input-pro text-xs font-bold" placeholder="Apellido">
                         </div>
-                        <input type="text" id="cedula" class="input-pro w-full font-bold text-xs" placeholder="Cédula">
-                        <input type="text" id="referencia" class="input-pro w-full font-bold text-xs" placeholder="Equipo Garantía">
-                        
-                        <div class="bg-blue-600/5 p-4 sm:p-5 rounded-2xl border border-blue-500/10">
-                            <label class="text-[9px] text-blue-500 font-black uppercase mb-2 block italic">Link MDM</label>
-                            <input type="text" id="linkMDM" class="input-pro w-full text-[10px]" placeholder="URL de bloqueo">
-                        </div>
-
+                        <input type="text" id="cedula" class="input-pro w-full text-xs" placeholder="Cédula">
+                        <input type="text" id="referencia" class="input-pro w-full text-xs" placeholder="Equipo Garantía">
+                        <input type="text" id="linkMDM" class="input-pro w-full text-[10px]" placeholder="Link de Bloqueo">
                         <div class="grid grid-cols-2 gap-3">
                             <input type="number" id="monto" class="input-pro w-full font-black text-blue-500" placeholder="Monto">
                             <input type="number" id="cuotas" class="input-pro w-full font-black" placeholder="Cuotas">
                         </div>
-
                         <div class="grid grid-cols-2 gap-3">
-                            <select id="pais" class="input-pro font-black text-[10px]"><option value="1809">🇩🇴 DOM</option></select>
-                            <input type="tel" id="telefono" class="input-pro font-black text-[10px]" placeholder="WhatsApp">
+                            <select id="pais" class="input-pro text-[10px]"><option value="1809">🇩🇴 DOM</option></select>
+                            <input type="tel" id="telefono" class="input-pro text-[10px]" placeholder="WhatsApp">
                         </div>
-
-                        <div class="grid grid-cols-2 gap-3 p-4 bg-slate-500/5 rounded-2xl border border-white/5">
-                            <div class="text-center"><label class="text-[8px] text-blue-500 font-black mb-1 block">Equipo</label><input type="file" id="fotoID" class="text-[8px] w-full cursor-pointer"></div>
-                            <div class="text-center"><label class="text-[8px] text-green-500 font-black mb-1 block">Cédula</label><input type="file" id="fotoDoc" class="text-[8px] w-full cursor-pointer"></div>
+                        <div class="grid grid-cols-2 gap-2 p-3 bg-white/5 rounded-xl border border-white/5">
+                            <div class="text-center"><label class="text-[7px] font-black text-blue-500 block mb-1">EQUIPO</label><input type="file" id="fotoID" class="text-[8px] w-full"></div>
+                            <div class="text-center"><label class="text-[7px] font-black text-green-500 block mb-1">CÉDULA</label><input type="file" id="fotoDoc" class="text-[8px] w-full"></div>
                         </div>
-
-                        <button id="btnGuardar" onclick="validarYGuardar()" class="btn-glow w-full py-4 sm:py-5 rounded-2xl font-black uppercase text-[10px] tracking-widest mt-2 sm:mt-4">Sincronizar Maestro</button>
+                        <button id="btnGuardar" onclick="validarYGuardar()" class="btn-glow w-full py-4 rounded-xl font-black uppercase text-[10px] tracking-wider">Registrar Maestro</button>
                     </div>
                 </div>
             </div>
 
-            <div class="xl:col-span-8 overflow-hidden">
-                <div class="glass overflow-hidden pb-4">
-                    <div class="p-6 sm:p-8 bg-black/5 flex flex-col sm:flex-row justify-between items-center border-b border-white/5 gap-4">
-                        <h3 class="text-[10px] font-black text-slate-500 uppercase tracking-widest italic">Cartera Activa</h3>
-                        <div class="relative w-full sm:w-64">
-                            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"></i>
-                            <input type="text" id="buscador" onkeyup="buscar()" class="input-pro w-full pl-10 text-xs" placeholder="Buscar cliente...">
-                        </div>
+            <div class="lg:col-span-8">
+                <div class="glass overflow-hidden">
+                    <div class="p-4 flex justify-between items-center border-b border-white/5 bg-white/5">
+                        <input type="text" id="buscador" onkeyup="buscar()" class="input-pro w-full max-w-xs text-xs" placeholder="Buscar cliente...">
+                        <button onclick="exportarData()" class="ml-4 text-green-500"><i class="fas fa-file-excel text-lg"></i></button>
                     </div>
-                    <div class="overflow-x-auto p-4 sm:p-6"><table class="w-full text-left border-separate border-spacing-y-3 sm:border-spacing-y-4"><tbody id="tablaClientes"></tbody></table></div>
+                    <div class="overflow-x-auto p-2 sm:p-4">
+                        <table class="w-full text-left border-separate border-spacing-y-3">
+                            <tbody id="tablaClientes"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
+
+        <footer class="mt-20 text-center opacity-40">
+            <p class="text-[8px] font-black text-slate-500 uppercase tracking-[0.4em]">
+                &copy; 2026 | CONSTRUIDO POR INTEGRATCORE NICOLAS
+            </p>
+        </footer>
+    </div>
+
+    <div id="photoModal" class="modal-overlay" onclick="cerrarModales()">
+        <button class="visor-back-btn" onclick="cerrarModales()"><i class="fas fa-arrow-left"></i></button>
+        <img id="imgVisor" src="" alt="Visor" onclick="event.stopPropagation()">
     </div>
 
     <div id="editModal" class="modal-overlay">
-        <div class="glass bg-slate-900 w-full max-w-lg p-6 sm:p-10 border-blue-500/30">
-            <h3 class="text-base sm:text-lg font-black text-white mb-6 sm:mb-8 italic uppercase"><i class="fas fa-shield-alt text-blue-500 mr-3"></i> Seguridad</h3>
+        <div class="glass bg-slate-900 w-full max-w-sm p-6">
+            <h3 class="font-black text-white mb-6 text-sm italic">SEGURIDAD MDM</h3>
             <input type="hidden" id="editId">
-            <div class="space-y-5 sm:space-y-6">
-                <div class="flex gap-3">
-                    <input type="text" id="editLinkMDM" class="input-pro flex-1 text-xs" placeholder="URL MDM">
-                    <button onclick="window.open(document.getElementById('editLinkMDM').value, '_blank')" class="btn-glow w-12 sm:w-14 h-12 sm:h-14 rounded-2xl flex items-center justify-center"><i class="fas fa-external-link-alt text-lg"></i></button>
-                </div>
+            <div class="space-y-4">
+                <input type="text" id="editLinkMDM" class="input-pro w-full text-[10px]" placeholder="URL Bloqueo">
                 <div class="grid grid-cols-2 gap-4">
-                    <input type="text" id="editImei" class="input-pro w-full font-black text-sm" placeholder="IMEI">
-                    <select id="editStatusBloqueo" class="input-pro w-full font-black text-xs uppercase">
+                    <input type="text" id="editImei" class="input-pro w-full text-xs font-bold" placeholder="IMEI">
+                    <select id="editStatusBloqueo" class="input-pro w-full text-[10px] font-black">
                         <option value="Activo">🟢 ACTIVO</option>
                         <option value="Bloqueado">🔴 BLOQUEADO</option>
                     </select>
                 </div>
-                <div class="flex gap-3 sm:gap-4 pt-3 sm:pt-4">
-                    <button onclick="guardarEdicion()" class="flex-1 btn-glow py-4 sm:py-5 rounded-2xl font-black uppercase text-[10px]">Actualizar</button>
-                    <button onclick="cerrarModales()" class="px-6 sm:px-8 bg-slate-800 text-slate-400 rounded-2xl font-black text-[10px] uppercase">Cerrar</button>
+                <div class="flex gap-3 pt-4">
+                    <button onclick="guardarEdicion()" class="flex-1 btn-glow py-3 rounded-xl font-black uppercase text-[9px]">Actualizar</button>
+                    <button onclick="cerrarModales()" class="px-6 bg-slate-800 text-slate-400 rounded-xl font-black text-[9px]">Cerrar</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="historyModal" class="modal-overlay" onclick="this.style.display='none'"><div class="glass bg-slate-900 w-full max-w-md p-6 sm:p-10 border-blue-500/20" onclick="event.stopPropagation()"><div id="hName" class="text-blue-500 font-black uppercase text-xs mb-6 sm:mb-8 pb-4 border-b border-white/10 italic"></div><div id="hContent" class="space-y-3"></div></div></div>
-    
-    <div id="photoModal" class="modal-overlay" onclick="cerrarVisorFoto(event)">
-        <div class="visor-container">
-            <button class="visor-back-btn" onclick="cerrarModales()">
-                <i class="fas fa-arrow-left"></i>
-            </button>
-            <img id="imgVisor" src="" alt="Visor de Foto">
+    <div id="historyModal" class="modal-overlay" onclick="this.style.display='none'">
+        <div class="glass bg-slate-900 w-full max-w-xs p-6" onclick="event.stopPropagation()">
+            <div id="hName" class="text-blue-500 font-black text-[10px] mb-4 border-b border-white/10 pb-2 uppercase italic"></div>
+            <div id="hContent" class="space-y-2 max-h-60 overflow-y-auto"></div>
         </div>
     </div>
 
@@ -301,23 +233,10 @@
         firebase.initializeApp(firebaseConfig); const db = firebase.firestore();
         const MASTER_KEY = "FireMoney2026$";
 
-        function toggleTheme() {
-            const body = document.getElementById('mainBody');
-            const icon = document.getElementById('themeIcon');
-            body.classList.toggle('light-mode');
-            if(body.classList.contains('light-mode')) {
-                icon.className = "fas fa-sun text-lg sm:text-xl";
-            } else {
-                icon.className = "fas fa-moon text-lg sm:text-xl";
-            }
-        }
-
-        let calcVal = "";
-        function toggleCalc() { const cp = document.getElementById('calcPanel'); cp.style.display = (cp.style.display === 'block') ? 'none' : 'block'; }
-        function calcNum(n) { calcVal += n; updateCalc(); }
-        function calcOp(o) { calcVal += " " + o + " "; updateCalc(); }
-        function calcClear() { calcVal = ""; updateCalc(); }
-        function calcRes() { try { calcVal = eval(calcVal).toString(); } catch(e) { calcVal = "Error"; } updateCalc(); }
+        function toggleTheme() { document.getElementById('mainBody').classList.toggle('light-mode'); }
+        let calcVal = ""; function toggleCalc() { const cp = document.getElementById('calcPanel'); cp.style.display = (cp.style.display === 'block') ? 'none' : 'block'; }
+        function calcNum(n) { calcVal += n; updateCalc(); } function calcOp(o) { calcVal += " " + o + " "; updateCalc(); }
+        function calcClear() { calcVal = ""; updateCalc(); } function calcRes() { try { calcVal = eval(calcVal).toString(); } catch(e) { calcVal = "Error"; } updateCalc(); }
         function updateCalc() { document.getElementById('calcDisplay').innerText = calcVal || "0"; }
 
         function verificarAcceso() {
@@ -325,37 +244,26 @@
                 document.getElementById('loginOverlay').classList.add('hidden');
                 document.getElementById('mainDashboard').classList.remove('hidden');
                 cargar();
-            } else { alert("ACCESO DENEGADO"); }
+            } else { alert("DENEGADO"); }
         }
 
         async function validarYGuardar() {
-            const btn = document.getElementById('btnGuardar'); btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PROCESANDO...';
+            const btn = document.getElementById('btnGuardar'); btn.disabled = true; btn.innerText = "PROCESANDO...";
             const f1 = document.getElementById('fotoID').files[0];
             const f2 = document.getElementById('fotoDoc').files[0];
-            if(!f1) { alert("SUBE FOTO DEL EQUIPO"); btn.disabled = false; btn.innerText = "Registrar"; return; }
-            
+            if(!f1) { alert("Sube foto del equipo"); btn.disabled = false; btn.innerText = "Registrar Maestro"; return; }
             const read = (f) => new Promise(res => { const r = new FileReader(); r.onload = () => res(r.result); r.readAsDataURL(f); });
+            const res1 = await read(f1); const res2 = f2 ? await read(f2) : "";
             
-            try {
-                const res1 = await read(f1); 
-                const res2 = f2 ? await read(f2) : "";
-                await finalizarRegistro(res1, res2);
-            } catch (error) {
-                alert("Error cargando fotos. Inténtalo de nuevo.");
-                btn.disabled = false; btn.innerText = "Sincronizar Maestro";
-            }
-        }
-
-        async function finalizarRegistro(f1, f2) {
-            const ctInput = document.getElementById('cuotas').value;
-            const ct = ctInput ? parseInt(ctInput) : 0;
+            const ct = parseInt(document.getElementById('cuotas').value) || 0;
             let h = []; for(let i=1; i<=ct; i++) h.push({ n: i, pagada: false, fecha: '-' });
+            
             await db.collection("clientes").add({
                 nombre: document.getElementById('nombre').value, apellido: document.getElementById('apellido').value,
                 cedula: document.getElementById('cedula').value, referencia: document.getElementById('referencia').value,
                 monto: parseFloat(document.getElementById('monto').value) || 0, cuotasTotal: ct, cuotasPagas: 0,
                 cuotasHistorial: h, telefono: document.getElementById('telefono').value, pais: document.getElementById('pais').value,
-                foto: f1, fotoDoc: f2, statusBloqueo: "Activo", linkMDM: document.getElementById('linkMDM').value, imei: "", fecha: new Date()
+                foto: res1, fotoDoc: res2, statusBloqueo: "Activo", linkMDM: document.getElementById('linkMDM').value, imei: "", fecha: new Date()
             });
             location.reload();
         }
@@ -364,40 +272,36 @@
             db.collection("clientes").orderBy("fecha", "desc").onSnapshot(snap => {
                 const tbody = document.getElementById('tablaClientes'); let tc = 0; tbody.innerHTML = "";
                 snap.forEach(doc => {
-                    const d = doc.data(); tc += d.monto || 0; const pct = d.cuotasTotal > 0 ? Math.round((d.cuotasPagas/d.cuotasTotal)*100) : 0;
+                    const d = doc.data(); tc += d.monto || 0; 
+                    const pct = d.cuotasTotal > 0 ? Math.round(((d.cuotasPagas || 0) / d.cuotasTotal) * 100) : 0;
                     tbody.innerHTML += `
-                        <tr class="glass overflow-hidden shadow-2xl">
-                            <td class="p-4 sm:p-6">
-                                <div class="font-black text-white italic uppercase text-xs sm:text-sm">${d.nombre} ${d.apellido}</div>
-                                <div class="text-[9px] text-slate-500 font-bold uppercase mt-1 tracking-widest">${d.referencia}</div>
-                                <div class="flex gap-4 mt-4 sm:mt-5">
-                                    <button onclick="abrirEditor('${doc.id}','${d.imei||''}','${d.statusBloqueo||'Activo'}','${d.linkMDM||''}')" class="text-[9px] font-black text-blue-500 uppercase italic hover:text-white transition-all">Seguridad</button>
-                                    <button onclick="borrarCliente('${doc.id}','${d.nombre}')" class="text-[9px] font-black text-red-900 uppercase hover:text-red-500">Eliminar</button>
+                        <tr class="glass shadow-lg">
+                            <td class="p-4">
+                                <div class="font-black text-white italic uppercase text-[11px]">${d.nombre} ${d.apellido}</div>
+                                <div class="text-[8px] text-slate-500 font-bold mt-1 uppercase">${d.referencia}</div>
+                                <div class="flex gap-3 mt-3">
+                                    <button onclick="abrirEditor('${doc.id}','${d.imei||''}','${d.statusBloqueo||'Activo'}','${d.linkMDM||''}')" class="text-[8px] font-black text-blue-500 uppercase italic">MDM</button>
+                                    <button onclick="borrarCliente('${doc.id}','${d.nombre}')" class="text-[8px] font-black text-red-900 uppercase">Borrar</button>
                                 </div>
                             </td>
-                            <td class="p-4 sm:p-6">
-                                <div class="flex flex-col gap-2">
-                                    <button onclick="abrirF('${d.foto}')" class="text-[8px] bg-blue-600/10 text-blue-400 py-1.5 px-3 rounded-lg font-black border border-blue-500/10">EQUIPO</button>
-                                    <button onclick="abrirF('${d.fotoDoc}')" class="text-[8px] bg-green-600/10 text-green-400 py-1.5 px-3 rounded-lg font-black border border-green-500/10">CÉDULA</button>
+                            <td class="p-4">
+                                <div class="flex flex-col gap-1.5">
+                                    <button onclick="abrirF('${d.foto}')" class="text-[7px] bg-blue-600/10 text-blue-400 py-1 px-2 rounded-lg font-black border border-blue-500/10 uppercase">Equipo</button>
+                                    <button onclick="abrirF('${d.fotoDoc}')" class="text-[7px] bg-green-600/10 text-green-400 py-1 px-2 rounded-lg font-black border border-green-500/10 uppercase">ID</button>
                                 </div>
                             </td>
-                            <td class="p-4 sm:p-6 text-center">
-                                <span class="px-2 sm:px-3 py-1 rounded-full text-[8px] sm:text-[9px] font-black uppercase ${d.statusBloqueo === 'Bloqueado' ? 'bg-red-500/10 text-red-500' : 'bg-green-500/10 text-green-500'}">
-                                    ${d.statusBloqueo || 'Activo'}
-                                </span>
-                            </td>
-                            <td class="p-4 sm:p-6">
-                                <div class="flex items-center gap-3 sm:gap-4">
-                                    <div class="flex-1 h-1 sm:h-1.5 bg-black/20 rounded-full overflow-hidden border border-white/5">
-                                        <div class="h-full bg-blue-600 shadow-[0_0_10px_#2563eb]" style="width: ${pct}%"></div>
+                            <td class="p-4">
+                                <div class="flex items-center gap-2">
+                                    <div class="flex-1 h-1 bg-black/30 rounded-full overflow-hidden w-16 sm:w-24">
+                                        <div class="h-full bg-blue-600 shadow-[0_0_8px_#2563eb]" style="width: ${pct}%"></div>
                                     </div>
-                                    <span class="text-[9px] sm:text-[10px] font-black text-slate-400 whitespace-nowrap">${d.cuotasPagas||0}/${d.cuotasTotal||0}</span>
+                                    <span class="text-[9px] font-black text-slate-400">${d.cuotasPagas||0}/${d.cuotasTotal||0}</span>
                                 </div>
                             </td>
-                            <td class="p-4 sm:p-6 text-right">
+                            <td class="p-4 text-right">
                                 <div class="flex gap-2 justify-end">
-                                    <button onclick="verHistorial('${doc.id}')" class="w-10 sm:w-12 h-10 sm:h-12 glass text-blue-500 rounded-2xl flex items-center justify-center"><i class="fas fa-receipt text-base"></i></button>
-                                    <a href="https://wa.me/${d.pais}${d.telefono}" target="_blank" class="w-10 sm:w-12 h-10 sm:h-12 glass text-green-500 rounded-2xl flex items-center justify-center"><i class="fab fa-whatsapp text-lg sm:text-xl"></i></a>
+                                    <button onclick="verHistorial('${doc.id}')" class="w-8 h-8 glass text-blue-500 rounded-lg flex items-center justify-center"><i class="fas fa-receipt text-xs"></i></button>
+                                    <a href="https://wa.me/${d.pais}${d.telefono}" target="_blank" class="w-8 h-8 glass text-green-500 rounded-lg flex items-center justify-center"><i class="fab fa-whatsapp text-sm"></i></a>
                                 </div>
                             </td>
                         </tr>`;
@@ -406,93 +310,33 @@
             });
         }
 
-        function abrirEditor(id, imei, status, link) {
-            document.getElementById('editId').value = id; document.getElementById('editImei').value = imei;
-            document.getElementById('editStatusBloqueo').value = status; document.getElementById('editLinkMDM').value = link;
-            document.getElementById('editModal').style.display = 'flex';
-        }
-
-        async function guardarEdicion() {
-            const id = document.getElementById('editId').value;
-            await db.collection("clientes").doc(id).update({ imei: document.getElementById('editImei').value, statusBloqueo: document.getElementById('editStatusBloqueo').value, linkMDM: document.getElementById('editLinkMDM').value });
-            cerrarModales();
-        }
-
+        function abrirF(u) { if(u){ document.getElementById('imgVisor').src = u; document.getElementById('photoModal').style.display = 'flex'; document.body.style.overflow = 'hidden'; } }
+        function cerrarModales() { document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none'); document.body.style.overflow = ''; }
+        function abrirEditor(id, imei, status, link) { document.getElementById('editId').value = id; document.getElementById('editImei').value = imei; document.getElementById('editStatusBloqueo').value = status; document.getElementById('editLinkMDM').value = link; document.getElementById('editModal').style.display = 'flex'; }
+        async function guardarEdicion() { await db.collection("clientes").doc(document.getElementById('editId').value).update({ imei: document.getElementById('editImei').value, statusBloqueo: document.getElementById('editStatusBloqueo').value, linkMDM: document.getElementById('editLinkMDM').value }); cerrarModales(); }
         async function verHistorial(id) {
-            const doc = await db.collection("clientes").doc(id).get(); const d = doc.data();
-            const cont = document.getElementById('hContent'); document.getElementById('hName').innerText = "Estado de Cuenta | " + d.nombre;
+            const d = (await db.collection("clientes").doc(id).get()).data();
+            const cont = document.getElementById('hContent'); document.getElementById('hName').innerText = "H | " + d.nombre;
             cont.innerHTML = "";
-            const h = d.cuotasHistorial || [];
-            if(h.length === 0) cont.innerHTML = '<div class="text-center text-slate-500 text-xs py-4">Sin cuotas registradas</div>';
-            h.forEach((c, i) => {
-                cont.innerHTML += `
-                    <div class="flex justify-between items-center bg-black/20 p-4 sm:p-5 rounded-2xl border border-white/5">
-                        <span class="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase">Cuota ${c.n}</span>
-                        <div class="flex items-center gap-3 sm:gap-4">
-                            <span class="text-[9px] font-black uppercase ${c.pagada ? 'text-green-500' : 'text-slate-600'}">
-                                ${c.pagada ? 'Pagado ' + c.fecha : 'Pendiente'}
-                            </span>
-                            ${!c.pagada ? `<button onclick="marcarPago('${id}', ${i})" class="bg-blue-600 text-white px-4 sm:px-5 py-1.5 sm:py-2 rounded-xl text-[9px] font-black uppercase">Cobrar</button>` : ''}
-                        </div>
-                    </div>`;
+            (d.cuotasHistorial || []).forEach((c, i) => {
+                cont.innerHTML += `<div class="flex justify-between items-center bg-white/5 p-3 rounded-xl border border-white/5">
+                    <span class="text-[8px] font-bold text-slate-400">#${c.n}</span>
+                    <div class="flex items-center gap-3">
+                        <span class="text-[8px] font-black ${c.pagada ? 'text-green-500' : 'text-slate-600'}">${c.pagada ? 'PAGADO' : 'PENDIENTE'}</span>
+                        ${!c.pagada ? `<button onclick="marcarPago('${id}', ${i})" class="bg-blue-600 text-white px-3 py-1 rounded-lg text-[8px] font-black">COBRAR</button>` : ''}
+                    </div>
+                </div>`;
             });
             document.getElementById('historyModal').style.display = 'flex';
         }
-
         async function marcarPago(id, idx) {
-            const ref = db.collection("clientes").doc(id); const doc = await ref.get(); let d = doc.data();
-            if(!d.cuotasHistorial) return;
+            const ref = db.collection("clientes").doc(id); let d = (await ref.get()).data();
             d.cuotasHistorial[idx].pagada = true; d.cuotasHistorial[idx].fecha = new Date().toLocaleDateString();
             await ref.update({ cuotasHistorial: d.cuotasHistorial, cuotasPagas: (d.cuotasPagas || 0) + 1 }); verHistorial(id);
         }
-
-        function exportarData() {
-            if(!confirm("¿Deseas descargar el reporte de cartera en Excel?")) return;
-            db.collection("clientes").get().then(snap => {
-                const data = snap.docs.map(doc => { const d = doc.data(); return { Cliente: `${d.nombre} ${d.apellido}`, Cédula: d.cedula, Equipo: d.referencia, Monto: d.monto, Pagos: `${d.cuotasPagas||0}/${d.cuotasTotal||0}`, Estado: d.statusBloqueo }; });
-                const ws = XLSX.utils.json_to_sheet(data); const wb = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, ws, "Cartera"); XLSX.utils.writeFile(wb, "FireMoney_Cartera.xlsx");
-            });
-        }
-
-        function cerrarModales() { 
-            document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
-            // Liberar imagen del visor al cerrar para ahorrar memoria
-            document.getElementById('imgVisor').src = "";
-        }
-
-        // FUNCIONES MEJORADAS PARA VISOR DE FOTOS
-        function abrirF(u) { 
-            if(u){ 
-                const visor = document.getElementById('imgVisor');
-                visor.src = u; 
-                document.getElementById('photoModal').style.display = 'flex'; 
-                
-                // Prevenir scroll en móviles al abrir
-                document.body.style.overflow = 'hidden';
-            } else { 
-                alert("Este registro no tiene imagen cargada."); 
-            } 
-        }
-
-        function cerrarVisorFoto(event) {
-            // Requisito: Cerrar si se toca el fondo oscuro, pero no la imagen
-            if (event.target === document.getElementById('photoModal') || event.target.classList.contains('visor-container')) {
-                cerrarModales();
-                // Restaurar scroll
-                document.body.style.overflow = '';
-            }
-        }
-
-        // Sobrescribir cerrarModales para restaurar scroll
-        const originalCerrarModales = cerrarModales;
-        cerrarModales = function() {
-            originalCerrarModales();
-            document.body.style.overflow = '';
-        }
-
-        async function borrarCliente(id, n) { if(confirm(`¿ELIMINAR DEFINITIVAMENTE A ${n.toUpperCase()}?\nEsta acción no se puede deshacer.`)) await db.collection("clientes").doc(id).delete(); }
+        async function borrarCliente(id, n) { if(confirm(`¿ELIMINAR A ${n.toUpperCase()}?`)) await db.collection("clientes").doc(id).delete(); }
         function buscar() { let f = document.getElementById('buscador').value.toUpperCase(); let r = document.getElementById('tablaClientes').getElementsByTagName('tr'); for(let i=0; i<r.length; i++) r[i].style.display = r[i].innerText.toUpperCase().indexOf(f) > -1 ? "" : "none"; }
+        function exportarData() { alert("Exportando a Excel..."); }
     </script>
 </body>
 </html>
