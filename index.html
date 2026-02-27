@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
-<head><script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
+<head>
+    <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FireGuard Elite | IntegratCore</title>
@@ -130,6 +131,40 @@
         const MASTER = "FireMoney2026$";
         const PARTNER = "Curazao2026*";
 
+        // CONEXIÓN CON PUSHER (TUS LLAVES)
+        const pusher = new Pusher('43b3675a0d7078d24ecc', {
+            cluster: 'us2'
+        });
+
+        // FUNCIÓN PARA ENVIAR EL BLOQUEO
+        function enviarOrdenBloqueo(idCliente) {
+            Swal.fire({
+                title: '¿Bloquear Celular?',
+                text: "Se apagará la pantalla del dispositivo",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, Bloquear',
+                cancelButtonText: 'Cancelar',
+                background: '#0f172a', 
+                color: '#fff'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const channel = pusher.subscribe('private-canal-seguridad');
+                    channel.trigger('client-orden-bloqueo', { action: 'lock', id: idCliente });
+                    
+                    Swal.fire({
+                        title: '¡Orden Enviada!',
+                        text: 'La señal fue enviada a Curazao.',
+                        icon: 'success',
+                        background: '#0f172a', 
+                        color: '#fff'
+                    });
+                }
+            });
+        }
+
         function access() {
             const p = document.getElementById('passInput').value;
             if(p === MASTER || p === PARTNER) {
@@ -207,8 +242,9 @@
                             </td>
                             <td class="p-4 text-right">
                                 <div class="flex gap-2 justify-end">
-                                    <button onclick="view('${doc.id}')" class="w-8 h-8 glass-card text-blue-500 flex items-center justify-center"><i class="fas fa-eye text-xs"></i></button>
-                                    ${role === 'ADMIN' ? `<button onclick="del('${doc.id}')" class="w-8 h-8 glass-card text-red-500 flex items-center justify-center"><i class="fas fa-trash text-xs"></i></button>` : ''}
+                                    <button onclick="enviarOrdenBloqueo('${doc.id}')" class="w-8 h-8 glass-card text-orange-500 flex items-center justify-center bg-orange-500/10" title="Bloquear"><i class="fas fa-lock text-xs"></i></button>
+                                    <button onclick="view('${doc.id}')" class="w-8 h-8 glass-card text-blue-500 flex items-center justify-center" title="Ver"><i class="fas fa-eye text-xs"></i></button>
+                                    ${role === 'ADMIN' ? `<button onclick="del('${doc.id}')" class="w-8 h-8 glass-card text-red-500 flex items-center justify-center" title="Eliminar"><i class="fas fa-trash text-xs"></i></button>` : ''}
                                 </div>
                             </td>
                         </tr>`;
@@ -236,4 +272,3 @@
     </script>
 </body>
 </html>
-
