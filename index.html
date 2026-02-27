@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FireGuard | Global Master Suite v40.0</title>
+    <title>FireGuard Master | IntegratCore Global</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -15,337 +15,345 @@
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
         
         :root {
-            --bg-dark: #020617;
-            --accent-blue: #2563eb;
-            --glass-bg: rgba(15, 23, 42, 0.85);
-            --border-glow: rgba(37, 99, 235, 0.3);
+            --bg: #020617;
+            --accent: #2563eb;
+            --glass: rgba(15, 23, 42, 0.9);
+            --border: rgba(255, 255, 255, 0.1);
         }
 
         body { 
-            background-color: var(--bg-dark); 
+            background-color: var(--bg); 
             color: #f1f5f9; 
             font-family: 'Plus Jakarta Sans', sans-serif;
             overflow-x: hidden;
-            min-height: 100vh;
-        }
-
-        .main-gradient {
-            background: radial-gradient(circle at top right, rgba(37, 99, 235, 0.1), transparent);
         }
 
         .glass-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 30px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            background: var(--glass);
+            backdrop-filter: blur(25px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
         }
 
         .input-master {
-            background: rgba(30, 41, 59, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 15px;
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 16px;
             color: #fff;
             width: 100%;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 13px;
+            transition: 0.3s;
         }
 
-        .input-master:focus {
-            border-color: var(--accent-blue);
-            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
-            outline: none;
-            background: rgba(30, 41, 59, 0.9);
-        }
+        .input-master:focus { border-color: var(--accent); outline: none; background: rgba(30, 41, 59, 1); }
 
         .btn-master {
-            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-            padding: 16px;
-            border-radius: 18px;
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            padding: 14px;
+            border-radius: 14px;
             font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: all 0.3s;
-            box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.5);
+            transition: 0.3s;
         }
 
-        .btn-master:hover { transform: translateY(-2px); box-shadow: 0 15px 25px -5px rgba(37, 99, 235, 0.6); }
-        .btn-master:active { transform: translateY(0); }
-
-        /* Animación de carga para sincronización */
-        .sync-loader {
-            width: 20px; height: 20px;
-            border: 3px solid rgba(255,255,255,0.3);
-            border-top: 3px solid white;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            display: inline-block; margin-right: 10px;
+        .sidebar {
+            position: fixed; top: 0; left: -300px; width: 280px; height: 100%;
+            background: #0f172a; border-right: 1px solid var(--border);
+            z-index: 4000; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .sidebar.active { left: 0; }
 
-        /* Estilo para errores de validación */
-        .field-error { border: 1px solid #ef4444 !important; animation: shake 0.5s; }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        .status-badge {
+            padding: 4px 10px; border-radius: 8px; font-size: 9px; font-weight: 900; text-transform: uppercase;
+        }
+
+        /* Estilo para carga */
+        .loading-ring {
+            width: 18px; height: 18px; border: 2px solid #ffffff33;
+            border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
-<body class="main-gradient">
+<body>
 
-    <div id="loginGate" class="fixed inset-0 z-[5000] bg-slate-950 flex items-center justify-center p-4">
-        <div class="w-full max-w-md text-center">
-            <div class="mb-8 inline-block p-4 rounded-3xl bg-blue-600/10 border border-blue-500/20">
-                <i class="fas fa-shield-halved text-blue-500 text-4xl"></i>
+    <div id="loginGate" class="fixed inset-0 z-[5000] bg-slate-950 flex items-center justify-center p-6">
+        <div class="w-full max-w-sm">
+            <div class="text-center mb-10">
+                <div class="w-16 h-16 bg-blue-600 rounded-2xl mx-auto flex items-center justify-center mb-4 shadow-lg shadow-blue-500/20">
+                    <i class="fas fa-lock text-white text-2xl"></i>
+                </div>
+                <h2 class="text-2xl font-black italic tracking-tighter uppercase">FireGuard <span class="text-blue-500">Global</span></h2>
+                <p class="text-slate-500 text-[10px] font-bold mt-2 uppercase">IntegratCore Authentication</p>
             </div>
-            <h2 class="text-3xl font-black mb-8 italic italic tracking-tighter">INTEGRATCORE <span class="text-blue-600">FIRE GUARD</span></h2>
-            <div class="glass-card p-10">
-                <input type="password" id="masterPass" class="input-master text-center text-3xl mb-6 tracking-[0.5em]" placeholder="••••">
-                <button onclick="unlock()" class="btn-master w-full text-sm">Validar Credencial</button>
+            <div class="glass-card p-8">
+                <input type="password" id="passInput" class="input-master text-center text-2xl mb-4 tracking-widest" placeholder="••••">
+                <button onclick="access()" class="btn-master w-full text-xs text-white">Verificar Identidad</button>
+                <p class="text-[8px] text-center text-slate-600 mt-6 uppercase font-bold tracking-widest">Master Key or Partner Key Required</p>
             </div>
         </div>
     </div>
 
-    <main id="dashboard" class="hidden opacity-0 transition-opacity duration-1000 p-6 lg:p-12">
-        <div class="max-w-[1600px] mx-auto">
-            
-            <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-16">
-                <div>
-                    <h1 class="text-2xl font-black italic">GLOBAL CONTROL CENTER</h1>
-                    <p class="text-slate-500 text-xs font-bold tracking-widest uppercase">Sistema Operativo Master</p>
-                </div>
-                <div class="glass-card px-8 py-5 border-l-8 border-l-blue-600 flex items-center gap-6">
-                    <div>
-                        <p class="text-[9px] font-black text-blue-500 uppercase">Patrimonio en Custodia</p>
-                        <p id="totalCapital" class="text-2xl font-black italic">RD$ 0.00</p>
-                    </div>
-                    <button onclick="location.reload()" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-blue-600/20 transition-all">
-                        <i class="fas fa-sync-alt text-xs text-blue-400"></i>
-                    </button>
-                </div>
-            </header>
+    <nav id="sidebar" class="sidebar p-8">
+        <div class="flex justify-between items-center mb-10">
+            <span class="text-xs font-black text-blue-500 italic uppercase">Menú Principal</span>
+            <button onclick="toggleMenu()" class="text-slate-500"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="space-y-4">
+            <button onclick="showSection('dashboard')" class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-white/5 text-sm font-bold transition-all"><i class="fas fa-th-large text-blue-500"></i> Dashboard</button>
+            <button onclick="showSection('history')" class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-white/5 text-sm font-bold transition-all"><i class="fas fa-history text-green-500"></i> Historial Global</button>
+            <button onclick="showSection('partner')" class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-white/5 text-sm font-bold transition-all"><i class="fas fa-users text-purple-500"></i> Partners</button>
+            <hr class="border-white/5 my-6">
+            <button onclick="logout()" class="w-full flex items-center gap-4 p-4 rounded-xl bg-red-500/10 text-red-500 text-sm font-bold transition-all"><i class="fas fa-power-off"></i> Cerrar Sesión</button>
+        </div>
+    </nav>
 
-            <div class="grid grid-cols-1 xl:grid-cols-12 gap-10">
-                
-                <section class="xl:col-span-4">
-                    <div class="glass-card p-8 sticky top-10 border-t-4 border-t-blue-600">
-                        <h3 class="text-sm font-black text-blue-500 uppercase mb-8 flex items-center gap-2">
-                            <i class="fas fa-user-plus"></i> Ingreso de Expediente Real
-                        </h3>
-                        
-                        <div class="space-y-4" id="masterForm">
-                            <div class="grid grid-cols-2 gap-4">
-                                <input type="text" id="n" class="input-master text-xs font-bold" placeholder="Nombre Real">
-                                <input type="text" id="a" class="input-master text-xs font-bold" placeholder="Apellido Real">
-                            </div>
-                            <input type="text" id="id" class="input-master text-xs" placeholder="Documento de Identidad (ID/Pasaporte)">
-                            <input type="text" id="eq" class="input-master text-xs" placeholder="Modelo Exacto del Equipo">
-                            
-                            <div class="grid grid-cols-2 gap-4">
-                                <select id="p" class="input-master text-[11px] font-black">
-                                    <option value="1">🇩🇴 Rep. Dominicana (+1)</option>
-                                    <option value="599">🇨🇼 Curazao (+599)</option>
-                                    <option value="507">🇵🇦 Panamá (+507)</option>
-                                    <option value="57">🇨🇴 Colombia (+57)</option>
-                                    <option value="1">🇺🇸 Estados Unidos (+1)</option>
-                                </select>
-                                <input type="tel" id="tel" class="input-master text-xs" placeholder="WhatsApp">
-                            </div>
-
-                            <div class="grid grid-cols-2 gap-4">
-                                <div class="space-y-1">
-                                    <label class="text-[9px] font-bold text-slate-500 ml-2">MONTO PRESTADO</label>
-                                    <input type="number" id="m" class="input-master font-black text-blue-500" placeholder="0.00">
-                                </div>
-                                <div class="space-y-1">
-                                    <label class="text-[9px] font-bold text-slate-500 ml-2">CUOTAS ACORDADAS</label>
-                                    <input type="number" id="c" class="input-master font-black" placeholder="0">
-                                </div>
-                            </div>
-
-                            <div class="p-6 bg-slate-900/40 rounded-2xl border border-white/5 space-y-4">
-                                <div>
-                                    <label class="text-[9px] font-black text-blue-400 uppercase block mb-2">Foto del Dispositivo</label>
-                                    <input type="file" id="f1" class="text-[10px] block w-full text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-black file:bg-blue-600 file:text-white hover:file:bg-blue-700">
-                                </div>
-                                <div>
-                                    <label class="text-[9px] font-black text-green-400 uppercase block mb-2">Foto de Identificación</label>
-                                    <input type="file" id="f2" class="text-[10px] block w-full text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-black file:bg-green-600 file:text-white hover:file:bg-green-700">
-                                </div>
-                            </div>
-
-                            <button id="saveBtn" onclick="masterProcess()" class="btn-master w-full text-xs">
-                                <span id="btnText">Sincronizar con FireGuard Cloud</span>
-                            </button>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="xl:col-span-8">
-                    <div class="glass-card overflow-hidden">
-                        <div class="p-6 bg-white/5 border-b border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
-                            <div class="relative w-full max-w-md">
-                                <i class="fas fa-search absolute left-4 top-4 text-slate-500 text-xs"></i>
-                                <input type="text" id="search" onkeyup="filter()" class="input-master pl-12 text-xs" placeholder="Buscar por nombre, ID o equipo...">
-                            </div>
-                            <div class="flex gap-2">
-                                <span class="px-4 py-2 rounded-full bg-blue-600/10 text-blue-500 text-[10px] font-black border border-blue-500/20">DATABASE ACTIVE</span>
-                            </div>
-                        </div>
-                        
-                        <div class="overflow-x-auto p-6">
-                            <table class="w-full text-left border-separate border-spacing-y-4">
-                                <tbody id="tableBody"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </section>
+    <main id="appContent" class="hidden min-h-screen p-4 lg:p-10 max-w-[1600px] mx-auto">
+        
+        <header class="flex justify-between items-center mb-12">
+            <button onclick="toggleMenu()" class="w-12 h-12 glass-card flex items-center justify-center text-blue-500">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="text-center">
+                <h1 class="text-xl font-black italic">CONTROL HUB</h1>
+                <p id="userType" class="text-[8px] font-black text-slate-500 uppercase tracking-[0.3em]">--</p>
             </div>
+            <div class="glass-card px-6 py-3 border-l-4 border-l-blue-600">
+                <p class="text-[8px] font-bold text-blue-500 uppercase">Total Activo</p>
+                <p id="totalCap" class="text-lg font-black italic">RD$ 0</p>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 xl:grid-cols-12 gap-8">
+            
+            <section class="xl:col-span-4">
+                <div class="glass-card p-6 sticky top-8">
+                    <h3 class="text-[10px] font-black text-blue-500 uppercase mb-6 italic">Verificación de Identidad Estricta</h3>
+                    
+                    <div class="space-y-3">
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="text" id="fn" class="input-master" placeholder="Nombre">
+                            <input type="text" id="ln" class="input-master" placeholder="Apellido">
+                        </div>
+                        <input type="text" id="docId" class="input-master" placeholder="Número de Documento">
+                        
+                        <select id="docType" class="input-master font-bold" onchange="adjustUploads()">
+                            <option value="Cedula">Cédula de Identidad</option>
+                            <option value="Licencia">Licencia de Conducir</option>
+                            <option value="Pasaporte">Pasaporte Internacional</option>
+                        </select>
+
+                        <div class="grid grid-cols-2 gap-2">
+                            <select id="country" class="input-master text-[10px]">
+                                <option value="1">Rep. Dom (+1)</option>
+                                <option value="599">Curazao (+599)</option>
+                                <option value="507">Panamá (+507)</option>
+                                <option value="1">USA (+1)</option>
+                            </select>
+                            <input type="tel" id="whatsapp" class="input-master" placeholder="WhatsApp">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="number" id="amt" class="input-master text-blue-400 font-black" placeholder="Monto">
+                            <input type="number" id="inst" class="input-master font-black" placeholder="Cuotas">
+                        </div>
+
+                        <div class="p-4 bg-black/20 rounded-xl border border-white/5 space-y-3">
+                            <div>
+                                <label class="text-[8px] font-black text-slate-500 block mb-1 uppercase">Foto del Equipo</label>
+                                <input type="file" id="upEq" class="text-[9px] w-full">
+                            </div>
+                            <div id="frontDocBox">
+                                <label id="frontLabel" class="text-[8px] font-black text-blue-500 block mb-1 uppercase">ID Frente / Pasaporte Principal</label>
+                                <input type="file" id="upFront" class="text-[9px] w-full">
+                            </div>
+                            <div id="backDocBox">
+                                <label class="text-[8px] font-black text-blue-500 block mb-1 uppercase">ID Reverso (Obligatorio)</label>
+                                <input type="file" id="upBack" class="text-[9px] w-full">
+                            </div>
+                        </div>
+
+                        <button id="saveBtn" onclick="processEntry()" class="btn-master w-full text-[10px] text-white flex items-center justify-center gap-3">
+                            Sincronizar Datos Reales
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="xl:col-span-8">
+                <div class="glass-card overflow-hidden">
+                    <div class="p-4 border-b border-white/5 bg-white/5 flex justify-between items-center">
+                        <input type="text" id="find" onkeyup="filtering()" class="input-master max-w-xs" placeholder="Buscar cliente...">
+                        <span class="text-[9px] font-black text-green-500 uppercase tracking-widest flex items-center gap-2">
+                            <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> Servidor Vivo
+                        </span>
+                    </div>
+                    <div class="overflow-x-auto p-4">
+                        <table class="w-full text-left border-separate border-spacing-y-3">
+                            <tbody id="mainList"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
         </div>
     </main>
 
     <script>
-        // CONFIGURACIÓN MAESTRA FIREBASE
+        // CONFIG INTEGRATCORE
         const firebaseConfig = { apiKey: "AIzaSyAmr8KHEyoaI3-xhKGy-uDUzCc8JkEzO6g", authDomain: "fireguard-4327f.firebaseapp.com", projectId: "fireguard-4327f", storageBucket: "fireguard-4327f.firebasestorage.app", messagingSenderId: "277545925255", appId: "1:277545925255:web:92175f4ac71dc9278b1622" };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // SEGURIDAD DE ACCESO
-        function unlock() {
-            if(document.getElementById('masterPass').value === "FireMoney2026$") {
-                document.getElementById('loginGate').classList.add('hidden');
-                const dash = document.getElementById('dashboard');
-                dash.classList.remove('hidden');
-                setTimeout(() => dash.style.opacity = "1", 100);
-                init();
+        const MASTER_PASS = "FireMoney2026$";
+        const PARTNER_PASS = "Curazao2026*"; // Nueva contraseña para ella
+
+        // SESIÓN MULTI-USUARIO
+        function access() {
+            const p = document.getElementById('passInput').value;
+            if(p === MASTER_PASS || p === PARTNER_PASS) {
+                localStorage.setItem('fireAuth', 'true');
+                localStorage.setItem('userRole', p === MASTER_PASS ? 'ADMIN MASTER' : 'PARTNER AGENT');
+                document.getElementById('loginGate').style.display = 'none';
+                document.getElementById('appContent').classList.remove('hidden');
+                document.getElementById('userType').innerText = localStorage.getItem('userRole');
+                initSystem();
             } else {
-                Swal.fire({ icon: 'error', title: 'Acceso Denegado', text: 'Credencial Inválida', background: '#0f172a', color: '#fff' });
+                Swal.fire({ icon: 'error', title: 'Acceso Fallido', background: '#0f172a', color: '#fff' });
             }
         }
 
-        // PROCESO DE GUARDADO ATÓMICO (Sin fallos para Curazao)
-        async function masterProcess() {
+        function logout() {
+            localStorage.clear();
+            location.reload();
+        }
+
+        function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); }
+
+        // AJUSTE DE DOCUMENTACIÓN ESTRICTA
+        function adjustUploads() {
+            const type = document.getElementById('docType').value;
+            const backBox = document.getElementById('backDocBox');
+            const frontLabel = document.getElementById('frontLabel');
+            
+            if(type === 'Pasaporte') {
+                backBox.style.display = 'none';
+                frontLabel.innerText = "Página Principal Pasaporte (Real)";
+            } else {
+                backBox.style.display = 'block';
+                frontLabel.innerText = "Frente del Documento";
+            }
+        }
+
+        async function processEntry() {
             const btn = document.getElementById('saveBtn');
-            const fields = ['n', 'a', 'id', 'eq', 'tel', 'm', 'c'];
-            let isValid = true;
+            const fEq = document.getElementById('upEq').files[0];
+            const fFront = document.getElementById('upFront').files[0];
+            const fBack = document.getElementById('upBack').files[0];
+            const docType = document.getElementById('docType').value;
 
-            // Validación Visual Rigurosa
-            fields.forEach(f => {
-                const el = document.getElementById(f);
-                if(!el.value || el.value.length < 2) {
-                    el.classList.add('field-error');
-                    isValid = false;
-                } else { el.classList.remove('field-error'); }
-            });
-
-            const foto1 = document.getElementById('f1').files[0];
-            if(!foto1 || !isValid) {
-                return Swal.fire({ icon: 'warning', title: 'Datos Insuficientes', text: 'Todos los campos y la foto del equipo son obligatorios para la seguridad.', background: '#0f172a', color: '#fff' });
+            // VALIDACIÓN MINUCIOSA
+            if(!fEq || !fFront || (docType !== 'Pasaporte' && !fBack)) {
+                return Swal.fire('Error de Verificación', 'Debes subir todas las caras del documento para validar que es real.', 'error');
             }
 
-            // Bloqueo de UI para sincronización
             btn.disabled = true;
-            btn.innerHTML = `<span class="sync-loader"></span> SINCRONIZANDO CON LA NUBE...`;
+            btn.innerHTML = `<div class="loading-ring"></div> PROCESANDO...`;
 
             try {
-                // Lectura de imágenes con promesa
-                const reader = (file) => new Promise(resolve => { const fr = new FileReader(); fr.onload = () => resolve(fr.result); fr.readAsDataURL(file); });
-                const img1 = await reader(foto1);
-                const file2 = document.getElementById('f2').files[0];
-                const img2 = file2 ? await reader(file2) : "";
+                const read = (f) => new Promise(r => { const fr = new FileReader(); fr.onload = () => r(fr.result); fr.readAsDataURL(f); });
+                const imgEq = await read(fEq);
+                const imgF = await read(fFront);
+                const imgB = fBack ? await read(fBack) : "";
 
-                const numCuotas = parseInt(document.getElementById('c').value);
-                let plan = [];
-                for(let i=1; i<=numCuotas; i++) plan.push({ n: i, status: 'PENDIENTE', date: '-' });
-
-                // Escritura Directa en Firestore
                 await db.collection("clientes").add({
-                    nombre: document.getElementById('n').value.trim(),
-                    apellido: document.getElementById('a').value.trim(),
-                    documento: document.getElementById('id').value.trim(),
-                    equipo: document.getElementById('eq').value.trim(),
-                    telefono: document.getElementById('tel').value.trim(),
-                    paisCode: document.getElementById('p').value,
-                    montoTotal: parseFloat(document.getElementById('m').value),
-                    cuotasCant: numCuotas,
-                    cuotasPagas: 0,
-                    historial: plan,
-                    fotoEquipo: img1,
-                    fotoID: img2,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                    masterID: "INTEGRATCORE_NICOLAS"
+                    nombre: document.getElementById('fn').value,
+                    apellido: document.getElementById('ln').value,
+                    idNum: document.getElementById('docId').value,
+                    tipoDoc: docType,
+                    monto: parseFloat(document.getElementById('amt').value),
+                    cuotasT: parseInt(document.getElementById('inst').value),
+                    cuotasP: 0,
+                    telefono: document.getElementById('whatsapp').value,
+                    pais: document.getElementById('country').value,
+                    fotoEquipo: imgEq,
+                    fotoFrente: imgF,
+                    fotoReverso: imgB,
+                    registradoPor: localStorage.getItem('userRole'),
+                    fecha: new Date(),
+                    status: 'Activo'
                 });
 
-                await Swal.fire({ icon: 'success', title: 'Sincronización Exitosa', text: 'El expediente ha sido blindado en la nube.', background: '#0f172a', color: '#fff' });
+                await Swal.fire('Sincronizado', 'El cliente ha sido guardado en el servidor global.', 'success');
                 location.reload();
-
-            } catch (err) {
-                console.error(err);
+            } catch(e) {
                 btn.disabled = false;
                 btn.innerText = "Reintentar Sincronización";
-                Swal.fire({ icon: 'error', title: 'Fallo de Red', text: 'No se pudo conectar con el servidor global.', background: '#0f172a', color: '#fff' });
+                Swal.fire('Fallo de Red', 'Error al conectar con Firebase', 'error');
             }
         }
 
-        // CARGA Y RENDERIZADO ROBUSTO
-        function init() {
-            db.collection("clientes").orderBy("timestamp", "desc").onSnapshot(snapshot => {
-                const container = document.getElementById('tableBody');
-                let globalSum = 0;
-                container.innerHTML = "";
-
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    globalSum += (data.montoTotal || 0);
-                    const pagas = data.cuotasPagas || 0;
-                    const total = data.cuotasCant || 0;
-                    const progreso = total > 0 ? Math.round((pagas / total) * 100) : 0;
-
-                    container.innerHTML += `
-                        <tr class="glass-card shadow-2xl">
-                            <td class="p-6">
-                                <div class="font-black text-xs text-white italic uppercase tracking-tighter">${data.nombre} ${data.apellido}</div>
-                                <div class="text-[9px] text-blue-500 font-black uppercase mt-1 tracking-widest">${data.equipo}</div>
+        function initSystem() {
+            db.collection("clientes").orderBy("fecha", "desc").onSnapshot(snap => {
+                const list = document.getElementById('mainList');
+                let total = 0;
+                list.innerHTML = "";
+                snap.forEach(doc => {
+                    const d = doc.data();
+                    total += (d.monto || 0);
+                    const pct = d.cuotasT > 0 ? Math.round((d.cuotasP / d.cuotasT) * 100) : 0;
+                    
+                    list.innerHTML += `
+                        <tr class="glass-card shadow-lg">
+                            <td class="p-4">
+                                <div class="font-black text-[11px] uppercase italic text-white">${d.nombre} ${d.apellido}</div>
+                                <div class="text-[8px] text-blue-500 font-bold uppercase mt-1">Registrado por: ${d.registradoPor}</div>
                             </td>
-                            <td class="p-6">
+                            <td class="p-4">
                                 <div class="flex items-center gap-3">
-                                    <div class="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden border border-white/5 min-w-[80px]">
-                                        <div class="h-full bg-blue-600 shadow-[0_0_10px_#2563eb]" style="width: ${progreso}%"></div>
+                                    <div class="flex-1 h-1 bg-white/10 rounded-full overflow-hidden w-16">
+                                        <div class="h-full bg-blue-600 shadow-[0_0_8px_#2563eb]" style="width:${pct}%"></div>
                                     </div>
-                                    <span class="text-[10px] font-black text-slate-400">${pagas}/${total}</span>
+                                    <span class="text-[9px] font-black">${d.cuotasP}/${d.cuotasT}</span>
                                 </div>
                             </td>
-                            <td class="p-6 text-right">
+                            <td class="p-4 text-right">
                                 <div class="flex gap-2 justify-end">
-                                    <a href="https://wa.me/${data.paisCode}${data.telefono}" target="_blank" class="w-10 h-10 rounded-xl bg-green-600/10 text-green-500 flex items-center justify-center border border-green-500/20 hover:bg-green-600 hover:text-white transition-all">
-                                        <i class="fab fa-whatsapp"></i>
-                                    </a>
-                                    <button onclick="removeDoc('${doc.id}')" class="w-10 h-10 rounded-xl bg-red-600/10 text-red-500 flex items-center justify-center border border-red-500/20 hover:bg-red-600 hover:text-white transition-all">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
+                                    <button onclick="verDetalles('${doc.id}')" class="w-8 h-8 glass-card text-blue-500 flex items-center justify-center"><i class="fas fa-eye text-[10px]"></i></button>
+                                    <a href="https://wa.me/${d.pais}${d.telefono}" target="_blank" class="w-8 h-8 glass-card text-green-500 flex items-center justify-center"><i class="fab fa-whatsapp text-xs"></i></a>
                                 </div>
                             </td>
-                        </tr>
-                    `;
+                        </tr>`;
                 });
-                document.getElementById('totalCapital').innerText = "RD$ " + globalSum.toLocaleString('en-US', {minimumFractionDigits: 2});
+                document.getElementById('totalCap').innerText = "RD$ " + total.toLocaleString();
             });
         }
 
-        async function removeDoc(id) {
-            const res = await Swal.fire({ title: '¿Eliminar Registro?', text: 'Esta acción borrará el expediente de forma permanente.', icon: 'warning', showCancelButton: true, confirmButtonColor: '#2563eb', cancelButtonColor: '#1e293b', confirmButtonText: 'Confirmar Borrado', background: '#0f172a', color: '#fff' });
-            if(res.isConfirmed) await db.collection("clientes").doc(id).delete();
+        function filtering() {
+            let t = document.getElementById('find').value.toUpperCase();
+            let r = document.getElementById('mainList').getElementsByTagName('tr');
+            for(let i=0; i<r.length; i++) r[i].style.display = r[i].innerText.toUpperCase().includes(t) ? "" : "none";
         }
 
-        function filter() {
-            let term = document.getElementById('search').value.toUpperCase();
-            let rows = document.getElementById('tableBody').getElementsByTagName('tr');
-            for(let i=0; i<rows.length; i++) {
-                rows[i].style.display = rows[i].innerText.toUpperCase().includes(term) ? "" : "none";
-            }
+        async function verDetalles(id) {
+            const doc = await db.collection("clientes").doc(id).get();
+            const d = doc.data();
+            Swal.fire({
+                title: `${d.nombre} - ${d.tipoDoc}`,
+                html: `
+                    <div class="grid grid-cols-2 gap-2 mt-4">
+                        <div class="text-[9px] font-bold">Frente/Pasp:<br><img src="${d.fotoFrente}" class="rounded-lg mt-1"></div>
+                        <div class="text-[9px] font-bold">Reverso:<br><img src="${d.fotoReverso || d.fotoFrente}" class="rounded-lg mt-1"></div>
+                    </div>
+                    <div class="mt-4 text-[10px] text-left p-4 bg-black/10 rounded-xl">
+                        <b>ID:</b> ${d.idNum}<br>
+                        <b>Monto:</b> RD$ ${d.monto}<br>
+                        <b>Agente:</b> ${d.registradoPor}
+                    </div>
+                `,
+                background: '#0f172a', color: '#fff', confirmButtonText: 'Cerrar'
+            });
         }
-
-        // ANTI-CIERRE PARA CURAZAO
-        window.onbeforeunload = function() {
-            if(document.getElementById('saveBtn').disabled) return "Hay un proceso de sincronización en curso. ¿Deseas salir?";
-        };
     </script>
 </body>
 </html>
