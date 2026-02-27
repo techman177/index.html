@@ -3,191 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FireGuard Master | IntegratCore Global</title>
-    
+    <title>FireGuard Elite | IntegratCore</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
-        
-        :root {
-            --bg: #020617;
-            --accent: #2563eb;
-            --glass: rgba(15, 23, 42, 0.9);
-            --border: rgba(255, 255, 255, 0.1);
-        }
-
-        body { 
-            background-color: var(--bg); 
-            color: #f1f5f9; 
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            overflow-x: hidden;
-        }
-
-        .glass-card {
-            background: var(--glass);
-            backdrop-filter: blur(25px);
-            border: 1px solid var(--border);
-            border-radius: 24px;
-        }
-
-        .input-master {
-            background: rgba(30, 41, 59, 0.7);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 12px 16px;
-            color: #fff;
-            width: 100%;
-            font-size: 13px;
-            transition: 0.3s;
-        }
-
-        .input-master:focus { border-color: var(--accent); outline: none; background: rgba(30, 41, 59, 1); }
-
-        .btn-master {
-            background: linear-gradient(135deg, #2563eb, #1e40af);
-            padding: 14px;
-            border-radius: 14px;
-            font-weight: 800;
-            text-transform: uppercase;
-            transition: 0.3s;
-        }
-
-        .sidebar {
-            position: fixed; top: 0; left: -300px; width: 280px; height: 100%;
-            background: #0f172a; border-right: 1px solid var(--border);
-            z-index: 4000; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+        :root { --bg: #020617; --accent: #2563eb; --glass: rgba(15, 23, 42, 0.9); }
+        body { background: var(--bg); color: #f1f5f9; font-family: 'Plus Jakarta Sans', sans-serif; }
+        .glass-card { background: var(--glass); backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; }
+        .input-master { background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 12px; color: #fff; width: 100%; font-size: 13px; }
+        .sidebar { position: fixed; top: 0; left: -300px; width: 280px; height: 100%; background: #0f172a; z-index: 4000; transition: 0.4s; border-right: 1px solid rgba(255,255,255,0.1); }
         .sidebar.active { left: 0; }
-
-        .status-badge {
-            padding: 4px 10px; border-radius: 8px; font-size: 9px; font-weight: 900; text-transform: uppercase;
-        }
-
-        /* Estilo para carga */
-        .loading-ring {
-            width: 18px; height: 18px; border: 2px solid #ffffff33;
-            border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        .btn-master { background: linear-gradient(135deg, #2563eb, #1e40af); padding: 14px; border-radius: 14px; font-weight: 800; text-transform: uppercase; width: 100%; }
+        .admin-only { display: none; }
     </style>
 </head>
 <body>
 
     <div id="loginGate" class="fixed inset-0 z-[5000] bg-slate-950 flex items-center justify-center p-6">
-        <div class="w-full max-w-sm">
-            <div class="text-center mb-10">
-                <div class="w-16 h-16 bg-blue-600 rounded-2xl mx-auto flex items-center justify-center mb-4 shadow-lg shadow-blue-500/20">
-                    <i class="fas fa-lock text-white text-2xl"></i>
-                </div>
-                <h2 class="text-2xl font-black italic tracking-tighter uppercase">FireGuard <span class="text-blue-500">Global</span></h2>
-                <p class="text-slate-500 text-[10px] font-bold mt-2 uppercase">IntegratCore Authentication</p>
-            </div>
+        <div class="w-full max-w-sm text-center">
+            <h2 class="text-3xl font-black italic mb-8">FIRE<span class="text-blue-500">GUARD</span></h2>
             <div class="glass-card p-8">
                 <input type="password" id="passInput" class="input-master text-center text-2xl mb-4 tracking-widest" placeholder="••••">
-                <button onclick="access()" class="btn-master w-full text-xs text-white">Verificar Identidad</button>
-                <p class="text-[8px] text-center text-slate-600 mt-6 uppercase font-bold tracking-widest">Master Key or Partner Key Required</p>
+                <button onclick="access()" class="btn-master text-xs text-white">Entrar al Sistema</button>
             </div>
         </div>
     </div>
 
     <nav id="sidebar" class="sidebar p-8">
         <div class="flex justify-between items-center mb-10">
-            <span class="text-xs font-black text-blue-500 italic uppercase">Menú Principal</span>
-            <button onclick="toggleMenu()" class="text-slate-500"><i class="fas fa-times"></i></button>
+            <span class="text-xs font-black text-blue-500 uppercase italic">IntegratCore Menu</span>
+            <button onclick="toggleMenu()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="bg-blue-600/10 p-4 rounded-xl text-center mb-6 border border-blue-500/20">
+            <p class="text-[9px] text-blue-400 font-bold uppercase">Sesión activa como:</p>
+            <p id="welcomeMsg" class="text-xs font-black text-white uppercase tracking-wider">--</p>
         </div>
         <div class="space-y-4">
-            <button onclick="showSection('dashboard')" class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-white/5 text-sm font-bold transition-all"><i class="fas fa-th-large text-blue-500"></i> Dashboard</button>
-            <button onclick="showSection('history')" class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-white/5 text-sm font-bold transition-all"><i class="fas fa-history text-green-500"></i> Historial Global</button>
-            <button onclick="showSection('partner')" class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-white/5 text-sm font-bold transition-all"><i class="fas fa-users text-purple-500"></i> Partners</button>
-            <hr class="border-white/5 my-6">
-            <button onclick="logout()" class="w-full flex items-center gap-4 p-4 rounded-xl bg-red-500/10 text-red-500 text-sm font-bold transition-all"><i class="fas fa-power-off"></i> Cerrar Sesión</button>
+            <button onclick="toggleMenu()" class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-white/5 font-bold"><i class="fas fa-home"></i> Inicio</button>
+            <button onclick="Swal.fire('Proximamente','Modulo de Reportes en desarrollo','info')" class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-white/5 font-bold"><i class="fas fa-file-invoice-dollar"></i> Historial Pagos</button>
+            <hr class="border-white/5">
+            <button onclick="logout()" class="w-full flex items-center gap-4 p-4 rounded-xl bg-red-500/10 text-red-500 font-bold"><i class="fas fa-power-off"></i> Cerrar Sesión</button>
         </div>
     </nav>
 
     <main id="appContent" class="hidden min-h-screen p-4 lg:p-10 max-w-[1600px] mx-auto">
-        
-        <header class="flex justify-between items-center mb-12">
-            <button onclick="toggleMenu()" class="w-12 h-12 glass-card flex items-center justify-center text-blue-500">
-                <i class="fas fa-bars"></i>
-            </button>
+        <header class="flex justify-between items-center mb-10">
+            <button onclick="toggleMenu()" class="w-12 h-12 glass-card flex items-center justify-center text-blue-500"><i class="fas fa-bars"></i></button>
             <div class="text-center">
-                <h1 class="text-xl font-black italic">CONTROL HUB</h1>
-                <p id="userType" class="text-[8px] font-black text-slate-500 uppercase tracking-[0.3em]">--</p>
+                <h1 class="text-xl font-black italic">GLOBAL DASHBOARD</h1>
+                <span id="roleBadge" class="text-[9px] bg-blue-600/20 text-blue-400 px-3 py-1 rounded-full font-black uppercase">--</span>
             </div>
-            <div class="glass-card px-6 py-3 border-l-4 border-l-blue-600">
-                <p class="text-[8px] font-bold text-blue-500 uppercase">Total Activo</p>
+            <div id="capitalBox" class="admin-only glass-card px-6 py-3 border-l-4 border-l-blue-600">
+                <p class="text-[8px] font-bold text-blue-500 uppercase">Capital Total</p>
                 <p id="totalCap" class="text-lg font-black italic">RD$ 0</p>
             </div>
         </header>
 
         <div class="grid grid-cols-1 xl:grid-cols-12 gap-8">
-            
             <section class="xl:col-span-4">
                 <div class="glass-card p-6 sticky top-8">
-                    <h3 class="text-[10px] font-black text-blue-500 uppercase mb-6 italic">Verificación de Identidad Estricta</h3>
-                    
+                    <h3 class="text-[10px] font-black text-blue-500 uppercase mb-6 flex items-center gap-2 italic">
+                        <i class="fas fa-shield-check"></i> Registro de Documentación Real
+                    </h3>
                     <div class="space-y-3">
                         <div class="grid grid-cols-2 gap-2">
                             <input type="text" id="fn" class="input-master" placeholder="Nombre">
                             <input type="text" id="ln" class="input-master" placeholder="Apellido">
                         </div>
+                        <select id="docType" class="input-master font-bold" onchange="checkDoc()">
+                            <option value="Cedula">Cédula (Frente/Atrás)</option>
+                            <option value="Licencia">Licencia (Frente/Atrás)</option>
+                            <option value="Pasaporte">Pasaporte (Pág. Principal)</option>
+                        </select>
                         <input type="text" id="docId" class="input-master" placeholder="Número de Documento">
                         
-                        <select id="docType" class="input-master font-bold" onchange="adjustUploads()">
-                            <option value="Cedula">Cédula de Identidad</option>
-                            <option value="Licencia">Licencia de Conducir</option>
-                            <option value="Pasaporte">Pasaporte Internacional</option>
-                        </select>
-
                         <div class="grid grid-cols-2 gap-2">
-                            <select id="country" class="input-master text-[10px]">
-                                <option value="1">Rep. Dom (+1)</option>
+                            <select id="country" class="input-master">
+                                <option value="1">RD (+1)</option>
                                 <option value="599">Curazao (+599)</option>
                                 <option value="507">Panamá (+507)</option>
-                                <option value="1">USA (+1)</option>
                             </select>
-                            <input type="tel" id="whatsapp" class="input-master" placeholder="WhatsApp">
+                            <input type="tel" id="tel" class="input-master" placeholder="WhatsApp">
                         </div>
 
                         <div class="grid grid-cols-2 gap-2">
-                            <input type="number" id="amt" class="input-master text-blue-400 font-black" placeholder="Monto">
-                            <input type="number" id="inst" class="input-master font-black" placeholder="Cuotas">
+                            <input type="number" id="amt" class="input-master text-blue-400 font-bold" placeholder="Monto">
+                            <input type="number" id="ins" class="input-master font-bold" placeholder="Cuotas">
                         </div>
 
-                        <div class="p-4 bg-black/20 rounded-xl border border-white/5 space-y-3">
-                            <div>
-                                <label class="text-[8px] font-black text-slate-500 block mb-1 uppercase">Foto del Equipo</label>
-                                <input type="file" id="upEq" class="text-[9px] w-full">
-                            </div>
-                            <div id="frontDocBox">
-                                <label id="frontLabel" class="text-[8px] font-black text-blue-500 block mb-1 uppercase">ID Frente / Pasaporte Principal</label>
-                                <input type="file" id="upFront" class="text-[9px] w-full">
-                            </div>
-                            <div id="backDocBox">
-                                <label class="text-[8px] font-black text-blue-500 block mb-1 uppercase">ID Reverso (Obligatorio)</label>
-                                <input type="file" id="upBack" class="text-[9px] w-full">
-                            </div>
+                        <div class="p-4 bg-black/30 rounded-xl space-y-3 border border-white/5">
+                            <div><label class="text-[8px] font-black text-slate-500 uppercase">Foto Equipo</label><input type="file" id="fEq" class="text-[9px] w-full"></div>
+                            <div id="frontBox"><label class="text-[8px] font-black text-blue-500 uppercase">Documento Frente</label><input type="file" id="fFr" class="text-[9px] w-full"></div>
+                            <div id="backBox"><label class="text-[8px] font-black text-blue-500 uppercase">Documento Reverso</label><input type="file" id="fBk" class="text-[9px] w-full"></div>
                         </div>
 
-                        <button id="saveBtn" onclick="processEntry()" class="btn-master w-full text-[10px] text-white flex items-center justify-center gap-3">
-                            Sincronizar Datos Reales
-                        </button>
+                        <button id="saveBtn" onclick="saveClient()" class="btn-master text-[10px] text-white">Sincronizar Maestro</button>
                     </div>
                 </div>
             </section>
 
             <section class="xl:col-span-8">
                 <div class="glass-card overflow-hidden">
-                    <div class="p-4 border-b border-white/5 bg-white/5 flex justify-between items-center">
-                        <input type="text" id="find" onkeyup="filtering()" class="input-master max-w-xs" placeholder="Buscar cliente...">
-                        <span class="text-[9px] font-black text-green-500 uppercase tracking-widest flex items-center gap-2">
-                            <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> Servidor Vivo
-                        </span>
+                    <div class="p-4 bg-white/5 flex justify-between items-center border-b border-white/10">
+                        <input type="text" id="find" onkeyup="filtering()" class="input-master max-w-xs" placeholder="Buscar expediente...">
+                        <div class="flex items-center gap-2"><span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> <span class="text-[10px] font-bold">LIVE</span></div>
                     </div>
                     <div class="overflow-x-auto p-4">
                         <table class="w-full text-left border-separate border-spacing-y-3">
@@ -200,127 +123,92 @@
     </main>
 
     <script>
-        // CONFIG INTEGRATCORE
         const firebaseConfig = { apiKey: "AIzaSyAmr8KHEyoaI3-xhKGy-uDUzCc8JkEzO6g", authDomain: "fireguard-4327f.firebaseapp.com", projectId: "fireguard-4327f", storageBucket: "fireguard-4327f.firebasestorage.app", messagingSenderId: "277545925255", appId: "1:277545925255:web:92175f4ac71dc9278b1622" };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        const MASTER_PASS = "FireMoney2026$";
-        const PARTNER_PASS = "Curazao2026*"; // Nueva contraseña para ella
+        const MASTER = "FireMoney2026$";
+        const PARTNER = "Curazao2026*";
 
-        // SESIÓN MULTI-USUARIO
         function access() {
             const p = document.getElementById('passInput').value;
-            if(p === MASTER_PASS || p === PARTNER_PASS) {
-                localStorage.setItem('fireAuth', 'true');
-                localStorage.setItem('userRole', p === MASTER_PASS ? 'ADMIN MASTER' : 'PARTNER AGENT');
+            if(p === MASTER || p === PARTNER) {
+                const role = p === MASTER ? 'ADMIN' : 'PARTNER';
+                const name = p === MASTER ? 'ADMINISTRADOR MASTER' : 'PARTNER AGENT';
+                localStorage.setItem('role', role);
                 document.getElementById('loginGate').style.display = 'none';
                 document.getElementById('appContent').classList.remove('hidden');
-                document.getElementById('userType').innerText = localStorage.getItem('userRole');
-                initSystem();
-            } else {
-                Swal.fire({ icon: 'error', title: 'Acceso Fallido', background: '#0f172a', color: '#fff' });
-            }
+                document.getElementById('roleBadge').innerText = name;
+                document.getElementById('welcomeMsg').innerText = name;
+                if(role === 'ADMIN') document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'block');
+                init();
+            } else { Swal.fire('Error', 'Clave Inválida', 'error'); }
         }
 
-        function logout() {
-            localStorage.clear();
-            location.reload();
-        }
-
+        function logout() { localStorage.clear(); location.reload(); }
         function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); }
 
-        // AJUSTE DE DOCUMENTACIÓN ESTRICTA
-        function adjustUploads() {
-            const type = document.getElementById('docType').value;
-            const backBox = document.getElementById('backDocBox');
-            const frontLabel = document.getElementById('frontLabel');
-            
-            if(type === 'Pasaporte') {
-                backBox.style.display = 'none';
-                frontLabel.innerText = "Página Principal Pasaporte (Real)";
-            } else {
-                backBox.style.display = 'block';
-                frontLabel.innerText = "Frente del Documento";
-            }
+        function checkDoc() {
+            const isPas = document.getElementById('docType').value === 'Pasaporte';
+            document.getElementById('backBox').style.display = isPas ? 'none' : 'block';
         }
 
-        async function processEntry() {
+        async function saveClient() {
             const btn = document.getElementById('saveBtn');
-            const fEq = document.getElementById('upEq').files[0];
-            const fFront = document.getElementById('upFront').files[0];
-            const fBack = document.getElementById('upBack').files[0];
-            const docType = document.getElementById('docType').value;
+            const f1 = document.getElementById('fEq').files[0];
+            const f2 = document.getElementById('fFr').files[0];
+            const f3 = document.getElementById('fBk').files[0];
+            const type = document.getElementById('docType').value;
 
-            // VALIDACIÓN MINUCIOSA
-            if(!fEq || !fFront || (docType !== 'Pasaporte' && !fBack)) {
-                return Swal.fire('Error de Verificación', 'Debes subir todas las caras del documento para validar que es real.', 'error');
+            if(!f1 || !f2 || (type !== 'Pasaporte' && !f3)) {
+                return Swal.fire('Error', 'Fotos de documentos incompletas.', 'error');
             }
 
-            btn.disabled = true;
-            btn.innerHTML = `<div class="loading-ring"></div> PROCESANDO...`;
-
+            btn.disabled = true; btn.innerText = "VERIFICANDO...";
+            
             try {
                 const read = (f) => new Promise(r => { const fr = new FileReader(); fr.onload = () => r(fr.result); fr.readAsDataURL(f); });
-                const imgEq = await read(fEq);
-                const imgF = await read(fFront);
-                const imgB = fBack ? await read(fBack) : "";
+                const img1 = await read(f1); const img2 = await read(f2);
+                const img3 = f3 ? await read(f3) : "";
 
                 await db.collection("clientes").add({
-                    nombre: document.getElementById('fn').value,
-                    apellido: document.getElementById('ln').value,
-                    idNum: document.getElementById('docId').value,
-                    tipoDoc: docType,
-                    monto: parseFloat(document.getElementById('amt').value),
-                    cuotasT: parseInt(document.getElementById('inst').value),
-                    cuotasP: 0,
-                    telefono: document.getElementById('whatsapp').value,
-                    pais: document.getElementById('country').value,
-                    fotoEquipo: imgEq,
-                    fotoFrente: imgF,
-                    fotoReverso: imgB,
-                    registradoPor: localStorage.getItem('userRole'),
-                    fecha: new Date(),
-                    status: 'Activo'
+                    n: document.getElementById('fn').value, a: document.getElementById('ln').value,
+                    doc: document.getElementById('docId').value, tDoc: type,
+                    m: parseFloat(document.getElementById('amt').value), cT: parseInt(document.getElementById('ins').value),
+                    cP: 0, tel: document.getElementById('tel').value, pais: document.getElementById('country').value,
+                    imgE: img1, imgF: img2, imgB: img3,
+                    by: localStorage.getItem('role'), date: new Date()
                 });
-
-                await Swal.fire('Sincronizado', 'El cliente ha sido guardado en el servidor global.', 'success');
-                location.reload();
-            } catch(e) {
-                btn.disabled = false;
-                btn.innerText = "Reintentar Sincronización";
-                Swal.fire('Fallo de Red', 'Error al conectar con Firebase', 'error');
-            }
+                Swal.fire('Guardado', 'Expediente Sincronizado', 'success').then(()=>location.reload());
+            } catch(e) { btn.disabled = false; btn.innerText = "Reintentar"; }
         }
 
-        function initSystem() {
-            db.collection("clientes").orderBy("fecha", "desc").onSnapshot(snap => {
+        function init() {
+            db.collection("clientes").orderBy("date", "desc").onSnapshot(snap => {
                 const list = document.getElementById('mainList');
-                let total = 0;
-                list.innerHTML = "";
+                const role = localStorage.getItem('role');
+                let total = 0; list.innerHTML = "";
+                
                 snap.forEach(doc => {
-                    const d = doc.data();
-                    total += (d.monto || 0);
-                    const pct = d.cuotasT > 0 ? Math.round((d.cuotasP / d.cuotasT) * 100) : 0;
+                    const d = doc.data(); total += d.m;
+                    const pct = Math.round((d.cP / d.cT) * 100);
                     
                     list.innerHTML += `
-                        <tr class="glass-card shadow-lg">
+                        <tr class="glass-card">
                             <td class="p-4">
-                                <div class="font-black text-[11px] uppercase italic text-white">${d.nombre} ${d.apellido}</div>
-                                <div class="text-[8px] text-blue-500 font-bold uppercase mt-1">Registrado por: ${d.registradoPor}</div>
+                                <div class="text-[11px] font-black uppercase text-white">${d.n} ${d.a}</div>
+                                <div class="text-[8px] text-blue-400 font-bold uppercase mt-1">Por: ${d.by}</div>
                             </td>
                             <td class="p-4">
-                                <div class="flex items-center gap-3">
-                                    <div class="flex-1 h-1 bg-white/10 rounded-full overflow-hidden w-16">
-                                        <div class="h-full bg-blue-600 shadow-[0_0_8px_#2563eb]" style="width:${pct}%"></div>
-                                    </div>
-                                    <span class="text-[9px] font-black">${d.cuotasP}/${d.cuotasT}</span>
+                                <div class="flex items-center gap-2">
+                                    <div class="flex-1 h-1 bg-white/10 rounded-full overflow-hidden w-12"><div class="h-full bg-blue-600" style="width:${pct}%"></div></div>
+                                    <span class="text-[9px] font-bold">${d.cP}/${d.cT}</span>
                                 </div>
                             </td>
                             <td class="p-4 text-right">
                                 <div class="flex gap-2 justify-end">
-                                    <button onclick="verDetalles('${doc.id}')" class="w-8 h-8 glass-card text-blue-500 flex items-center justify-center"><i class="fas fa-eye text-[10px]"></i></button>
-                                    <a href="https://wa.me/${d.pais}${d.telefono}" target="_blank" class="w-8 h-8 glass-card text-green-500 flex items-center justify-center"><i class="fab fa-whatsapp text-xs"></i></a>
+                                    <button onclick="view('${doc.id}')" class="w-8 h-8 glass-card text-blue-500 flex items-center justify-center"><i class="fas fa-eye text-xs"></i></button>
+                                    ${role === 'ADMIN' ? `<button onclick="del('${doc.id}')" class="w-8 h-8 glass-card text-red-500 flex items-center justify-center"><i class="fas fa-trash text-xs"></i></button>` : ''}
                                 </div>
                             </td>
                         </tr>`;
@@ -329,31 +217,22 @@
             });
         }
 
-        function filtering() {
-            let t = document.getElementById('find').value.toUpperCase();
-            let r = document.getElementById('mainList').getElementsByTagName('tr');
-            for(let i=0; i<r.length; i++) r[i].style.display = r[i].innerText.toUpperCase().includes(t) ? "" : "none";
-        }
-
-        async function verDetalles(id) {
+        async function view(id) {
             const doc = await db.collection("clientes").doc(id).get();
             const d = doc.data();
             Swal.fire({
-                title: `${d.nombre} - ${d.tipoDoc}`,
-                html: `
-                    <div class="grid grid-cols-2 gap-2 mt-4">
-                        <div class="text-[9px] font-bold">Frente/Pasp:<br><img src="${d.fotoFrente}" class="rounded-lg mt-1"></div>
-                        <div class="text-[9px] font-bold">Reverso:<br><img src="${d.fotoReverso || d.fotoFrente}" class="rounded-lg mt-1"></div>
-                    </div>
-                    <div class="mt-4 text-[10px] text-left p-4 bg-black/10 rounded-xl">
-                        <b>ID:</b> ${d.idNum}<br>
-                        <b>Monto:</b> RD$ ${d.monto}<br>
-                        <b>Agente:</b> ${d.registradoPor}
-                    </div>
-                `,
-                background: '#0f172a', color: '#fff', confirmButtonText: 'Cerrar'
+                title: d.n + ' ' + d.a,
+                html: `<div class="grid grid-cols-2 gap-2"><img src="${d.imgF}" class="rounded"> <img src="${d.imgB || d.imgF}" class="rounded"></div>
+                       <p class="mt-4 text-[10px] text-left"><b>Documento:</b> ${d.doc}<br><b>Monto:</b> RD$ ${d.m}</p>`,
+                background: '#0f172a', color: '#fff'
             });
         }
+
+        async function del(id) {
+            const res = await Swal.fire({ title:'¿Borrar?', icon:'warning', showCancelButton:true, confirmButtonColor:'#d33', background:'#0f172a', color:'#fff' });
+            if(res.isConfirmed) await db.collection("clientes").doc(id).delete();
+        }
+        function filtering() { let t = document.getElementById('find').value.toUpperCase(); let r = document.getElementById('mainList').getElementsByTagName('tr'); for(let i=0; i<r.length; i++) r[i].style.display = r[i].innerText.toUpperCase().includes(t) ? "" : "none"; }
     </script>
 </body>
 </html>
