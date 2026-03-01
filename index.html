@@ -4,7 +4,7 @@
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FireGuard Elite V4 | IntegratCore</title>
+    <title>FireGuard Elite V5 | IntegratCore</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -22,21 +22,42 @@
         .input-xl:focus { outline: none; border-color: #2563eb; }
         .sidebar { position: fixed; top: 0; left: -320px; width: 300px; height: 100%; background: #0f172a; z-index: 5000; transition: 0.4s; border-right: 1px solid rgba(255,255,255,0.1); color: white; }
         .sidebar.active { left: 0; }
-        .btn-xl { background: linear-gradient(135deg, #2563eb, #1e40af); padding: 18px; border-radius: 16px; font-weight: 800; width: 100%; text-transform: uppercase; color: white; border: none; }
+        .btn-xl { background: linear-gradient(135deg, #2563eb, #1e40af); padding: 18px; border-radius: 16px; font-weight: 800; width: 100%; text-transform: uppercase; color: white; border: none; cursor: pointer; }
         .hidden-force { display: none !important; }
-        .calc-btn { background: rgba(255,255,255,0.1); padding: 15px; border-radius: 12px; font-weight: bold; text-align: center; color: white; font-size: 18px; }
+        .calc-btn { background: rgba(255,255,255,0.1); padding: 15px; border-radius: 12px; font-weight: bold; text-align: center; color: white; font-size: 18px; cursor: pointer; }
         .calc-btn:active { background: #2563eb; }
+        
+        /* SCROLLBAR INVISIBLE PARA POPUPS */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: #2563eb; border-radius: 10px; }
     </style>
 </head>
-<body>
+<body class="flex flex-col min-h-screen">
 
-    <div id="loginGate" class="fixed inset-0 z-[6000] bg-slate-950 flex items-center justify-center p-6">
-        <div class="w-full max-w-sm text-center">
-            <h2 class="text-4xl font-black italic mb-10 text-white">FIRE<span class="text-blue-500">GUARD</span></h2>
-            <div class="glass-card p-10 bg-slate-900 border border-slate-700">
-                <input type="password" id="passInput" class="input-xl text-center text-2xl mb-6 tracking-widest text-white" placeholder="••••" autocomplete="new-password">
-                <button onclick="access()" class="btn-xl shadow-lg shadow-blue-500/30">Iniciar Sesión</button>
+    <div id="loginGate" class="fixed inset-0 z-[6000] bg-slate-950 flex flex-col items-center justify-center p-6">
+        <div class="w-full max-w-sm text-center relative z-10">
+            <h2 class="text-4xl font-black italic mb-8 text-white">FIRE<span class="text-blue-500">GUARD</span></h2>
+            <div class="glass-card p-8 bg-slate-900 border border-slate-700">
+                <input type="password" id="passInput" class="input-xl text-center text-2xl mb-4 tracking-widest text-white" placeholder="••••" autocomplete="new-password">
+                
+                <div class="flex items-start gap-3 mb-6 text-left bg-black/20 p-3 rounded-xl border border-white/5">
+                    <input type="checkbox" id="termsCheck" class="mt-1 w-4 h-4 accent-blue-500 cursor-pointer">
+                    <label for="termsCheck" class="text-[10px] text-gray-400 leading-tight cursor-pointer">
+                        He leído y acepto los <a href="#" onclick="verTerminos(); return false;" class="text-blue-500 font-bold underline">Términos, Condiciones y Privacidad</a>.
+                    </label>
+                </div>
+
+                <button onclick="access()" class="btn-xl shadow-lg shadow-blue-500/30 mb-6">Iniciar Sesión</button>
+                
+                <div class="flex flex-col gap-3 pt-4 border-t border-slate-700">
+                    <button onclick="recuperarClave()" class="text-[11px] text-gray-400 hover:text-white transition-all"><i class="fas fa-key mr-1"></i> ¿Olvidaste tu contraseña?</button>
+                    <button onclick="window.location.href='mailto:contact@integratcore.com'" class="text-[11px] text-blue-500 font-bold hover:text-blue-400 transition-all"><i class="fas fa-headset mr-1"></i> Contactar a Soporte IntegratCore</button>
+                </div>
             </div>
+        </div>
+        
+        <div class="absolute bottom-6 left-0 w-full text-center text-[9px] text-gray-500 font-bold uppercase tracking-widest px-4 z-0">
+            &copy; 2026 IntegratCore Corp. Creado por Nicolás A.<br class="md:hidden"> Todos los derechos reservados.
         </div>
     </div>
 
@@ -73,12 +94,12 @@
 
     <nav id="sidebar" class="sidebar p-8">
         <div class="flex justify-between items-center mb-10">
-            <span class="text-blue-500 font-black italic">INTEGRATCORE v4</span>
-            <button onclick="toggleMenu()" class="text-2xl"><i class="fas fa-times"></i></button>
+            <span class="text-blue-500 font-black italic">INTEGRATCORE v5</span>
+            <button onclick="document.getElementById('sidebar').classList.remove('active')" class="text-2xl"><i class="fas fa-times"></i></button>
         </div>
         <div class="space-y-3">
             <button onclick="toggleTheme()" class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-white/10 font-bold"><i class="fas fa-adjust"></i> Modo Día / Noche</button>
-            <button onclick="document.getElementById('calcModal').classList.remove('hidden-force'); toggleMenu();" class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-white/10 font-bold"><i class="fas fa-calculator"></i> Calculadora</button>
+            <button onclick="document.getElementById('calcModal').classList.remove('hidden-force'); document.getElementById('sidebar').classList.remove('active');" class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-white/10 font-bold"><i class="fas fa-calculator"></i> Calculadora</button>
             <button onclick="exportarExcel()" class="w-full flex items-center gap-4 p-4 rounded-xl bg-green-500/10 text-green-400 font-bold border border-green-500/20"><i class="fas fa-file-excel text-lg"></i> Exportar a Excel</button>
             <hr class="opacity-20 my-4">
             <button onclick="window.open('https://wa.me/18094051812', '_blank')" class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-white/10 text-green-400 font-bold"><i class="fab fa-whatsapp text-lg"></i> Soporte WhatsApp</button>
@@ -88,16 +109,16 @@
         </div>
     </nav>
 
-    <main id="appContent" class="hidden-force min-h-screen p-4 md:p-8 max-w-[1200px] mx-auto">
+    <main id="appContent" class="hidden-force flex-grow flex flex-col p-4 md:p-8 max-w-[1200px] mx-auto w-full">
         <header class="flex justify-between items-center mb-6">
-            <button onclick="toggleMenu()" class="w-14 h-14 glass-card flex items-center justify-center text-blue-500 text-2xl shadow-lg"><i class="fas fa-bars"></i></button>
+            <button onclick="document.getElementById('sidebar').classList.add('active')" class="w-14 h-14 glass-card flex items-center justify-center text-blue-500 text-2xl shadow-lg"><i class="fas fa-bars"></i></button>
             <div class="text-right">
                 <p id="liveClock" class="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-1">--/--/---- --:--</p>
                 <p id="totalCap" class="text-2xl font-black italic">RD$ 0</p>
             </div>
         </header>
 
-        <div class="space-y-6">
+        <div class="space-y-6 flex-grow">
             <section class="glass-card p-6 shadow-xl">
                 <h3 class="text-xs font-black text-blue-500 uppercase mb-6 italic"><i class="fas fa-user-plus mr-2"></i>Nuevo Registro</h3>
                 <div class="space-y-4">
@@ -167,6 +188,10 @@
                     </div>
             </section>
         </div>
+
+        <footer class="mt-10 mb-4 text-center text-[10px] text-gray-500 font-bold uppercase tracking-widest border-t border-gray-500/20 pt-6">
+            &copy; 2026 IntegratCore Corp.<br class="md:hidden"> Creado por Nicolás A. Todos los derechos reservados.
+        </footer>
     </main>
 
     <script>
@@ -177,18 +202,28 @@
         const PARTNER_PASS = "Curazao2026*";
         let clientDataForExcel = []; 
 
-        // TEMA DIA/NOCHE
+        // TEMA DIA/NOCHE REPARADO
         if(localStorage.getItem('theme') === 'light') document.body.classList.add('light-mode');
-        function toggleTheme() { document.body.classList.toggle('light-mode'); localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'light' : 'dark'); toggleMenu(); }
+        
+        function toggleTheme() { 
+            document.body.classList.toggle('light-mode'); 
+            const isLight = document.body.classList.contains('light-mode');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark'); 
+            document.getElementById('sidebar').classList.remove('active');
+            Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 1500, background: 'var(--card-bg)', color: 'var(--text)' })
+            .fire({ icon: 'success', title: isLight ? '☀️ Modo Día Activado' : '🌙 Modo Noche Activado' });
+        }
 
-        document.addEventListener("DOMContentLoaded", () => { document.getElementById('passInput').value = ''; });
+        document.addEventListener("DOMContentLoaded", () => { 
+            document.getElementById('passInput').value = ''; 
+            document.getElementById('termsCheck').checked = false; 
+        });
 
         setInterval(() => {
             const now = new Date();
             document.getElementById('liveClock').innerText = now.toLocaleString('es-DO', { dateStyle: 'short', timeStyle: 'medium' });
         }, 1000);
 
-        function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); }
         function checkDocType() {
             const type = document.getElementById('docType').value;
             const backContainer = document.getElementById('backDocContainer');
@@ -196,7 +231,27 @@
             else { backContainer.style.display = 'block'; }
         }
 
-        // COPIAR / PEGAR
+        // FUNCIONES DE LEGAL Y SOPORTE
+        function verTerminos() {
+            Swal.fire({
+                title: 'Términos y Condiciones',
+                html: '<div class="text-left text-xs space-y-3 h-48 overflow-y-auto p-2"><p><b>1. Uso del Sistema:</b> FireGuard Elite es una herramienta de administración provista por IntegratCore Corp. (2026). El uso indebido del bloqueo de dispositivos es entera responsabilidad del usuario administrador.</p><p><b>2. Privacidad de Datos:</b> Los datos recopilados son encriptados y utilizados exclusivamente para el control interno de su negocio.</p><p><b>3. Consentimiento:</b> Al registrar un equipo, el administrador asume la responsabilidad de haber informado al cliente final sobre las políticas de bloqueo por atraso de pagos.</p><p><b>4. Exención:</b> IntegratCore Corp. no se hace responsable por bloqueos erróneos debido a números de IMEI mal digitados.</p></div>',
+                confirmButtonText: 'Entendido', confirmButtonColor: '#2563eb', background: 'var(--card-bg)', color: 'var(--text)'
+            });
+        }
+
+        function recuperarClave() {
+            Swal.fire({
+                title: 'Recuperar Acceso',
+                text: 'Ingresa tu correo administrativo para enviarte las instrucciones de restablecimiento.',
+                input: 'email', inputPlaceholder: 'tu@correo.com', showCancelButton: true, confirmButtonText: 'Enviar Solicitud', cancelButtonText: 'Cancelar', confirmButtonColor: '#2563eb', background: 'var(--card-bg)', color: 'var(--text)'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({ icon: 'success', title: 'Solicitud Enviada', text: 'Si el correo existe en nuestra base de datos, recibirás un enlace seguro.', confirmButtonColor: '#2563eb', background: 'var(--card-bg)', color: 'var(--text)'});
+                }
+            });
+        }
+
         async function pegarIMEI() {
             try {
                 const text = await navigator.clipboard.readText(); document.getElementById('imei').value = text;
@@ -209,7 +264,6 @@
             });
         }
 
-        // BUSCADOR EN TIEMPO REAL
         function buscarCliente() {
             let filter = document.getElementById('searchBar').value.toUpperCase();
             let cards = document.getElementById('mainList').children;
@@ -219,40 +273,39 @@
             }
         }
 
-        // COBRO POR WHATSAPP (1-CLICK)
         function enviarCobro(nombre, telefono, monto) {
             let telLimpio = telefono.replace(/\s+/g, '');
             let msj = encodeURIComponent(`Hola ${nombre}, le contactamos del departamento de cobros. Le recordamos que tiene un balance pendiente de RD$ ${monto.toLocaleString()}. Por favor comuníquese con nosotros para mantener su cuenta al día y evitar la suspensión del equipo.`);
             window.open(`https://wa.me/${telLimpio}?text=${msj}`, '_blank');
         }
 
-        // EXPORTAR A EXCEL
         function exportarExcel() {
-            if(clientDataForExcel.length === 0) return Swal.fire('Vacío', 'No hay clientes para exportar', 'info');
+            if(clientDataForExcel.length === 0) return Swal.fire({title:'Vacío', text:'No hay clientes para exportar', icon:'info', background: 'var(--card-bg)', color: 'var(--text)'});
             let csvContent = "data:text/csv;charset=utf-8,Nombre,Apellido,Telefono,IMEI,Monto,Cuotas,Documento\n";
-            clientDataForExcel.forEach(row => {
-                csvContent += `"${row.n}","${row.a}","${row.tel}","${row.imei}","${row.m}","${row.ins}","${row.tDoc}"\n`;
-            });
+            clientDataForExcel.forEach(row => { csvContent += `"${row.n}","${row.a}","${row.tel}","${row.imei}","${row.m}","${row.ins}","${row.tDoc}"\n`; });
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a"); link.setAttribute("href", encodedUri); link.setAttribute("download", "Reporte_Cartera_FireGuard.csv");
-            document.body.appendChild(link); link.click(); document.body.removeChild(link); toggleMenu();
+            document.body.appendChild(link); link.click(); document.body.removeChild(link); 
+            document.getElementById('sidebar').classList.remove('active');
         }
 
-        // CALCULADORA
         let cVal = "";
         function btnCalc(v) { cVal += v; document.getElementById('calcDisplay').value = cVal; }
         function clsCalc() { cVal = ""; document.getElementById('calcDisplay').value = ""; }
         function resCalc() { try { cVal = eval(cVal).toString(); } catch(e) { cVal = "Error"; } document.getElementById('calcDisplay').value = cVal; if(cVal==="Error") cVal=""; }
 
-        // --- ACCESO CON .TRIM() PARA CORTAR ESPACIOS ---
         function access() {
+            const terms = document.getElementById('termsCheck').checked;
+            if(!terms) {
+                return Swal.fire({ icon: 'warning', title: 'Atención', text: 'Debes aceptar los Términos y Condiciones para ingresar al sistema.', confirmButtonColor: '#2563eb', background: 'var(--card-bg)', color: 'var(--text)' });
+            }
             const val = document.getElementById('passInput').value.trim();
             if(val === MASTER_PASS || val === PARTNER_PASS) {
                 localStorage.setItem('session', val === MASTER_PASS ? 'ADMIN' : 'PARTNER');
                 location.reload();
             } else {
                 localStorage.clear(); document.getElementById('passInput').value = ''; 
-                Swal.fire({ icon: 'error', title: 'Acceso Denegado', text: 'Clave Incorrecta', confirmButtonColor: '#2563eb' });
+                Swal.fire({ icon: 'error', title: 'Acceso Denegado', text: 'Clave Incorrecta', confirmButtonColor: '#2563eb', background: 'var(--card-bg)', color: 'var(--text)' });
             }
         }
 
@@ -272,8 +325,7 @@
         async function saveClient() {
             const btn = document.getElementById('saveBtn'); const type = document.getElementById('docType').value;
             const f1 = document.getElementById('fEq').files[0]; const f2 = document.getElementById('fFr').files[0]; const f3 = document.getElementById('fBk').files[0];
-            
-            if(!f1 || !f2 || (type !== 'Pasaporte' && !f3)) return Swal.fire('Error', 'Sube todas las fotos requeridas', 'warning');
+            if(!f1 || !f2 || (type !== 'Pasaporte' && !f3)) return Swal.fire({title:'Error', text:'Sube todas las fotos requeridas', icon:'warning', background: 'var(--card-bg)', color: 'var(--text)'});
 
             btn.disabled = true; btn.innerText = "Sincronizando...";
             try {
@@ -284,7 +336,7 @@
                     imei: document.getElementById('imei').value, m: parseFloat(document.getElementById('amt').value) || 0,
                     ins: document.getElementById('ins').value || "1", img1, img2, img3, date: new Date()
                 });
-                Swal.fire('Éxito', 'Cliente Sincronizado', 'success').then(() => location.reload());
+                Swal.fire({title:'Éxito', text:'Cliente Sincronizado', icon:'success', background: 'var(--card-bg)', color: 'var(--text)'}).then(() => location.reload());
             } catch(e) { btn.disabled = false; btn.innerText = "Reintentar"; }
         }
 
@@ -305,7 +357,6 @@
                             
                             <div class="flex flex-wrap gap-2 w-full md:w-auto justify-end">
                                 <button onclick="enviarCobro('${d.n}', '${d.tel}', ${d.m})" class="w-10 h-10 rounded-xl bg-green-500/10 text-green-500 hover:bg-green-500 hover:text-white transition-all flex items-center justify-center" title="Enviar Cobro por WhatsApp"><i class="fab fa-whatsapp text-lg"></i></button>
-                                
                                 <button onclick="editar('${doc.id}')" class="w-10 h-10 rounded-xl bg-gray-500/10 text-gray-400 hover:text-blue-500 flex items-center justify-center" title="Editar"><i class="fas fa-edit"></i></button>
                                 <button onclick="borrar('${doc.id}')" class="w-10 h-10 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500/30 flex items-center justify-center" title="Eliminar"><i class="fas fa-trash"></i></button>
                                 <button onclick="desbloquear('${d.imei}')" class="w-12 h-12 rounded-xl bg-gradient-to-tr from-emerald-500 to-green-400 text-white flex items-center justify-center shadow-lg shadow-green-500/40 active:scale-95 transition-all" title="Desbloquear"><i class="fas fa-unlock"></i></button>
