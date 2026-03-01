@@ -4,7 +4,7 @@
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FireGuard Pro | IntegratCore</title>
+    <title>FireGuard Elite V4 | IntegratCore</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -13,25 +13,19 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
         
-        /* VARIABLES PARA MODO DIA/NOCHE */
         :root { --bg: #020617; --text: #f8fafc; --card-bg: rgba(15, 23, 42, 0.8); --card-border: rgba(255,255,255,0.1); --input-bg: rgba(255,255,255,0.05); }
         .light-mode { --bg: #f1f5f9; --text: #0f172a; --card-bg: rgba(255, 255, 255, 0.9); --card-border: rgba(0,0,0,0.1); --input-bg: rgba(0,0,0,0.05); }
         
-        /* ANTI-REBOTE MOVIL */
         body { background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; overscroll-behavior-y: none; transition: background 0.3s, color 0.3s; }
-        
         .glass-card { background: var(--card-bg); backdrop-filter: blur(15px); border: 1px solid var(--card-border); border-radius: 20px; transition: 0.3s; }
         .input-xl { background: var(--input-bg); border: 1px solid var(--card-border); border-radius: 14px; padding: 16px; color: var(--text); width: 100%; font-size: 16px; transition: 0.3s; }
         .input-xl:focus { outline: none; border-color: #2563eb; }
-        
         .sidebar { position: fixed; top: 0; left: -320px; width: 300px; height: 100%; background: #0f172a; z-index: 5000; transition: 0.4s; border-right: 1px solid rgba(255,255,255,0.1); color: white; }
         .sidebar.active { left: 0; }
         .btn-xl { background: linear-gradient(135deg, #2563eb, #1e40af); padding: 18px; border-radius: 16px; font-weight: 800; width: 100%; text-transform: uppercase; color: white; border: none; }
         .hidden-force { display: none !important; }
-        
-        /* BOTONES DE LA CALCULADORA */
-        .calc-btn { background: rgba(255,255,255,0.1); padding: 15px; border-radius: 12px; font-weight: bold; text-align: center; color: var(--text); font-size: 18px; }
-        .calc-btn:active { background: #2563eb; color: white; }
+        .calc-btn { background: rgba(255,255,255,0.1); padding: 15px; border-radius: 12px; font-weight: bold; text-align: center; color: white; font-size: 18px; }
+        .calc-btn:active { background: #2563eb; }
     </style>
 </head>
 <body>
@@ -39,7 +33,7 @@
     <div id="loginGate" class="fixed inset-0 z-[6000] bg-slate-950 flex items-center justify-center p-6">
         <div class="w-full max-w-sm text-center">
             <h2 class="text-4xl font-black italic mb-10 text-white">FIRE<span class="text-blue-500">GUARD</span></h2>
-            <div class="glass-card p-10">
+            <div class="glass-card p-10 bg-slate-900 border border-slate-700">
                 <input type="password" id="passInput" class="input-xl text-center text-2xl mb-6 tracking-widest text-white" placeholder="••••" autocomplete="new-password">
                 <button onclick="access()" class="btn-xl shadow-lg shadow-blue-500/30">Iniciar Sesión</button>
             </div>
@@ -47,31 +41,31 @@
     </div>
 
     <div id="calcModal" class="hidden-force fixed inset-0 z-[7000] bg-black/80 flex items-center justify-center p-4 backdrop-blur-sm">
-        <div class="glass-card w-full max-w-xs p-6 shadow-2xl">
+        <div class="glass-card bg-slate-900 w-full max-w-xs p-6 shadow-2xl border border-slate-700 text-white">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="font-black italic text-blue-500"><i class="fas fa-calculator mr-2"></i>FINANZAS</h3>
                 <button onclick="document.getElementById('calcModal').classList.add('hidden-force')" class="text-xl text-gray-400"><i class="fas fa-times"></i></button>
             </div>
-            <input type="text" id="calcDisplay" class="input-xl mb-4 text-right text-3xl font-black text-blue-500 bg-black/20" readonly>
+            <input type="text" id="calcDisplay" class="input-xl mb-4 text-right text-3xl font-black text-blue-500 bg-black/40 text-white border-slate-600" readonly>
             <div class="grid grid-cols-4 gap-2">
-                <button class="calc-btn text-red-500" onclick="clsCalc()">C</button>
-                <button class="calc-btn" onclick="btnCalc('(')">(</button>
-                <button class="calc-btn" onclick="btnCalc(')')">)</button>
-                <button class="calc-btn text-blue-500" onclick="btnCalc('/')">÷</button>
-                <button class="calc-btn" onclick="btnCalc('7')">7</button>
-                <button class="calc-btn" onclick="btnCalc('8')">8</button>
-                <button class="calc-btn" onclick="btnCalc('9')">9</button>
-                <button class="calc-btn text-blue-500" onclick="btnCalc('*')">×</button>
-                <button class="calc-btn" onclick="btnCalc('4')">4</button>
-                <button class="calc-btn" onclick="btnCalc('5')">5</button>
-                <button class="calc-btn" onclick="btnCalc('6')">6</button>
-                <button class="calc-btn text-blue-500" onclick="btnCalc('-')">-</button>
-                <button class="calc-btn" onclick="btnCalc('1')">1</button>
-                <button class="calc-btn" onclick="btnCalc('2')">2</button>
-                <button class="calc-btn" onclick="btnCalc('3')">3</button>
-                <button class="calc-btn text-blue-500" onclick="btnCalc('+')">+</button>
-                <button class="calc-btn col-span-2" onclick="btnCalc('0')">0</button>
-                <button class="calc-btn" onclick="btnCalc('.')">.</button>
+                <button class="calc-btn text-red-500 bg-slate-800" onclick="clsCalc()">C</button>
+                <button class="calc-btn bg-slate-800" onclick="btnCalc('(')">(</button>
+                <button class="calc-btn bg-slate-800" onclick="btnCalc(')')">)</button>
+                <button class="calc-btn text-blue-500 bg-slate-800" onclick="btnCalc('/')">÷</button>
+                <button class="calc-btn bg-slate-800" onclick="btnCalc('7')">7</button>
+                <button class="calc-btn bg-slate-800" onclick="btnCalc('8')">8</button>
+                <button class="calc-btn bg-slate-800" onclick="btnCalc('9')">9</button>
+                <button class="calc-btn text-blue-500 bg-slate-800" onclick="btnCalc('*')">×</button>
+                <button class="calc-btn bg-slate-800" onclick="btnCalc('4')">4</button>
+                <button class="calc-btn bg-slate-800" onclick="btnCalc('5')">5</button>
+                <button class="calc-btn bg-slate-800" onclick="btnCalc('6')">6</button>
+                <button class="calc-btn text-blue-500 bg-slate-800" onclick="btnCalc('-')">-</button>
+                <button class="calc-btn bg-slate-800" onclick="btnCalc('1')">1</button>
+                <button class="calc-btn bg-slate-800" onclick="btnCalc('2')">2</button>
+                <button class="calc-btn bg-slate-800" onclick="btnCalc('3')">3</button>
+                <button class="calc-btn text-blue-500 bg-slate-800" onclick="btnCalc('+')">+</button>
+                <button class="calc-btn col-span-2 bg-slate-800" onclick="btnCalc('0')">0</button>
+                <button class="calc-btn bg-slate-800" onclick="btnCalc('.')">.</button>
                 <button class="calc-btn bg-blue-600 text-white" onclick="resCalc()">=</button>
             </div>
         </div>
@@ -79,13 +73,15 @@
 
     <nav id="sidebar" class="sidebar p-8">
         <div class="flex justify-between items-center mb-10">
-            <span class="text-blue-500 font-black italic">INTEGRATCORE v3</span>
+            <span class="text-blue-500 font-black italic">INTEGRATCORE v4</span>
             <button onclick="toggleMenu()" class="text-2xl"><i class="fas fa-times"></i></button>
         </div>
         <div class="space-y-3">
-            <button onclick="toggleTheme()" class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-white/10 font-bold"><i class="fas fa-adjust"></i> Modo Día/Noche</button>
+            <button onclick="toggleTheme()" class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-white/10 font-bold"><i class="fas fa-adjust"></i> Modo Día / Noche</button>
             <button onclick="document.getElementById('calcModal').classList.remove('hidden-force'); toggleMenu();" class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-white/10 font-bold"><i class="fas fa-calculator"></i> Calculadora</button>
-            <button onclick="window.open('https://wa.me/18094051812', '_blank')" class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-white/10 text-green-400 font-bold"><i class="fab fa-whatsapp text-lg"></i> +1 (809) 405-1812</button>
+            <button onclick="exportarExcel()" class="w-full flex items-center gap-4 p-4 rounded-xl bg-green-500/10 text-green-400 font-bold border border-green-500/20"><i class="fas fa-file-excel text-lg"></i> Exportar a Excel</button>
+            <hr class="opacity-20 my-4">
+            <button onclick="window.open('https://wa.me/18094051812', '_blank')" class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-white/10 text-green-400 font-bold"><i class="fab fa-whatsapp text-lg"></i> Soporte WhatsApp</button>
             <button onclick="window.location.href='mailto:contact@integratcore.com'" class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-white/10 text-blue-400 font-bold"><i class="fas fa-envelope"></i> Soporte Correo</button>
             <hr class="opacity-20 my-4">
             <button onclick="logout()" class="w-full flex items-center gap-4 p-4 rounded-xl bg-red-500/20 text-red-400 font-bold"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button>
@@ -122,21 +118,34 @@
                         <input type="tel" id="tel" class="input-xl font-bold" placeholder="Número WhatsApp">
                     </div>
 
-                    <input type="text" id="imei" class="input-xl border-blue-500/30 font-bold" placeholder="IMEI / ID de Dispositivo">
+                    <div class="relative">
+                        <input type="text" id="imei" class="input-xl border-blue-500/30 font-bold pr-16" placeholder="IMEI / ID de Dispositivo">
+                        <button onclick="pegarIMEI()" class="absolute right-2 top-2 h-10 w-12 bg-blue-500/20 text-blue-500 rounded-lg hover:bg-blue-500 hover:text-white transition-all flex items-center justify-center shadow-sm" title="Pegar IMEI"><i class="fas fa-paste text-lg"></i></button>
+                    </div>
 
                     <div class="grid grid-cols-2 gap-4">
-                        <input type="number" id="amt" class="input-xl font-black text-blue-500" placeholder="Monto">
+                        <input type="number" id="amt" class="input-xl font-black text-blue-500" placeholder="Monto Total">
                         <input type="number" id="ins" class="input-xl font-bold" placeholder="Cuotas">
                     </div>
 
-                    <div class="grid grid-cols-2 gap-4 bg-black/5 p-4 rounded-2xl border border-gray-500/20">
+                    <select id="docType" class="input-xl font-bold border-blue-500/50 text-blue-500" onchange="checkDocType()">
+                        <option value="Cedula">💳 Cédula de Identidad</option>
+                        <option value="Licencia">🚗 Licencia de Conducir</option>
+                        <option value="Pasaporte">✈️ Pasaporte</option>
+                    </select>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-black/5 p-4 rounded-2xl border border-gray-500/20">
                         <div class="text-center overflow-hidden">
-                            <label class="text-[9px] uppercase font-black opacity-60 text-blue-500">1. Foto Equipo</label>
+                            <label class="text-[9px] uppercase font-black opacity-60 text-blue-500">Foto Equipo</label>
                             <input type="file" id="fEq" class="mt-2 text-[10px] w-full">
                         </div>
                         <div class="text-center overflow-hidden">
-                            <label class="text-[9px] uppercase font-black opacity-60 text-blue-500">2. Cédula Frente</label>
+                            <label class="text-[9px] uppercase font-black opacity-60 text-blue-500">Doc. Frente</label>
                             <input type="file" id="fFr" class="mt-2 text-[10px] w-full">
+                        </div>
+                        <div class="text-center overflow-hidden" id="backDocContainer">
+                            <label class="text-[9px] uppercase font-black opacity-60 text-blue-500">Doc. Reverso</label>
+                            <input type="file" id="fBk" class="mt-2 text-[10px] w-full">
                         </div>
                     </div>
 
@@ -145,10 +154,15 @@
             </section>
 
             <section class="glass-card p-4 shadow-xl">
-                <div class="flex justify-between items-center mb-4 px-2">
-                    <span class="text-[10px] font-black uppercase opacity-50"><i class="fas fa-users"></i> Carteras Activas</span>
-                    <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                <div class="flex flex-col md:flex-row justify-between items-center mb-4 px-2 gap-4">
+                    <span class="text-[10px] font-black uppercase opacity-50 flex items-center gap-2"><i class="fas fa-users"></i> Carteras Activas <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span></span>
+                    
+                    <div class="relative w-full md:w-1/2">
+                        <i class="fas fa-search absolute left-4 top-4 text-gray-500"></i>
+                        <input type="text" id="searchBar" onkeyup="buscarCliente()" class="input-xl pl-10 py-3 text-sm" placeholder="Buscar por Nombre o IMEI...">
+                    </div>
                 </div>
+
                 <div id="mainList" class="space-y-3">
                     </div>
             </section>
@@ -161,22 +175,76 @@
 
         const MASTER_PASS = "ClaroLluvia77";
         const PARTNER_PASS = "Curazao2026*";
+        let clientDataForExcel = []; // Guarda los datos para exportar
 
-        // LIMPIEZA FORZADA DE CLAVE AL CARGAR LA PAGINA
-        document.addEventListener("DOMContentLoaded", () => {
-            document.getElementById('passInput').value = '';
-        });
+        // TEMA DIA/NOCHE
+        if(localStorage.getItem('theme') === 'light') document.body.classList.add('light-mode');
+        function toggleTheme() { document.body.classList.toggle('light-mode'); localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'light' : 'dark'); toggleMenu(); }
 
-        // RELOJ EN TIEMPO REAL
+        document.addEventListener("DOMContentLoaded", () => { document.getElementById('passInput').value = ''; });
+
         setInterval(() => {
             const now = new Date();
             document.getElementById('liveClock').innerText = now.toLocaleString('es-DO', { dateStyle: 'short', timeStyle: 'medium' });
         }, 1000);
 
         function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); }
-        function toggleTheme() { document.body.classList.toggle('light-mode'); toggleMenu(); }
+        function checkDocType() {
+            const type = document.getElementById('docType').value;
+            const backContainer = document.getElementById('backDocContainer');
+            if(type === 'Pasaporte') { backContainer.style.display = 'none'; document.getElementById('fBk').value = ''; } 
+            else { backContainer.style.display = 'block'; }
+        }
 
-        // LOGICA CALCULADORA INTEGRADA
+        // COPIAR / PEGAR
+        async function pegarIMEI() {
+            try {
+                const text = await navigator.clipboard.readText(); document.getElementById('imei').value = text;
+                Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 1500, background: 'var(--card-bg)', color: 'var(--text)' }).fire({ icon: 'success', title: 'IMEI Pegado' });
+            } catch (err) { Swal.fire({ title: 'Permiso Denegado', text: 'Permite el acceso al portapapeles', icon: 'warning', background: 'var(--card-bg)', color: 'var(--text)'}); }
+        }
+        function copiarIMEI(texto) {
+            navigator.clipboard.writeText(texto).then(() => {
+                Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 1500, background: 'var(--card-bg)', color: 'var(--text)' }).fire({ icon: 'success', title: 'IMEI Copiado' });
+            });
+        }
+
+        // BUSCADOR EN TIEMPO REAL
+        function buscarCliente() {
+            let filter = document.getElementById('searchBar').value.toUpperCase();
+            let cards = document.getElementById('mainList').children;
+            for (let i = 0; i < cards.length; i++) {
+                let text = cards[i].innerText.toUpperCase();
+                cards[i].style.display = text.indexOf(filter) > -1 ? "" : "none";
+            }
+        }
+
+        // COBRO POR WHATSAPP (1-CLICK)
+        function enviarCobro(nombre, telefono, monto) {
+            // Limpia el teléfono de espacios para el link
+            let telLimpio = telefono.replace(/\s+/g, '');
+            let msj = encodeURIComponent(`Hola ${nombre}, le contactamos del departamento de cobros. Le recordamos que tiene un balance pendiente de RD$ ${monto.toLocaleString()}. Por favor comuníquese con nosotros para mantener su cuenta al día y evitar la suspensión del equipo.`);
+            window.open(`https://wa.me/${telLimpio}?text=${msj}`, '_blank');
+        }
+
+        // EXPORTAR A EXCEL
+        function exportarExcel() {
+            if(clientDataForExcel.length === 0) return Swal.fire('Vacío', 'No hay clientes para exportar', 'info');
+            let csvContent = "data:text/csv;charset=utf-8,Nombre,Apellido,Telefono,IMEI,Monto,Cuotas,Documento\n";
+            clientDataForExcel.forEach(row => {
+                csvContent += `"${row.n}","${row.a}","${row.tel}","${row.imei}","${row.m}","${row.ins}","${row.tDoc}"\n`;
+            });
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "Reporte_Cartera_FireGuard.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            toggleMenu();
+        }
+
+        // CALCULADORA
         let cVal = "";
         function btnCalc(v) { cVal += v; document.getElementById('calcDisplay').value = cVal; }
         function clsCalc() { cVal = ""; document.getElementById('calcDisplay').value = ""; }
@@ -188,8 +256,7 @@
                 localStorage.setItem('session', val === MASTER_PASS ? 'ADMIN' : 'PARTNER');
                 location.reload();
             } else {
-                localStorage.clear();
-                document.getElementById('passInput').value = ''; // Limpia instantaneamente
+                localStorage.clear(); document.getElementById('passInput').value = ''; 
                 Swal.fire({ icon: 'error', title: 'Acceso Denegado', text: 'Clave Incorrecta', confirmButtonColor: '#2563eb' });
             }
         }
@@ -200,29 +267,27 @@
                 reader.onload = (e) => {
                     const img = new Image(); img.src = e.target.result;
                     img.onload = () => {
-                        const canvas = document.createElement('canvas');
-                        canvas.width = 500; canvas.height = (img.height * 500) / img.width;
-                        canvas.getContext('2d').drawImage(img, 0, 0, 500, canvas.height);
-                        r(canvas.toDataURL('image/jpeg', 0.5));
+                        const canvas = document.createElement('canvas'); canvas.width = 500; canvas.height = (img.height * 500) / img.width;
+                        canvas.getContext('2d').drawImage(img, 0, 0, 500, canvas.height); r(canvas.toDataURL('image/jpeg', 0.5));
                     }
                 }
             });
         }
 
         async function saveClient() {
-            const btn = document.getElementById('saveBtn');
-            const f1 = document.getElementById('fEq').files[0];
-            const f2 = document.getElementById('fFr').files[0];
-            if(!f1 || !f2) return Swal.fire('Error', 'Sube las 2 fotos para continuar', 'warning');
+            const btn = document.getElementById('saveBtn'); const type = document.getElementById('docType').value;
+            const f1 = document.getElementById('fEq').files[0]; const f2 = document.getElementById('fFr').files[0]; const f3 = document.getElementById('fBk').files[0];
+            
+            if(!f1 || !f2 || (type !== 'Pasaporte' && !f3)) return Swal.fire('Error', 'Sube todas las fotos requeridas', 'warning');
 
             btn.disabled = true; btn.innerText = "Sincronizando...";
             try {
-                const img1 = await compress(f1); const img2 = await compress(f2);
+                const img1 = await compress(f1); const img2 = await compress(f2); const img3 = f3 ? await compress(f3) : ""; 
                 await db.collection("clientes").add({
                     n: document.getElementById('fn').value, a: document.getElementById('ln').value,
-                    tel: document.getElementById('country').value + document.getElementById('tel').value,
+                    tDoc: type, tel: document.getElementById('country').value + document.getElementById('tel').value,
                     imei: document.getElementById('imei').value, m: parseFloat(document.getElementById('amt').value) || 0,
-                    ins: document.getElementById('ins').value || "1", img1, img2, date: new Date()
+                    ins: document.getElementById('ins').value || "1", img1, img2, img3, date: new Date()
                 });
                 Swal.fire('Éxito', 'Cliente Sincronizado', 'success').then(() => location.reload());
             } catch(e) { btn.disabled = false; btn.innerText = "Reintentar"; }
@@ -231,22 +296,25 @@
         function init() {
             db.collection("clientes").orderBy("date", "desc").onSnapshot(snap => {
                 const list = document.getElementById('mainList');
-                let total = 0; list.innerHTML = "";
+                let total = 0; list.innerHTML = ""; clientDataForExcel = [];
                 snap.forEach(doc => {
-                    const d = doc.data(); total += d.m;
+                    const d = doc.data(); total += d.m; clientDataForExcel.push(d);
                     list.innerHTML += `
-                        <div class="p-4 border border-gray-500/20 rounded-2xl bg-black/5 flex justify-between items-center shadow-sm">
-                            <div class="w-1/2">
+                        <div class="p-4 border border-gray-500/20 rounded-2xl bg-black/5 flex flex-col md:flex-row justify-between items-start md:items-center shadow-sm gap-4">
+                            <div class="w-full md:w-1/2">
                                 <p class="text-xs font-black uppercase truncate">${d.n} ${d.a}</p>
                                 <p class="text-[9px] text-gray-500 font-bold mt-1"><i class="fab fa-whatsapp text-green-500"></i> ${d.tel}</p>
-                                <p class="text-[9px] text-blue-500 font-black truncate">${d.imei} | ${d.ins} Cuotas</p>
+                                <p class="text-[9px] text-blue-500 font-black truncate">${d.tDoc} | IMEI: ${d.imei} <i class="fas fa-copy ml-1 text-gray-400 hover:text-blue-500 cursor-pointer text-sm" onclick="copiarIMEI('${d.imei}')" title="Copiar IMEI"></i> | ${d.ins} Cuotas</p>
                                 <p class="text-sm mt-1 font-black text-blue-600">RD$ ${d.m.toLocaleString()}</p>
                             </div>
                             
-                            <div class="flex gap-2">
-                                <button onclick="editar('${doc.id}')" class="w-10 h-10 rounded-xl bg-gray-500/10 text-gray-400 hover:text-blue-500 transition-all flex items-center justify-center"><i class="fas fa-edit"></i></button>
-                                <button onclick="borrar('${doc.id}')" class="w-10 h-10 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500/30 transition-all flex items-center justify-center"><i class="fas fa-trash"></i></button>
-                                <button onclick="bloquear('${d.imei}')" class="w-12 h-12 rounded-xl bg-gradient-to-tr from-orange-600 to-orange-400 text-white flex items-center justify-center shadow-lg shadow-orange-500/40 transform active:scale-95 transition-all"><i class="fas fa-lock"></i></button>
+                            <div class="flex flex-wrap gap-2 w-full md:w-auto justify-end">
+                                <button onclick="enviarCobro('${d.n}', '${d.tel}', ${d.m})" class="w-10 h-10 rounded-xl bg-green-500/10 text-green-500 hover:bg-green-500 hover:text-white transition-all flex items-center justify-center" title="Enviar Cobro por WhatsApp"><i class="fab fa-whatsapp text-lg"></i></button>
+                                
+                                <button onclick="editar('${doc.id}')" class="w-10 h-10 rounded-xl bg-gray-500/10 text-gray-400 hover:text-blue-500 flex items-center justify-center" title="Editar"><i class="fas fa-edit"></i></button>
+                                <button onclick="borrar('${doc.id}')" class="w-10 h-10 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500/30 flex items-center justify-center" title="Eliminar"><i class="fas fa-trash"></i></button>
+                                <button onclick="desbloquear('${d.imei}')" class="w-12 h-12 rounded-xl bg-gradient-to-tr from-emerald-500 to-green-400 text-white flex items-center justify-center shadow-lg shadow-green-500/40 active:scale-95 transition-all" title="Desbloquear"><i class="fas fa-unlock"></i></button>
+                                <button onclick="bloquear('${d.imei}')" class="w-12 h-12 rounded-xl bg-gradient-to-tr from-orange-600 to-orange-400 text-white flex items-center justify-center shadow-lg shadow-orange-500/40 active:scale-95 transition-all" title="Bloquear"><i class="fas fa-lock"></i></button>
                             </div>
                         </div>`;
                 });
@@ -254,36 +322,10 @@
             });
         }
 
-        function bloquear(imei) {
-            Swal.fire({ title: '¿BLOQUEAR EQUIPO?', text: 'IMEI: ' + imei, icon: 'warning', showCancelButton: true, confirmButtonColor: '#ea580c', confirmButtonText: 'SÍ, APAGAR', background: 'var(--card-bg)', color: 'var(--text)' })
-            .then(r => { if(r.isConfirmed) { pusher.subscribe('private-canal-seguridad').trigger('client-orden-bloqueo', { action: 'lock', imei: imei }); Swal.fire({title:'¡Enviado!', icon:'success', background: 'var(--card-bg)', color: 'var(--text)'}); } });
-        }
+        function bloquear(imei) { Swal.fire({ title: '¿BLOQUEAR EQUIPO?', text: 'IMEI: ' + imei, icon: 'warning', showCancelButton: true, confirmButtonColor: '#ea580c', confirmButtonText: 'SÍ, APAGAR', background: 'var(--card-bg)', color: 'var(--text)' }).then(r => { if(r.isConfirmed) { pusher.subscribe('private-canal-seguridad').trigger('client-orden-bloqueo', { action: 'lock', imei: imei }); Swal.fire({title:'¡Bloqueo Enviado!', icon:'success', background: 'var(--card-bg)', color: 'var(--text)'}); } }); }
+        function desbloquear(imei) { Swal.fire({ title: '¿DESBLOQUEAR EQUIPO?', text: 'IMEI: ' + imei, icon: 'info', showCancelButton: true, confirmButtonColor: '#10b981', confirmButtonText: 'SÍ, DESBLOQUEAR', background: 'var(--card-bg)', color: 'var(--text)' }).then(r => { if(r.isConfirmed) { pusher.subscribe('private-canal-seguridad').trigger('client-orden-bloqueo', { action: 'unlock', imei: imei }); Swal.fire({title:'¡Desbloqueo Enviado!', icon:'success', background: 'var(--card-bg)', color: 'var(--text)'}); } }); }
 
         async function editar(id) {
             const doc = await db.collection("clientes").doc(id).get(); const d = doc.data();
-            const { value: form } = await Swal.fire({
-                title: 'Editar Cliente',
-                html: `<input id="e-n" class="swal2-input" value="${d.n}" placeholder="Nombre">
-                       <input id="e-imei" class="swal2-input" value="${d.imei}" placeholder="IMEI">`,
-                focusConfirm: false, background: 'var(--card-bg)', color: 'var(--text)',
-                preConfirm: () => [document.getElementById('e-n').value, document.getElementById('e-imei').value]
-            });
-            if(form) await db.collection("clientes").doc(id).update({ n: form[0], imei: form[1] });
-        }
+            const { value: form } = await Swal.fire({ title: 'Editar Cliente', html: `<input id="e-n" class="swal2-
 
-        function borrar(id) {
-            Swal.fire({ title: '¿ELIMINAR CLIENTE?', text: 'Esta acción no se puede deshacer.', icon: 'error', showCancelButton: true, confirmButtonColor: '#ef4444', confirmButtonText: 'SÍ, ELIMINAR', background: 'var(--card-bg)', color: 'var(--text)' })
-            .then(async r => { if(r.isConfirmed) { await db.collection("clientes").doc(id).delete(); } });
-        }
-
-        function logout() { localStorage.clear(); document.getElementById('passInput').value = ''; location.reload(); }
-
-        const ses = localStorage.getItem('session');
-        if(ses) {
-            document.getElementById('loginGate').classList.add('hidden-force');
-            document.getElementById('appContent').classList.remove('hidden-force');
-            init();
-        }
-    </script>
-</body>
-</html>
