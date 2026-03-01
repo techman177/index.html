@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace = "com.example.fireguard"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.fireguard"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
     }
@@ -32,4 +32,5 @@ dependencies {
     
     // ESTO ES LO QUE CONECTA CON TU BOTÓN DE VERCEL
     implementation("com.pusher:pusher-java-client:2.4.4")
+
 }
