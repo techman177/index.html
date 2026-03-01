@@ -12,14 +12,26 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
-        :root { --bg: #020617; --text: #f8fafc; --accent: #2563eb; }
-        body { background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; }
-        .glass-card { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; }
-        .input-xl { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 16px; color: white; width: 100%; font-size: 16px; }
-        .sidebar { position: fixed; top: 0; left: -320px; width: 300px; height: 100%; background: #0f172a; z-index: 5000; transition: 0.4s; border-right: 1px solid rgba(255,255,255,0.1); }
+        
+        /* VARIABLES PARA MODO DIA/NOCHE */
+        :root { --bg: #020617; --text: #f8fafc; --card-bg: rgba(15, 23, 42, 0.8); --card-border: rgba(255,255,255,0.1); --input-bg: rgba(255,255,255,0.05); }
+        .light-mode { --bg: #f1f5f9; --text: #0f172a; --card-bg: rgba(255, 255, 255, 0.9); --card-border: rgba(0,0,0,0.1); --input-bg: rgba(0,0,0,0.05); }
+        
+        /* ANTI-REBOTE MOVIL */
+        body { background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; overscroll-behavior-y: none; transition: background 0.3s, color 0.3s; }
+        
+        .glass-card { background: var(--card-bg); backdrop-filter: blur(15px); border: 1px solid var(--card-border); border-radius: 20px; transition: 0.3s; }
+        .input-xl { background: var(--input-bg); border: 1px solid var(--card-border); border-radius: 14px; padding: 16px; color: var(--text); width: 100%; font-size: 16px; transition: 0.3s; }
+        .input-xl:focus { outline: none; border-color: #2563eb; }
+        
+        .sidebar { position: fixed; top: 0; left: -320px; width: 300px; height: 100%; background: #0f172a; z-index: 5000; transition: 0.4s; border-right: 1px solid rgba(255,255,255,0.1); color: white; }
         .sidebar.active { left: 0; }
-        .btn-xl { background: linear-gradient(135deg, #2563eb, #1e40af); padding: 18px; border-radius: 16px; font-weight: 800; width: 100%; text-transform: uppercase; }
+        .btn-xl { background: linear-gradient(135deg, #2563eb, #1e40af); padding: 18px; border-radius: 16px; font-weight: 800; width: 100%; text-transform: uppercase; color: white; border: none; }
         .hidden-force { display: none !important; }
+        
+        /* BOTONES DE LA CALCULADORA */
+        .calc-btn { background: rgba(255,255,255,0.1); padding: 15px; border-radius: 12px; font-weight: bold; text-align: center; color: var(--text); font-size: 18px; }
+        .calc-btn:active { background: #2563eb; color: white; }
     </style>
 </head>
 <body>
@@ -28,8 +40,39 @@
         <div class="w-full max-w-sm text-center">
             <h2 class="text-4xl font-black italic mb-10 text-white">FIRE<span class="text-blue-500">GUARD</span></h2>
             <div class="glass-card p-10">
-                <input type="password" id="passInput" class="input-xl text-center text-2xl mb-6 tracking-widest" placeholder="••••">
-                <button onclick="access()" class="btn-xl text-white">Iniciar Sesión</button>
+                <input type="password" id="passInput" class="input-xl text-center text-2xl mb-6 tracking-widest text-white" placeholder="••••" autocomplete="new-password">
+                <button onclick="access()" class="btn-xl shadow-lg shadow-blue-500/30">Iniciar Sesión</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="calcModal" class="hidden-force fixed inset-0 z-[7000] bg-black/80 flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="glass-card w-full max-w-xs p-6 shadow-2xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-black italic text-blue-500"><i class="fas fa-calculator mr-2"></i>FINANZAS</h3>
+                <button onclick="document.getElementById('calcModal').classList.add('hidden-force')" class="text-xl text-gray-400"><i class="fas fa-times"></i></button>
+            </div>
+            <input type="text" id="calcDisplay" class="input-xl mb-4 text-right text-3xl font-black text-blue-500 bg-black/20" readonly>
+            <div class="grid grid-cols-4 gap-2">
+                <button class="calc-btn text-red-500" onclick="clsCalc()">C</button>
+                <button class="calc-btn" onclick="btnCalc('(')">(</button>
+                <button class="calc-btn" onclick="btnCalc(')')">)</button>
+                <button class="calc-btn text-blue-500" onclick="btnCalc('/')">÷</button>
+                <button class="calc-btn" onclick="btnCalc('7')">7</button>
+                <button class="calc-btn" onclick="btnCalc('8')">8</button>
+                <button class="calc-btn" onclick="btnCalc('9')">9</button>
+                <button class="calc-btn text-blue-500" onclick="btnCalc('*')">×</button>
+                <button class="calc-btn" onclick="btnCalc('4')">4</button>
+                <button class="calc-btn" onclick="btnCalc('5')">5</button>
+                <button class="calc-btn" onclick="btnCalc('6')">6</button>
+                <button class="calc-btn text-blue-500" onclick="btnCalc('-')">-</button>
+                <button class="calc-btn" onclick="btnCalc('1')">1</button>
+                <button class="calc-btn" onclick="btnCalc('2')">2</button>
+                <button class="calc-btn" onclick="btnCalc('3')">3</button>
+                <button class="calc-btn text-blue-500" onclick="btnCalc('+')">+</button>
+                <button class="calc-btn col-span-2" onclick="btnCalc('0')">0</button>
+                <button class="calc-btn" onclick="btnCalc('.')">.</button>
+                <button class="calc-btn bg-blue-600 text-white" onclick="resCalc()">=</button>
             </div>
         </div>
     </div>
@@ -39,27 +82,27 @@
             <span class="text-blue-500 font-black italic">INTEGRATCORE v3</span>
             <button onclick="toggleMenu()" class="text-2xl"><i class="fas fa-times"></i></button>
         </div>
-        <div class="space-y-4">
-            <button onclick="location.reload()" class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-white/5"><i class="fas fa-sync"></i> Actualizar Sistema</button>
-            <button onclick="openCalc()" class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-white/5"><i class="fas fa-calculator"></i> Calculadora Financiera</button>
-            <button onclick="Swal.fire('Historial','Módulo de pagos en desarrollo','info')" class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-white/5"><i class="fas fa-history"></i> Historial de Bloqueos</button>
-            <button onclick="Swal.fire('Soporte','WhatsApp de soporte: +1 829-XXX-XXXX','info')" class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-white/5 text-green-400"><i class="fab fa-whatsapp"></i> Soporte Técnico</button>
-            <hr class="opacity-10">
-            <button onclick="logout()" class="w-full flex items-center gap-4 p-4 rounded-xl bg-red-500/10 text-red-500"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button>
+        <div class="space-y-3">
+            <button onclick="toggleTheme()" class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-white/10 font-bold"><i class="fas fa-adjust"></i> Modo Día/Noche</button>
+            <button onclick="document.getElementById('calcModal').classList.remove('hidden-force'); toggleMenu();" class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-white/10 font-bold"><i class="fas fa-calculator"></i> Calculadora</button>
+            <button onclick="window.open('https://wa.me/18094051812', '_blank')" class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-white/10 text-green-400 font-bold"><i class="fab fa-whatsapp text-lg"></i> +1 (809) 405-1812</button>
+            <button onclick="window.location.href='mailto:contact@integratcore.com'" class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-white/10 text-blue-400 font-bold"><i class="fas fa-envelope"></i> Soporte Correo</button>
+            <hr class="opacity-20 my-4">
+            <button onclick="logout()" class="w-full flex items-center gap-4 p-4 rounded-xl bg-red-500/20 text-red-400 font-bold"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button>
         </div>
     </nav>
 
-    <main id="appContent" class="hidden-force min-h-screen p-4 md:p-10 max-w-[1200px] mx-auto">
-        <header class="flex justify-between items-center mb-8">
-            <button onclick="toggleMenu()" class="w-14 h-14 glass-card flex items-center justify-center text-blue-500 text-2xl"><i class="fas fa-bars"></i></button>
+    <main id="appContent" class="hidden-force min-h-screen p-4 md:p-8 max-w-[1200px] mx-auto">
+        <header class="flex justify-between items-center mb-6">
+            <button onclick="toggleMenu()" class="w-14 h-14 glass-card flex items-center justify-center text-blue-500 text-2xl shadow-lg"><i class="fas fa-bars"></i></button>
             <div class="text-right">
-                <p id="roleName" class="text-[10px] font-black text-blue-500 uppercase">--</p>
-                <p id="totalCap" class="text-xl font-black italic">RD$ 0</p>
+                <p id="liveClock" class="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-1">--/--/---- --:--</p>
+                <p id="totalCap" class="text-2xl font-black italic">RD$ 0</p>
             </div>
         </header>
 
         <div class="space-y-6">
-            <section class="glass-card p-6">
+            <section class="glass-card p-6 shadow-xl">
                 <h3 class="text-xs font-black text-blue-500 uppercase mb-6 italic"><i class="fas fa-user-plus mr-2"></i>Nuevo Registro</h3>
                 <div class="space-y-4">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -68,41 +111,45 @@
                     </div>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <select id="country" class="input-xl bg-slate-800">
-                            <option value="+1">Dominicana 🇩🇴 (+1)</option>
-                            <option value="+599">Curazao 🇨🇼 (+599)</option>
-                            <option value="+507">Panamá 🇵🇦 (+507)</option>
-                            <option value="+1">USA 🇺🇸 (+1)</option>
-                            <option value="+58">Venezuela 🇻🇪 (+58)</option>
-                            <option value="+57">Colombia 🇨🇴 (+57)</option>
+                        <select id="country" class="input-xl font-bold">
+                            <option value="+1 ">🇩🇴 Dominicana (+1)</option>
+                            <option value="+599 ">🇨🇼 Curazao (+599)</option>
+                            <option value="+507 ">🇵🇦 Panamá (+507)</option>
+                            <option value="+1 ">🇺🇸 USA (+1)</option>
+                            <option value="+58 ">🇻🇪 Venezuela (+58)</option>
+                            <option value="+57 ">🇨🇴 Colombia (+57)</option>
                         </select>
-                        <input type="tel" id="tel" class="input-xl" placeholder="WhatsApp">
+                        <input type="tel" id="tel" class="input-xl font-bold" placeholder="Número WhatsApp">
                     </div>
 
-                    <input type="text" id="imei" class="input-xl border-blue-500/30" placeholder="IMEI / ID de Dispositivo">
+                    <input type="text" id="imei" class="input-xl border-blue-500/30 font-bold" placeholder="IMEI / ID de Dispositivo">
 
                     <div class="grid grid-cols-2 gap-4">
-                        <input type="number" id="amt" class="input-xl font-bold text-blue-400" placeholder="Monto">
-                        <input type="number" id="ins" class="input-xl" placeholder="Cuotas">
+                        <input type="number" id="amt" class="input-xl font-black text-blue-500" placeholder="Monto">
+                        <input type="number" id="ins" class="input-xl font-bold" placeholder="Cuotas">
                     </div>
 
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="text-center">
-                            <label class="text-[9px] uppercase font-bold opacity-50">Foto Equipo</label>
-                            <input type="file" id="fEq" class="mt-2 text-[10px]">
+                    <div class="grid grid-cols-2 gap-4 bg-black/5 p-4 rounded-2xl border border-gray-500/20">
+                        <div class="text-center overflow-hidden">
+                            <label class="text-[9px] uppercase font-black opacity-60 text-blue-500">1. Foto Equipo</label>
+                            <input type="file" id="fEq" class="mt-2 text-[10px] w-full">
                         </div>
-                        <div class="text-center">
-                            <label class="text-[9px] uppercase font-bold opacity-50">Cédula Frente</label>
-                            <input type="file" id="fFr" class="mt-2 text-[10px]">
+                        <div class="text-center overflow-hidden">
+                            <label class="text-[9px] uppercase font-black opacity-60 text-blue-500">2. Cédula Frente</label>
+                            <input type="file" id="fFr" class="mt-2 text-[10px] w-full">
                         </div>
                     </div>
 
-                    <button id="saveBtn" onclick="saveClient()" class="btn-xl text-white mt-4">Sincronizar Maestro</button>
+                    <button id="saveBtn" onclick="saveClient()" class="btn-xl mt-4 shadow-lg shadow-blue-500/20">Sincronizar Maestro</button>
                 </div>
             </section>
 
-            <section class="glass-card p-4">
-                <div id="mainList" class="space-y-4">
+            <section class="glass-card p-4 shadow-xl">
+                <div class="flex justify-between items-center mb-4 px-2">
+                    <span class="text-[10px] font-black uppercase opacity-50"><i class="fas fa-users"></i> Carteras Activas</span>
+                    <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                </div>
+                <div id="mainList" class="space-y-3">
                     </div>
             </section>
         </div>
@@ -112,13 +159,29 @@
         const db = firebase.initializeApp({ apiKey: "AIzaSyAmr8KHEyoaI3-xhKGy-uDUzCc8JkEzO6g", authDomain: "fireguard-4327f.firebaseapp.com", projectId: "fireguard-4327f", storageBucket: "fireguard-4327f.firebasestorage.app", messagingSenderId: "277545925255", appId: "1:277545925255:web:92175f4ac71dc9278b1622" }).firestore();
         const pusher = new Pusher('43b3675a0d7078d24ecc', { cluster: 'us2' });
 
-        const MASTER_PASS = "ClaroLluvia77"; // LA CLAVE QUE PEDISTE
+        const MASTER_PASS = "ClaroLluvia77";
         const PARTNER_PASS = "Curazao2026*";
 
-        function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); }
-        function openCalc() { window.open('https://www.google.com/search?q=calculadora', '_blank', 'width=400,height=600'); }
+        // LIMPIEZA FORZADA DE CLAVE AL CARGAR LA PAGINA
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById('passInput').value = '';
+        });
 
-        // LOGIN BLINDADO
+        // RELOJ EN TIEMPO REAL
+        setInterval(() => {
+            const now = new Date();
+            document.getElementById('liveClock').innerText = now.toLocaleString('es-DO', { dateStyle: 'short', timeStyle: 'medium' });
+        }, 1000);
+
+        function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); }
+        function toggleTheme() { document.body.classList.toggle('light-mode'); toggleMenu(); }
+
+        // LOGICA CALCULADORA INTEGRADA
+        let cVal = "";
+        function btnCalc(v) { cVal += v; document.getElementById('calcDisplay').value = cVal; }
+        function clsCalc() { cVal = ""; document.getElementById('calcDisplay').value = ""; }
+        function resCalc() { try { cVal = eval(cVal).toString(); } catch(e) { cVal = "Error"; } document.getElementById('calcDisplay').value = cVal; if(cVal==="Error") cVal=""; }
+
         function access() {
             const val = document.getElementById('passInput').value;
             if(val === MASTER_PASS || val === PARTNER_PASS) {
@@ -126,7 +189,8 @@
                 location.reload();
             } else {
                 localStorage.clear();
-                Swal.fire('Acceso Denegado', 'La clave no es válida', 'error');
+                document.getElementById('passInput').value = ''; // Limpia instantaneamente
+                Swal.fire({ icon: 'error', title: 'Acceso Denegado', text: 'Clave Incorrecta', confirmButtonColor: '#2563eb' });
             }
         }
 
@@ -149,19 +213,19 @@
             const btn = document.getElementById('saveBtn');
             const f1 = document.getElementById('fEq').files[0];
             const f2 = document.getElementById('fFr').files[0];
-            if(!f1 || !f2) return Swal.fire('Error', 'Sube las fotos', 'warning');
+            if(!f1 || !f2) return Swal.fire('Error', 'Sube las 2 fotos para continuar', 'warning');
 
-            btn.disabled = true; btn.innerText = "COMPRIMIENDO...";
+            btn.disabled = true; btn.innerText = "Sincronizando...";
             try {
                 const img1 = await compress(f1); const img2 = await compress(f2);
                 await db.collection("clientes").add({
                     n: document.getElementById('fn').value, a: document.getElementById('ln').value,
                     tel: document.getElementById('country').value + document.getElementById('tel').value,
-                    imei: document.getElementById('imei').value, m: parseFloat(document.getElementById('amt').value),
-                    ins: document.getElementById('ins').value, img1, img2, date: new Date()
+                    imei: document.getElementById('imei').value, m: parseFloat(document.getElementById('amt').value) || 0,
+                    ins: document.getElementById('ins').value || "1", img1, img2, date: new Date()
                 });
-                Swal.fire('Éxito', 'Registrado', 'success').then(() => location.reload());
-            } catch(e) { btn.disabled = false; btn.innerText = "REINTENTAR"; }
+                Swal.fire('Éxito', 'Cliente Sincronizado', 'success').then(() => location.reload());
+            } catch(e) { btn.disabled = false; btn.innerText = "Reintentar"; }
         }
 
         function init() {
@@ -171,15 +235,18 @@
                 snap.forEach(doc => {
                     const d = doc.data(); total += d.m;
                     list.innerHTML += `
-                        <div class="p-5 border border-white/5 rounded-2xl bg-white/5 flex justify-between items-center">
-                            <div>
-                                <p class="text-sm font-black uppercase">${d.n} ${d.a}</p>
-                                <p class="text-[10px] text-blue-500 font-bold">${d.imei} | ${d.ins} Cuotas</p>
-                                <p class="text-xs mt-1 font-bold text-blue-400">RD$ ${d.m.toLocaleString()}</p>
+                        <div class="p-4 border border-gray-500/20 rounded-2xl bg-black/5 flex justify-between items-center shadow-sm">
+                            <div class="w-1/2">
+                                <p class="text-xs font-black uppercase truncate">${d.n} ${d.a}</p>
+                                <p class="text-[9px] text-gray-500 font-bold mt-1"><i class="fab fa-whatsapp text-green-500"></i> ${d.tel}</p>
+                                <p class="text-[9px] text-blue-500 font-black truncate">${d.imei} | ${d.ins} Cuotas</p>
+                                <p class="text-sm mt-1 font-black text-blue-600">RD$ ${d.m.toLocaleString()}</p>
                             </div>
+                            
                             <div class="flex gap-2">
-                                <button onclick="editar('${doc.id}')" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center"><i class="fas fa-edit text-xs"></i></button>
-                                <button onclick="bloquear('${d.imei}')" class="w-12 h-12 rounded-xl bg-orange-500 text-white flex items-center justify-center shadow-lg shadow-orange-500/20"><i class="fas fa-lock"></i></button>
+                                <button onclick="editar('${doc.id}')" class="w-10 h-10 rounded-xl bg-gray-500/10 text-gray-400 hover:text-blue-500 transition-all flex items-center justify-center"><i class="fas fa-edit"></i></button>
+                                <button onclick="borrar('${doc.id}')" class="w-10 h-10 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500/30 transition-all flex items-center justify-center"><i class="fas fa-trash"></i></button>
+                                <button onclick="bloquear('${d.imei}')" class="w-12 h-12 rounded-xl bg-gradient-to-tr from-orange-600 to-orange-400 text-white flex items-center justify-center shadow-lg shadow-orange-500/40 transform active:scale-95 transition-all"><i class="fas fa-lock"></i></button>
                             </div>
                         </div>`;
                 });
@@ -188,28 +255,35 @@
         }
 
         function bloquear(imei) {
-            Swal.fire({ title: '¿BLOQUEAR?', text: 'IMEI: ' + imei, icon: 'warning', showCancelButton: true, confirmButtonColor: '#f97316', confirmButtonText: 'SÍ, APAGAR' })
-            .then(r => { if(r.isConfirmed) { pusher.subscribe('private-canal-seguridad').trigger('client-orden-bloqueo', { imei }); Swal.fire('Enviado', '', 'success'); } });
+            Swal.fire({ title: '¿BLOQUEAR EQUIPO?', text: 'IMEI: ' + imei, icon: 'warning', showCancelButton: true, confirmButtonColor: '#ea580c', confirmButtonText: 'SÍ, APAGAR', background: 'var(--card-bg)', color: 'var(--text)' })
+            .then(r => { if(r.isConfirmed) { pusher.subscribe('private-canal-seguridad').trigger('client-orden-bloqueo', { action: 'lock', imei: imei }); Swal.fire({title:'¡Enviado!', icon:'success', background: 'var(--card-bg)', color: 'var(--text)'}); } });
         }
 
         async function editar(id) {
+            const doc = await db.collection("clientes").doc(id).get(); const d = doc.data();
             const { value: form } = await Swal.fire({
-                title: 'Editar',
-                html: `<input id="e-n" class="swal2-input" placeholder="Nombre">`,
-                preConfirm: () => [document.getElementById('e-n').value]
+                title: 'Editar Cliente',
+                html: `<input id="e-n" class="swal2-input" value="${d.n}" placeholder="Nombre">
+                       <input id="e-imei" class="swal2-input" value="${d.imei}" placeholder="IMEI">`,
+                focusConfirm: false, background: 'var(--card-bg)', color: 'var(--text)',
+                preConfirm: () => [document.getElementById('e-n').value, document.getElementById('e-imei').value]
             });
-            if(form) await db.collection("clientes").doc(id).update({ n: form[0] });
+            if(form) await db.collection("clientes").doc(id).update({ n: form[0], imei: form[1] });
         }
 
-        // VERIFICACIÓN DE SESIÓN
+        function borrar(id) {
+            Swal.fire({ title: '¿ELIMINAR CLIENTE?', text: 'Esta acción no se puede deshacer.', icon: 'error', showCancelButton: true, confirmButtonColor: '#ef4444', confirmButtonText: 'SÍ, ELIMINAR', background: 'var(--card-bg)', color: 'var(--text)' })
+            .then(async r => { if(r.isConfirmed) { await db.collection("clientes").doc(id).delete(); } });
+        }
+
+        function logout() { localStorage.clear(); document.getElementById('passInput').value = ''; location.reload(); }
+
         const ses = localStorage.getItem('session');
         if(ses) {
             document.getElementById('loginGate').classList.add('hidden-force');
             document.getElementById('appContent').classList.remove('hidden-force');
-            document.getElementById('roleName').innerText = ses;
             init();
         }
-        function logout() { localStorage.clear(); location.reload(); }
     </script>
 </body>
 </html>
