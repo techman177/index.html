@@ -175,7 +175,7 @@
 
         const MASTER_PASS = "ClaroLluvia77";
         const PARTNER_PASS = "Curazao2026*";
-        let clientDataForExcel = []; // Guarda los datos para exportar
+        let clientDataForExcel = []; 
 
         // TEMA DIA/NOCHE
         if(localStorage.getItem('theme') === 'light') document.body.classList.add('light-mode');
@@ -221,7 +221,6 @@
 
         // COBRO POR WHATSAPP (1-CLICK)
         function enviarCobro(nombre, telefono, monto) {
-            // Limpia el teléfono de espacios para el link
             let telLimpio = telefono.replace(/\s+/g, '');
             let msj = encodeURIComponent(`Hola ${nombre}, le contactamos del departamento de cobros. Le recordamos que tiene un balance pendiente de RD$ ${monto.toLocaleString()}. Por favor comuníquese con nosotros para mantener su cuenta al día y evitar la suspensión del equipo.`);
             window.open(`https://wa.me/${telLimpio}?text=${msj}`, '_blank');
@@ -235,13 +234,8 @@
                 csvContent += `"${row.n}","${row.a}","${row.tel}","${row.imei}","${row.m}","${row.ins}","${row.tDoc}"\n`;
             });
             const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "Reporte_Cartera_FireGuard.csv");
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            toggleMenu();
+            const link = document.createElement("a"); link.setAttribute("href", encodedUri); link.setAttribute("download", "Reporte_Cartera_FireGuard.csv");
+            document.body.appendChild(link); link.click(); document.body.removeChild(link); toggleMenu();
         }
 
         // CALCULADORA
@@ -250,8 +244,9 @@
         function clsCalc() { cVal = ""; document.getElementById('calcDisplay').value = ""; }
         function resCalc() { try { cVal = eval(cVal).toString(); } catch(e) { cVal = "Error"; } document.getElementById('calcDisplay').value = cVal; if(cVal==="Error") cVal=""; }
 
+        // --- ACCESO CON .TRIM() PARA CORTAR ESPACIOS ---
         function access() {
-            const val = document.getElementById('passInput').value;
+            const val = document.getElementById('passInput').value.trim();
             if(val === MASTER_PASS || val === PARTNER_PASS) {
                 localStorage.setItem('session', val === MASTER_PASS ? 'ADMIN' : 'PARTNER');
                 location.reload();
@@ -327,5 +322,16 @@
 
         async function editar(id) {
             const doc = await db.collection("clientes").doc(id).get(); const d = doc.data();
-            const { value: form } = await Swal.fire({ title: 'Editar Cliente', html: `<input id="e-n" class="swal2-
+            const { value: form } = await Swal.fire({ title: 'Editar Cliente', html: `<input id="e-n" class="swal2-input" value="${d.n}" placeholder="Nombre"><input id="e-imei" class="swal2-input" value="${d.imei}" placeholder="IMEI">`, focusConfirm: false, background: 'var(--card-bg)', color: 'var(--text)', preConfirm: () => [document.getElementById('e-n').value, document.getElementById('e-imei').value] });
+            if(form) await db.collection("clientes").doc(id).update({ n: form[0], imei: form[1] });
+        }
+
+        function borrar(id) { Swal.fire({ title: '¿ELIMINAR CLIENTE?', text: 'Esta acción no se puede deshacer.', icon: 'error', showCancelButton: true, confirmButtonColor: '#ef4444', confirmButtonText: 'SÍ, ELIMINAR', background: 'var(--card-bg)', color: 'var(--text)' }).then(async r => { if(r.isConfirmed) { await db.collection("clientes").doc(id).delete(); } }); }
+        function logout() { localStorage.clear(); document.getElementById('passInput').value = ''; location.reload(); }
+
+        const ses = localStorage.getItem('session');
+        if(ses) { document.getElementById('loginGate').classList.add('hidden-force'); document.getElementById('appContent').classList.remove('hidden-force'); init(); }
+    </script>
+</body>
+</html>
 
