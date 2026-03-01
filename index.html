@@ -4,155 +4,164 @@
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FireGuard Elite | IntegratCore</title>
+    <title>FireGuard Pro | IntegratCore</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
-        :root { --bg: #020617; --accent: #2563eb; --glass: rgba(15, 23, 42, 0.9); }
-        body { background: var(--bg); color: #f1f5f9; font-family: 'Plus Jakarta Sans', sans-serif; }
-        .glass-card { background: var(--glass); backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; }
-        .input-master { background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 12px; color: #fff; width: 100%; font-size: 13px; }
-        .sidebar { position: fixed; top: 0; left: -300px; width: 280px; height: 100%; background: #0f172a; z-index: 4000; transition: 0.4s; border-right: 1px solid rgba(255,255,255,0.1); }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+        :root { --bg: #020617; --text: #f8fafc; --accent: #2563eb; }
+        body { background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; }
+        .glass-card { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; }
+        .input-xl { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 16px; color: white; width: 100%; font-size: 16px; }
+        .sidebar { position: fixed; top: 0; left: -320px; width: 300px; height: 100%; background: #0f172a; z-index: 5000; transition: 0.4s; border-right: 1px solid rgba(255,255,255,0.1); }
         .sidebar.active { left: 0; }
-        .btn-master { background: linear-gradient(135deg, #2563eb, #1e40af); padding: 14px; border-radius: 14px; font-weight: 800; text-transform: uppercase; width: 100%; cursor: pointer; }
-        /* FORZAR OCULTAMIENTO REAL */
+        .btn-xl { background: linear-gradient(135deg, #2563eb, #1e40af); padding: 18px; border-radius: 16px; font-weight: 800; width: 100%; text-transform: uppercase; }
         .hidden-force { display: none !important; }
-        .admin-only { display: none; }
     </style>
 </head>
 <body>
 
-    <div id="loginGate" class="fixed inset-0 z-[5000] bg-slate-950 flex items-center justify-center p-6">
+    <div id="loginGate" class="fixed inset-0 z-[6000] bg-slate-950 flex items-center justify-center p-6">
         <div class="w-full max-w-sm text-center">
-            <h2 class="text-3xl font-black italic mb-8 uppercase tracking-tighter text-white">FIRE<span class="text-blue-500">GUARD</span></h2>
-            <div class="glass-card p-8">
-                <input type="password" id="passInput" class="input-master text-center text-2xl mb-4 tracking-widest" placeholder="••••">
-                <button onclick="access()" class="btn-master text-xs text-white">Entrar al Sistema</button>
+            <h2 class="text-4xl font-black italic mb-10 text-white">FIRE<span class="text-blue-500">GUARD</span></h2>
+            <div class="glass-card p-10">
+                <input type="password" id="passInput" class="input-xl text-center text-2xl mb-6 tracking-widest" placeholder="••••">
+                <button onclick="access()" class="btn-xl text-white">Iniciar Sesión</button>
             </div>
         </div>
     </div>
 
-    <main id="appContent" class="hidden-force min-h-screen p-4 lg:p-10 max-w-[1600px] mx-auto">
-        <header class="flex justify-between items-center mb-10">
-            <button onclick="document.getElementById('sidebar').classList.toggle('active')" class="w-12 h-12 glass-card flex items-center justify-center text-blue-500"><i class="fas fa-bars"></i></button>
-            <div class="text-center">
-                <h1 class="text-xl font-black italic">GLOBAL DASHBOARD</h1>
-                <span id="roleBadge" class="text-[9px] bg-blue-600/20 text-blue-400 px-3 py-1 rounded-full font-black uppercase">--</span>
-            </div>
-            <div id="capitalBox" class="admin-only glass-card px-6 py-3 border-l-4 border-l-blue-600">
-                <p id="totalCap" class="text-lg font-black italic">RD$ 0</p>
+    <nav id="sidebar" class="sidebar p-8">
+        <div class="flex justify-between items-center mb-10">
+            <span class="text-blue-500 font-black italic">INTEGRATCORE v3</span>
+            <button onclick="toggleMenu()" class="text-2xl"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="space-y-4">
+            <button onclick="location.reload()" class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-white/5"><i class="fas fa-sync"></i> Actualizar Sistema</button>
+            <button onclick="openCalc()" class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-white/5"><i class="fas fa-calculator"></i> Calculadora Financiera</button>
+            <button onclick="Swal.fire('Historial','Módulo de pagos en desarrollo','info')" class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-white/5"><i class="fas fa-history"></i> Historial de Bloqueos</button>
+            <button onclick="Swal.fire('Soporte','WhatsApp de soporte: +1 829-XXX-XXXX','info')" class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-white/5 text-green-400"><i class="fab fa-whatsapp"></i> Soporte Técnico</button>
+            <hr class="opacity-10">
+            <button onclick="logout()" class="w-full flex items-center gap-4 p-4 rounded-xl bg-red-500/10 text-red-500"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button>
+        </div>
+    </nav>
+
+    <main id="appContent" class="hidden-force min-h-screen p-4 md:p-10 max-w-[1200px] mx-auto">
+        <header class="flex justify-between items-center mb-8">
+            <button onclick="toggleMenu()" class="w-14 h-14 glass-card flex items-center justify-center text-blue-500 text-2xl"><i class="fas fa-bars"></i></button>
+            <div class="text-right">
+                <p id="roleName" class="text-[10px] font-black text-blue-500 uppercase">--</p>
+                <p id="totalCap" class="text-xl font-black italic">RD$ 0</p>
             </div>
         </header>
 
-        <div class="grid grid-cols-1 xl:grid-cols-12 gap-8">
-            <section class="xl:col-span-4">
-                <div class="glass-card p-6 sticky top-8">
-                    <h3 class="text-[10px] font-black text-blue-500 uppercase mb-6 italic"><i class="fas fa-user-plus mr-2"></i>Nuevo Cliente</h3>
-                    <div class="space-y-3">
-                        <div class="grid grid-cols-2 gap-2">
-                            <input type="text" id="fn" class="input-master" placeholder="Nombre">
-                            <input type="text" id="ln" class="input-master" placeholder="Apellido">
-                        </div>
-                        <input type="text" id="docId" class="input-master" placeholder="Cédula/ID">
-                        <input type="number" id="amt" class="input-master text-blue-400 font-bold" placeholder="Monto RD$">
-                        <div class="p-4 bg-black/20 rounded-xl space-y-4 border border-white/5">
-                            <div><label class="text-[8px] font-black text-slate-500 uppercase">Foto Equipo</label><input type="file" id="fEq" class="text-[9px] w-full mt-1"></div>
-                            <div><label class="text-[8px] font-black text-blue-500 uppercase">Cédula Frente</label><input type="file" id="fFr" class="text-[9px] w-full mt-1"></div>
-                            <div><label class="text-[8px] font-black text-blue-500 uppercase">Cédula Atrás</label><input type="file" id="fBk" class="text-[9px] w-full mt-1"></div>
-                        </div>
-                        <button id="saveBtn" onclick="saveClient()" class="btn-master text-[10px] text-white mt-2">Sincronizar Datos</button>
+        <div class="space-y-6">
+            <section class="glass-card p-6">
+                <h3 class="text-xs font-black text-blue-500 uppercase mb-6 italic"><i class="fas fa-user-plus mr-2"></i>Nuevo Registro</h3>
+                <div class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <input type="text" id="fn" class="input-xl" placeholder="Nombre">
+                        <input type="text" id="ln" class="input-xl" placeholder="Apellido">
                     </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <select id="country" class="input-xl bg-slate-800">
+                            <option value="+1">Dominicana 🇩🇴 (+1)</option>
+                            <option value="+599">Curazao 🇨🇼 (+599)</option>
+                            <option value="+507">Panamá 🇵🇦 (+507)</option>
+                            <option value="+1">USA 🇺🇸 (+1)</option>
+                            <option value="+58">Venezuela 🇻🇪 (+58)</option>
+                            <option value="+57">Colombia 🇨🇴 (+57)</option>
+                        </select>
+                        <input type="tel" id="tel" class="input-xl" placeholder="WhatsApp">
+                    </div>
+
+                    <input type="text" id="imei" class="input-xl border-blue-500/30" placeholder="IMEI / ID de Dispositivo">
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <input type="number" id="amt" class="input-xl font-bold text-blue-400" placeholder="Monto">
+                        <input type="number" id="ins" class="input-xl" placeholder="Cuotas">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="text-center">
+                            <label class="text-[9px] uppercase font-bold opacity-50">Foto Equipo</label>
+                            <input type="file" id="fEq" class="mt-2 text-[10px]">
+                        </div>
+                        <div class="text-center">
+                            <label class="text-[9px] uppercase font-bold opacity-50">Cédula Frente</label>
+                            <input type="file" id="fFr" class="mt-2 text-[10px]">
+                        </div>
+                    </div>
+
+                    <button id="saveBtn" onclick="saveClient()" class="btn-xl text-white mt-4">Sincronizar Maestro</button>
                 </div>
             </section>
 
-            <section class="xl:col-span-8">
-                <div class="glass-card p-4 overflow-x-auto">
-                    <table class="w-full text-left border-separate border-spacing-y-2">
-                        <tbody id="mainList"></tbody>
-                    </table>
-                </div>
+            <section class="glass-card p-4">
+                <div id="mainList" class="space-y-4">
+                    </div>
             </section>
         </div>
     </main>
 
     <script>
-        const firebaseConfig = { apiKey: "AIzaSyAmr8KHEyoaI3-xhKGy-uDUzCc8JkEzO6g", authDomain: "fireguard-4327f.firebaseapp.com", projectId: "fireguard-4327f", storageBucket: "fireguard-4327f.firebasestorage.app", messagingSenderId: "277545925255", appId: "1:277545925255:web:92175f4ac71dc9278b1622" };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-        const MASTER = "FireMoney2026$";
-        const PARTNER = "Curazao2026*";
+        const db = firebase.initializeApp({ apiKey: "AIzaSyAmr8KHEyoaI3-xhKGy-uDUzCc8JkEzO6g", authDomain: "fireguard-4327f.firebaseapp.com", projectId: "fireguard-4327f", storageBucket: "fireguard-4327f.firebasestorage.app", messagingSenderId: "277545925255", appId: "1:277545925255:web:92175f4ac71dc9278b1622" }).firestore();
         const pusher = new Pusher('43b3675a0d7078d24ecc', { cluster: 'us2' });
 
-        // --- LOGIN REFORZADO ---
+        const MASTER_PASS = "ClaroLluvia77"; // LA CLAVE QUE PEDISTE
+        const PARTNER_PASS = "Curazao2026*";
+
+        function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); }
+        function openCalc() { window.open('https://www.google.com/search?q=calculadora', '_blank', 'width=400,height=600'); }
+
+        // LOGIN BLINDADO
         function access() {
-            const p = document.getElementById('passInput').value;
-            if(p === MASTER || p === PARTNER) {
-                const role = p === MASTER ? 'ADMIN' : 'PARTNER';
-                localStorage.setItem('role', role);
-                document.getElementById('loginGate').classList.add('hidden-force');
-                document.getElementById('appContent').classList.remove('hidden-force');
-                document.getElementById('roleBadge').innerText = role === 'ADMIN' ? 'ADMIN MASTER' : 'AGENTE';
-                if(role === 'ADMIN') document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'block');
-                init();
+            const val = document.getElementById('passInput').value;
+            if(val === MASTER_PASS || val === PARTNER_PASS) {
+                localStorage.setItem('session', val === MASTER_PASS ? 'ADMIN' : 'PARTNER');
+                location.reload();
             } else {
-                Swal.fire('Error', 'Clave Incorrecta', 'error');
+                localStorage.clear();
+                Swal.fire('Acceso Denegado', 'La clave no es válida', 'error');
             }
         }
 
-        // --- COMPRESOR DE IMÁGENES (PARA QUE NO PESE) ---
-        async function compressImage(file) {
-            return new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = (event) => {
-                    const img = new Image();
-                    img.src = event.target.result;
+        async function compress(file) {
+            return new Promise(r => {
+                const reader = new FileReader(); reader.readAsDataURL(file);
+                reader.onload = (e) => {
+                    const img = new Image(); img.src = e.target.result;
                     img.onload = () => {
                         const canvas = document.createElement('canvas');
-                        const MAX_WIDTH = 800; // Reducimos el tamaño para Firebase
-                        let width = img.width;
-                        let height = img.height;
-                        if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
-                        canvas.width = width; canvas.height = height;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, width, height);
-                        resolve(canvas.toDataURL('image/jpeg', 0.6)); // Calidad 60% es suficiente
-                    };
-                };
+                        canvas.width = 500; canvas.height = (img.height * 500) / img.width;
+                        canvas.getContext('2d').drawImage(img, 0, 0, 500, canvas.height);
+                        r(canvas.toDataURL('image/jpeg', 0.5));
+                    }
+                }
             });
         }
 
-        // --- REGISTRO FLUIDO ---
         async function saveClient() {
             const btn = document.getElementById('saveBtn');
             const f1 = document.getElementById('fEq').files[0];
             const f2 = document.getElementById('fFr').files[0];
-            const f3 = document.getElementById('fBk').files[0];
+            if(!f1 || !f2) return Swal.fire('Error', 'Sube las fotos', 'warning');
 
-            if(!f1 || !f2 || !f3) return Swal.fire('Atención', 'Sube las 3 fotos para continuar', 'info');
-
-            btn.disabled = true; btn.innerText = "PROCESANDO Y COMPRIMIENDO...";
-
+            btn.disabled = true; btn.innerText = "COMPRIMIENDO...";
             try {
-                const img1 = await compressImage(f1);
-                const img2 = await compressImage(f2);
-                const img3 = await compressImage(f3);
-
+                const img1 = await compress(f1); const img2 = await compress(f2);
                 await db.collection("clientes").add({
                     n: document.getElementById('fn').value, a: document.getElementById('ln').value,
-                    doc: document.getElementById('docId').value, m: parseFloat(document.getElementById('amt').value) || 0,
-                    imgE: img1, imgF: img2, imgB: img3, date: new Date(), by: localStorage.getItem('role')
+                    tel: document.getElementById('country').value + document.getElementById('tel').value,
+                    imei: document.getElementById('imei').value, m: parseFloat(document.getElementById('amt').value),
+                    ins: document.getElementById('ins').value, img1, img2, date: new Date()
                 });
-
-                Swal.fire('Éxito', 'Cliente Registrado Correctamente', 'success').then(() => location.reload());
-            } catch(e) {
-                btn.disabled = false; btn.innerText = "Reintentar";
-                Swal.fire('Error', 'Revisa tu internet', 'error');
-            }
+                Swal.fire('Éxito', 'Registrado', 'success').then(() => location.reload());
+            } catch(e) { btn.disabled = false; btn.innerText = "REINTENTAR"; }
         }
 
         function init() {
@@ -160,37 +169,47 @@
                 const list = document.getElementById('mainList');
                 let total = 0; list.innerHTML = "";
                 snap.forEach(doc => {
-                    const d = doc.data(); total += (d.m || 0);
+                    const d = doc.data(); total += d.m;
                     list.innerHTML += `
-                        <tr class="glass-card">
-                            <td class="p-4 text-xs font-black uppercase">${d.n} ${d.a}</td>
-                            <td class="p-4 text-[10px] text-blue-400 font-bold">RD$ ${d.m.toLocaleString()}</td>
-                            <td class="p-4 text-right">
-                                <button onclick="bloquear('${doc.id}')" class="w-10 h-10 rounded-xl bg-orange-500/10 text-orange-500"><i class="fas fa-lock"></i></button>
-                            </td>
-                        </tr>`;
+                        <div class="p-5 border border-white/5 rounded-2xl bg-white/5 flex justify-between items-center">
+                            <div>
+                                <p class="text-sm font-black uppercase">${d.n} ${d.a}</p>
+                                <p class="text-[10px] text-blue-500 font-bold">${d.imei} | ${d.ins} Cuotas</p>
+                                <p class="text-xs mt-1 font-bold text-blue-400">RD$ ${d.m.toLocaleString()}</p>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="editar('${doc.id}')" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center"><i class="fas fa-edit text-xs"></i></button>
+                                <button onclick="bloquear('${d.imei}')" class="w-12 h-12 rounded-xl bg-orange-500 text-white flex items-center justify-center shadow-lg shadow-orange-500/20"><i class="fas fa-lock"></i></button>
+                            </div>
+                        </div>`;
                 });
                 document.getElementById('totalCap').innerText = "RD$ " + total.toLocaleString();
             });
         }
 
-        function bloquear(id) {
-            Swal.fire({ title: '¿Bloquear?', text: 'Se enviará la orden de apagado', icon: 'warning', showCancelButton: true, confirmButtonText: 'Sí, Bloquear', background: '#0f172a', color: '#fff' })
-            .then((r) => { 
-                if(r.isConfirmed) {
-                    pusher.subscribe('private-canal-seguridad').trigger('client-orden-bloqueo', { action: 'lock', id: id });
-                    Swal.fire('Enviado', 'Señal de bloqueo en camino', 'success');
-                }
-            });
+        function bloquear(imei) {
+            Swal.fire({ title: '¿BLOQUEAR?', text: 'IMEI: ' + imei, icon: 'warning', showCancelButton: true, confirmButtonColor: '#f97316', confirmButtonText: 'SÍ, APAGAR' })
+            .then(r => { if(r.isConfirmed) { pusher.subscribe('private-canal-seguridad').trigger('client-orden-bloqueo', { imei }); Swal.fire('Enviado', '', 'success'); } });
         }
 
-        // AUTO LOGIN SI YA ENTRÓ
-        if(localStorage.getItem('role')) accessAuto();
-        function accessAuto() {
+        async function editar(id) {
+            const { value: form } = await Swal.fire({
+                title: 'Editar',
+                html: `<input id="e-n" class="swal2-input" placeholder="Nombre">`,
+                preConfirm: () => [document.getElementById('e-n').value]
+            });
+            if(form) await db.collection("clientes").doc(id).update({ n: form[0] });
+        }
+
+        // VERIFICACIÓN DE SESIÓN
+        const ses = localStorage.getItem('session');
+        if(ses) {
             document.getElementById('loginGate').classList.add('hidden-force');
             document.getElementById('appContent').classList.remove('hidden-force');
+            document.getElementById('roleName').innerText = ses;
             init();
         }
+        function logout() { localStorage.clear(); location.reload(); }
     </script>
 </body>
 </html>
