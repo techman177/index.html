@@ -1,387 +1,227 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FireGuard Elite V5 | IntegratCore</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FireGuard MDM | Gestión de Dispositivos</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+        /* Diseño Empresarial / Corporativo */
+        :root {
+            --primary: #2563eb; /* Azul corporativo */
+            --primary-hover: #1d4ed8;
+            --bg-body: #f1f5f9; /* Gris muy claro de fondo */
+            --bg-card: #ffffff;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --danger: #ef4444;
+            --success: #10b981;
+            --sidebar-bg: #0f172a;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', 'Segoe UI', sans-serif; }
+        body { background-color: var(--bg-body); color: var(--text-dark); display: flex; height: 100vh; overflow: hidden; }
+
+        /* Sidebar oscuro y elegante */
+        .sidebar { width: 260px; background-color: var(--sidebar-bg); color: white; display: flex; flex-direction: column; padding: 20px 0; }
+        .logo-container { padding: 0 20px 30px; border-bottom: 1px solid #1e293b; margin-bottom: 20px; }
+        .logo-title { font-size: 22px; font-weight: 700; color: white; display: flex; align-items: center; gap: 10px; }
+        .logo-subtitle { font-size: 11px; color: #94a3b8; letter-spacing: 1px; text-transform: uppercase; margin-top: 5px; }
         
-        :root { --bg: #020617; --text: #f8fafc; --card-bg: rgba(15, 23, 42, 0.8); --card-border: rgba(255,255,255,0.1); --input-bg: rgba(255,255,255,0.05); }
-        .light-mode { --bg: #f1f5f9; --text: #0f172a; --card-bg: rgba(255, 255, 255, 0.9); --card-border: rgba(0,0,0,0.1); --input-bg: rgba(0,0,0,0.05); }
+        .nav-menu { flex: 1; }
+        .nav-item { padding: 12px 24px; color: #94a3b8; font-size: 14px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: 0.2s; }
+        .nav-item:hover, .nav-item.active { background-color: #1e293b; color: white; border-left: 4px solid var(--primary); }
+
+        /* Contenido Principal */
+        .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
+        .topbar { height: 60px; background-color: white; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 30px; }
+        .user-profile { font-size: 14px; font-weight: 500; color: var(--text-dark); display: flex; align-items: center; gap: 10px; }
+        .avatar { width: 32px; height: 32px; background-color: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+
+        .content-area { padding: 30px; max-width: 1200px; margin: 0 auto; width: 100%; }
+        .page-header { margin-bottom: 25px; display: flex; justify-content: space-between; align-items: flex-end; }
+        .page-title { font-size: 24px; font-weight: 600; }
         
-        body { background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; overscroll-behavior-y: none; transition: background 0.3s, color 0.3s; }
-        .glass-card { background: var(--card-bg); backdrop-filter: blur(15px); border: 1px solid var(--card-border); border-radius: 20px; transition: 0.3s; }
-        .input-xl { background: var(--input-bg); border: 1px solid var(--card-border); border-radius: 14px; padding: 16px; color: var(--text); width: 100%; font-size: 16px; transition: 0.3s; }
-        .input-xl:focus { outline: none; border-color: #2563eb; }
-        .sidebar { position: fixed; top: 0; left: -320px; width: 300px; height: 100%; background: #0f172a; z-index: 5000; transition: 0.4s; border-right: 1px solid rgba(255,255,255,0.1); color: white; }
-        .sidebar.active { left: 0; }
-        .btn-xl { background: linear-gradient(135deg, #2563eb, #1e40af); padding: 18px; border-radius: 16px; font-weight: 800; width: 100%; text-transform: uppercase; color: white; border: none; cursor: pointer; }
-        .hidden-force { display: none !important; }
-        .calc-btn { background: rgba(255,255,255,0.1); padding: 15px; border-radius: 12px; font-weight: bold; text-align: center; color: white; font-size: 18px; cursor: pointer; }
-        .calc-btn:active { background: #2563eb; }
+        /* Tarjetas de Dispositivo (Estilo MDM) */
+        .device-card { background-color: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); padding: 25px; margin-bottom: 25px; display: flex; gap: 20px; align-items: center; }
+        .device-icon { width: 60px; height: 60px; background-color: #f8fafc; border: 1px solid var(--border); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 30px; }
+        .device-info { flex: 1; }
+        .device-name { font-size: 18px; font-weight: 600; margin-bottom: 5px; }
+        .device-meta { font-size: 13px; color: var(--text-muted); display: flex; gap: 15px; }
+        .status-badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; background-color: #dcfce7; color: #166534; }
         
-        /* SCROLLBAR INVISIBLE PARA POPUPS */
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: #2563eb; border-radius: 10px; }
+        /* Botones de Acción limpios */
+        .action-bar { display: flex; gap: 15px; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); }
+        .btn { padding: 10px 20px; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer; border: none; transition: 0.2s; display: flex; align-items: center; gap: 8px; }
+        .btn-lock { background-color: #fee2e2; color: #b91c1c; }
+        .btn-lock:hover { background-color: #fca5a5; }
+        .btn-unlock { background-color: #d1fae5; color: #047857; }
+        .btn-unlock:hover { background-color: #a7f3d0; }
+
+        /* Panel de Configuración de API (Oculto como un menú profesional) */
+        .config-panel { background-color: white; border: 1px solid var(--border); border-radius: 10px; padding: 25px; margin-top: 30px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .config-title { font-size: 16px; font-weight: 600; margin-bottom: 15px; color: var(--text-dark); display: flex; align-items: center; gap: 8px; }
+        .input-group { display: flex; gap: 15px; margin-bottom: 15px; }
+        .input-box { flex: 1; }
+        label { display: block; font-size: 12px; font-weight: 500; color: var(--text-muted); margin-bottom: 5px; }
+        input { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; outline: none; transition: 0.2s; }
+        input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+        .btn-save { background-color: var(--text-dark); color: white; }
+        .btn-save:hover { background-color: black; }
+
+        /* Notificaciones Toast (Elegantes) */
+        #toast { visibility: hidden; min-width: 250px; background-color: #333; color: #fff; text-align: center; border-radius: 6px; padding: 12px 20px; position: fixed; z-index: 1; bottom: 30px; right: 30px; font-size: 14px; font-weight: 500; box-shadow: 0 4px 12px rgba(0,0,0,0.15); opacity: 0; transition: opacity 0.3s, bottom 0.3s; }
+        #toast.show { visibility: visible; opacity: 1; bottom: 50px; }
+        #toast.success { background-color: var(--success); }
+        #toast.error { background-color: var(--danger); }
     </style>
 </head>
-<body class="flex flex-col min-h-screen">
+<body>
 
-    <div id="loginGate" class="fixed inset-0 z-[6000] bg-slate-950 flex flex-col items-center justify-center p-6">
-        <div class="w-full max-w-sm text-center relative z-10">
-            <h2 class="text-4xl font-black italic mb-8 text-white">FIRE<span class="text-blue-500">GUARD</span></h2>
-            <div class="glass-card p-8 bg-slate-900 border border-slate-700">
-                <input type="password" id="passInput" class="input-xl text-center text-2xl mb-4 tracking-widest text-white" placeholder="••••" autocomplete="new-password">
-                
-                <div class="flex items-start gap-3 mb-6 text-left bg-black/20 p-3 rounded-xl border border-white/5">
-                    <input type="checkbox" id="termsCheck" class="mt-1 w-4 h-4 accent-blue-500 cursor-pointer">
-                    <label for="termsCheck" class="text-[10px] text-gray-400 leading-tight cursor-pointer">
-                        He leído y acepto los <a href="#" onclick="verTerminos(); return false;" class="text-blue-500 font-bold underline">Términos, Condiciones y Privacidad</a>.
-                    </label>
-                </div>
+    <aside class="sidebar">
+        <div class="logo-container">
+            <div class="logo-title">🛡️ FireGuard</div>
+            <div class="logo-subtitle">Unified Endpoint Management</div>
+        </div>
+        <nav class="nav-menu">
+            <div class="nav-item">📊 Vista General</div>
+            <div class="nav-item active">📱 Inventario de Equipos</div>
+            <div class="nav-item">🔒 Políticas de Seguridad</div>
+            <div class="nav-item">⚙️ Ajustes del Sistema</div>
+        </nav>
+        <div style="padding: 20px; font-size: 12px; color: #64748b;">
+            Operador: Admin_Nicolás<br>Red: Segura
+        </div>
+    </aside>
 
-                <button onclick="access()" class="btn-xl shadow-lg shadow-blue-500/30 mb-6">Iniciar Sesión</button>
-                
-                <div class="flex flex-col gap-3 pt-4 border-t border-slate-700">
-                    <button onclick="recuperarClave()" class="text-[11px] text-gray-400 hover:text-white transition-all"><i class="fas fa-key mr-1"></i> ¿Olvidaste tu contraseña?</button>
-                    <button onclick="window.location.href='mailto:contact@integratcore.com'" class="text-[11px] text-blue-500 font-bold hover:text-blue-400 transition-all"><i class="fas fa-headset mr-1"></i> Contactar a Soporte IntegratCore</button>
-                </div>
-            </div>
-        </div>
-        
-        <div class="absolute bottom-6 left-0 w-full text-center text-[9px] text-gray-500 font-bold uppercase tracking-widest px-4 z-0">
-            &copy; 2026 IntegratCore Corp. Creado por Nicolás A.<br class="md:hidden"> Todos los derechos reservados.
-        </div>
-    </div>
-
-    <div id="calcModal" class="hidden-force fixed inset-0 z-[7000] bg-black/80 flex items-center justify-center p-4 backdrop-blur-sm">
-        <div class="glass-card bg-slate-900 w-full max-w-xs p-6 shadow-2xl border border-slate-700 text-white">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="font-black italic text-blue-500"><i class="fas fa-calculator mr-2"></i>FINANZAS</h3>
-                <button onclick="document.getElementById('calcModal').classList.add('hidden-force')" class="text-xl text-gray-400"><i class="fas fa-times"></i></button>
-            </div>
-            <input type="text" id="calcDisplay" class="input-xl mb-4 text-right text-3xl font-black text-blue-500 bg-black/40 text-white border-slate-600" readonly>
-            <div class="grid grid-cols-4 gap-2">
-                <button class="calc-btn text-red-500 bg-slate-800" onclick="clsCalc()">C</button>
-                <button class="calc-btn bg-slate-800" onclick="btnCalc('(')">(</button>
-                <button class="calc-btn bg-slate-800" onclick="btnCalc(')')">)</button>
-                <button class="calc-btn text-blue-500 bg-slate-800" onclick="btnCalc('/')">÷</button>
-                <button class="calc-btn bg-slate-800" onclick="btnCalc('7')">7</button>
-                <button class="calc-btn bg-slate-800" onclick="btnCalc('8')">8</button>
-                <button class="calc-btn bg-slate-800" onclick="btnCalc('9')">9</button>
-                <button class="calc-btn text-blue-500 bg-slate-800" onclick="btnCalc('*')">×</button>
-                <button class="calc-btn bg-slate-800" onclick="btnCalc('4')">4</button>
-                <button class="calc-btn bg-slate-800" onclick="btnCalc('5')">5</button>
-                <button class="calc-btn bg-slate-800" onclick="btnCalc('6')">6</button>
-                <button class="calc-btn text-blue-500 bg-slate-800" onclick="btnCalc('-')">-</button>
-                <button class="calc-btn bg-slate-800" onclick="btnCalc('1')">1</button>
-                <button class="calc-btn bg-slate-800" onclick="btnCalc('2')">2</button>
-                <button class="calc-btn bg-slate-800" onclick="btnCalc('3')">3</button>
-                <button class="calc-btn text-blue-500 bg-slate-800" onclick="btnCalc('+')">+</button>
-                <button class="calc-btn col-span-2 bg-slate-800" onclick="btnCalc('0')">0</button>
-                <button class="calc-btn bg-slate-800" onclick="btnCalc('.')">.</button>
-                <button class="calc-btn bg-blue-600 text-white" onclick="resCalc()">=</button>
-            </div>
-        </div>
-    </div>
-
-    <nav id="sidebar" class="sidebar p-8">
-        <div class="flex justify-between items-center mb-10">
-            <span class="text-blue-500 font-black italic">INTEGRATCORE v5</span>
-            <button onclick="document.getElementById('sidebar').classList.remove('active')" class="text-2xl"><i class="fas fa-times"></i></button>
-        </div>
-        <div class="space-y-3">
-            <button onclick="toggleTheme()" class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-white/10 font-bold"><i class="fas fa-adjust"></i> Modo Día / Noche</button>
-            <button onclick="document.getElementById('calcModal').classList.remove('hidden-force'); document.getElementById('sidebar').classList.remove('active');" class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-white/10 font-bold"><i class="fas fa-calculator"></i> Calculadora</button>
-            <button onclick="exportarExcel()" class="w-full flex items-center gap-4 p-4 rounded-xl bg-green-500/10 text-green-400 font-bold border border-green-500/20"><i class="fas fa-file-excel text-lg"></i> Exportar a Excel</button>
-            <hr class="opacity-20 my-4">
-            <button onclick="window.open('https://wa.me/18094051812', '_blank')" class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-white/10 text-green-400 font-bold"><i class="fab fa-whatsapp text-lg"></i> Soporte WhatsApp</button>
-            <button onclick="window.location.href='mailto:contact@integratcore.com'" class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-white/10 text-blue-400 font-bold"><i class="fas fa-envelope"></i> Soporte Correo</button>
-            <hr class="opacity-20 my-4">
-            <button onclick="logout()" class="w-full flex items-center gap-4 p-4 rounded-xl bg-red-500/20 text-red-400 font-bold"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button>
-        </div>
-    </nav>
-
-    <main id="appContent" class="hidden-force flex-grow flex flex-col p-4 md:p-8 max-w-[1200px] mx-auto w-full">
-        <header class="flex justify-between items-center mb-6">
-            <button onclick="document.getElementById('sidebar').classList.add('active')" class="w-14 h-14 glass-card flex items-center justify-center text-blue-500 text-2xl shadow-lg"><i class="fas fa-bars"></i></button>
-            <div class="text-right">
-                <p id="liveClock" class="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-1">--/--/---- --:--</p>
-                <p id="totalCap" class="text-2xl font-black italic">RD$ 0</p>
+    <main class="main-content">
+        <header class="topbar">
+            <div style="color: var(--text-muted); font-size: 14px;">Detalles del Dispositivo</div>
+            <div class="user-profile">
+                <div class="avatar">N</div>
+                Nicolás (Admin)
             </div>
         </header>
 
-        <div class="space-y-6 flex-grow">
-            <section class="glass-card p-6 shadow-xl">
-                <h3 class="text-xs font-black text-blue-500 uppercase mb-6 italic"><i class="fas fa-user-plus mr-2"></i>Nuevo Registro</h3>
-                <div class="space-y-4">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <input type="text" id="fn" class="input-xl" placeholder="Nombre">
-                        <input type="text" id="ln" class="input-xl" placeholder="Apellido">
-                    </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <select id="country" class="input-xl font-bold">
-                            <option value="+1 ">🇩🇴 Dominicana (+1)</option>
-                            <option value="+599 ">🇨🇼 Curazao (+599)</option>
-                            <option value="+507 ">🇵🇦 Panamá (+507)</option>
-                            <option value="+1 ">🇺🇸 USA (+1)</option>
-                            <option value="+58 ">🇻🇪 Venezuela (+58)</option>
-                            <option value="+57 ">🇨🇴 Colombia (+57)</option>
-                        </select>
-                        <input type="tel" id="tel" class="input-xl font-bold" placeholder="Número WhatsApp">
-                    </div>
-
-                    <div class="relative">
-                        <input type="text" id="imei" class="input-xl border-blue-500/30 font-bold pr-16" placeholder="IMEI / ID de Dispositivo">
-                        <button onclick="pegarIMEI()" class="absolute right-2 top-2 h-10 w-12 bg-blue-500/20 text-blue-500 rounded-lg hover:bg-blue-500 hover:text-white transition-all flex items-center justify-center shadow-sm" title="Pegar IMEI"><i class="fas fa-paste text-lg"></i></button>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-4">
-                        <input type="number" id="amt" class="input-xl font-black text-blue-500" placeholder="Monto Total">
-                        <input type="number" id="ins" class="input-xl font-bold" placeholder="Cuotas">
-                    </div>
-
-                    <select id="docType" class="input-xl font-bold border-blue-500/50 text-blue-500" onchange="checkDocType()">
-                        <option value="Cedula">💳 Cédula de Identidad</option>
-                        <option value="Licencia">🚗 Licencia de Conducir</option>
-                        <option value="Pasaporte">✈️ Pasaporte</option>
-                    </select>
-
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-black/5 p-4 rounded-2xl border border-gray-500/20">
-                        <div class="text-center overflow-hidden">
-                            <label class="text-[9px] uppercase font-black opacity-60 text-blue-500">Foto Equipo</label>
-                            <input type="file" id="fEq" class="mt-2 text-[10px] w-full">
-                        </div>
-                        <div class="text-center overflow-hidden">
-                            <label class="text-[9px] uppercase font-black opacity-60 text-blue-500">Doc. Frente</label>
-                            <input type="file" id="fFr" class="mt-2 text-[10px] w-full">
-                        </div>
-                        <div class="text-center overflow-hidden" id="backDocContainer">
-                            <label class="text-[9px] uppercase font-black opacity-60 text-blue-500">Doc. Reverso</label>
-                            <input type="file" id="fBk" class="mt-2 text-[10px] w-full">
-                        </div>
-                    </div>
-
-                    <button id="saveBtn" onclick="saveClient()" class="btn-xl mt-4 shadow-lg shadow-blue-500/20">Sincronizar Maestro</button>
+        <div class="content-area">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Gestión Remota: <span id="displayDeviceTitle">Dispositivo Cliente</span></h1>
+                    <p style="color: var(--text-muted); font-size: 14px; margin-top: 5px;">Control total de acceso y bloqueo</p>
                 </div>
-            </section>
+            </div>
 
-            <section class="glass-card p-4 shadow-xl">
-                <div class="flex flex-col md:flex-row justify-between items-center mb-4 px-2 gap-4">
-                    <span class="text-[10px] font-black uppercase opacity-50 flex items-center gap-2"><i class="fas fa-users"></i> Carteras Activas <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span></span>
-                    
-                    <div class="relative w-full md:w-1/2">
-                        <i class="fas fa-search absolute left-4 top-4 text-gray-500"></i>
-                        <input type="text" id="searchBar" onkeyup="buscarCliente()" class="input-xl pl-10 py-3 text-sm" placeholder="Buscar por Nombre o IMEI...">
+            <div class="device-card">
+                <div class="device-icon">📱</div>
+                <div class="device-info">
+                    <div class="device-name">Moto G06 (Cliente Asignado)</div>
+                    <div class="device-meta">
+                        <span><strong>OS:</strong> Android Enterprise</span>
+                        <span><strong>Batería:</strong> 85% 🔋</span>
+                        <span><strong>Última Sincronización:</strong> Hace un momento</span>
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <span class="status-badge">Estado: Activo y Conectado</span>
                     </div>
                 </div>
+            </div>
 
-                <div id="mainList" class="space-y-3">
+            <div class="device-card" style="display: block;">
+                <h3 style="font-size: 16px; margin-bottom: 10px;">Comandos de Seguridad</h3>
+                <p style="font-size: 13px; color: var(--text-muted);">Las acciones ejecutadas aquí se aplican instantáneamente en el equipo del cliente a través de la red celular o Wi-Fi.</p>
+                
+                <div class="action-bar">
+                    <button class="btn btn-lock" onclick="enviarComando('lock')">
+                        🔒 Bloquear Dispositivo (Por Falta de Pago)
+                    </button>
+                    <button class="btn btn-unlock" onclick="enviarComando('unlock')">
+                        🔓 Restaurar Acceso (Pago Recibido)
+                    </button>
+                </div>
+            </div>
+
+            <div class="config-panel">
+                <div class="config-title">⚙️ Integración API (Solo Administrador)</div>
+                <div class="input-group">
+                    <div class="input-box">
+                        <label>Scalefusion API Token</label>
+                        <input type="password" id="apiInput" placeholder="Pega tu token de seguridad aquí...">
                     </div>
-            </section>
+                    <div class="input-box">
+                        <label>Device ID (Identificador)</label>
+                        <input type="text" id="idInput" placeholder="Ej: 12345">
+                    </div>
+                </div>
+                <button class="btn btn-save" onclick="guardarAjustes()">Guardar Configuración en Caché</button>
+            </div>
         </div>
-
-        <footer class="mt-10 mb-4 text-center text-[10px] text-gray-500 font-bold uppercase tracking-widest border-t border-gray-500/20 pt-6">
-            &copy; 2026 IntegratCore Corp.<br class="md:hidden"> Creado por Nicolás A. Todos los derechos reservados.
-        </footer>
     </main>
 
+    <div id="toast">Notificación</div>
+
     <script>
-        const db = firebase.initializeApp({ apiKey: "AIzaSyAmr8KHEyoaI3-xhKGy-uDUzCc8JkEzO6g", authDomain: "fireguard-4327f.firebaseapp.com", projectId: "fireguard-4327f", storageBucket: "fireguard-4327f.firebasestorage.app", messagingSenderId: "277545925255", appId: "1:277545925255:web:92175f4ac71dc9278b1622" }).firestore();
-        const pusher = new Pusher('43b3675a0d7078d24ecc', { cluster: 'us2' });
+        // Cargar datos al iniciar
+        window.onload = function() {
+            if(localStorage.getItem('fg_api')) document.getElementById('apiInput').value = localStorage.getItem('fg_api');
+            if(localStorage.getItem('fg_id')) {
+                document.getElementById('idInput').value = localStorage.getItem('fg_id');
+                document.getElementById('displayDeviceTitle').innerText = "ID: " + localStorage.getItem('fg_id');
+            }
+        };
 
-        const MASTER_PASS = "ClaroLluvia77";
-        const PARTNER_PASS = "Curazao2026*";
-        let clientDataForExcel = []; 
-
-        // TEMA DIA/NOCHE REPARADO
-        if(localStorage.getItem('theme') === 'light') document.body.classList.add('light-mode');
-        
-        function toggleTheme() { 
-            document.body.classList.toggle('light-mode'); 
-            const isLight = document.body.classList.contains('light-mode');
-            localStorage.setItem('theme', isLight ? 'light' : 'dark'); 
-            document.getElementById('sidebar').classList.remove('active');
-            Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 1500, background: 'var(--card-bg)', color: 'var(--text)' })
-            .fire({ icon: 'success', title: isLight ? '☀️ Modo Día Activado' : '🌙 Modo Noche Activado' });
+        // Guardar configuración
+        function guardarAjustes() {
+            const api = document.getElementById('apiInput').value;
+            const id = document.getElementById('idInput').value;
+            if(!api || !id) {
+                mostrarToast("⚠️ Faltan datos por completar", "error");
+                return;
+            }
+            localStorage.setItem('fg_api', api);
+            localStorage.setItem('fg_id', id);
+            document.getElementById('displayDeviceTitle').innerText = "ID: " + id;
+            mostrarToast("✅ Integración guardada exitosamente", "success");
         }
 
-        document.addEventListener("DOMContentLoaded", () => { 
-            document.getElementById('passInput').value = ''; 
-            document.getElementById('termsCheck').checked = false; 
-        });
+        // Enviar orden a Scalefusion
+        function enviarComando(accion) {
+            const api = localStorage.getItem('fg_api');
+            const id = localStorage.getItem('fg_id');
 
-        setInterval(() => {
-            const now = new Date();
-            document.getElementById('liveClock').innerText = now.toLocaleString('es-DO', { dateStyle: 'short', timeStyle: 'medium' });
-        }, 1000);
+            if(!api || !id) {
+                mostrarToast("⚠️ Configura la API Key y el ID primero", "error");
+                return;
+            }
 
-        function checkDocType() {
-            const type = document.getElementById('docType').value;
-            const backContainer = document.getElementById('backDocContainer');
-            if(type === 'Pasaporte') { backContainer.style.display = 'none'; document.getElementById('fBk').value = ''; } 
-            else { backContainer.style.display = 'block'; }
-        }
+            mostrarToast("⏳ Conectando con el dispositivo...", "");
 
-        // FUNCIONES DE LEGAL Y SOPORTE
-        function verTerminos() {
-            Swal.fire({
-                title: 'Términos y Condiciones',
-                html: '<div class="text-left text-xs space-y-3 h-48 overflow-y-auto p-2"><p><b>1. Uso del Sistema:</b> FireGuard Elite es una herramienta de administración provista por IntegratCore Corp. (2026). El uso indebido del bloqueo de dispositivos es entera responsabilidad del usuario administrador.</p><p><b>2. Privacidad de Datos:</b> Los datos recopilados son encriptados y utilizados exclusivamente para el control interno de su negocio.</p><p><b>3. Consentimiento:</b> Al registrar un equipo, el administrador asume la responsabilidad de haber informado al cliente final sobre las políticas de bloqueo por atraso de pagos.</p><p><b>4. Exención:</b> IntegratCore Corp. no se hace responsable por bloqueos erróneos debido a números de IMEI mal digitados.</p></div>',
-                confirmButtonText: 'Entendido', confirmButtonColor: '#2563eb', background: 'var(--card-bg)', color: 'var(--text)'
-            });
-        }
-
-        function recuperarClave() {
-            Swal.fire({
-                title: 'Recuperar Acceso',
-                text: 'Ingresa tu correo administrativo para enviarte las instrucciones de restablecimiento.',
-                input: 'email', inputPlaceholder: 'tu@correo.com', showCancelButton: true, confirmButtonText: 'Enviar Solicitud', cancelButtonText: 'Cancelar', confirmButtonColor: '#2563eb', background: 'var(--card-bg)', color: 'var(--text)'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire({ icon: 'success', title: 'Solicitud Enviada', text: 'Si el correo existe en nuestra base de datos, recibirás un enlace seguro.', confirmButtonColor: '#2563eb', background: 'var(--card-bg)', color: 'var(--text)'});
+            fetch(`https://api.scalefusion.com/api/v1/devices/${id}/${accion}.json`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Token ${api}`,
+                    'Content-Type': 'application/json'
                 }
-            });
-        }
-
-        async function pegarIMEI() {
-            try {
-                const text = await navigator.clipboard.readText(); document.getElementById('imei').value = text;
-                Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 1500, background: 'var(--card-bg)', color: 'var(--text)' }).fire({ icon: 'success', title: 'IMEI Pegado' });
-            } catch (err) { Swal.fire({ title: 'Permiso Denegado', text: 'Permite el acceso al portapapeles', icon: 'warning', background: 'var(--card-bg)', color: 'var(--text)'}); }
-        }
-        function copiarIMEI(texto) {
-            navigator.clipboard.writeText(texto).then(() => {
-                Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 1500, background: 'var(--card-bg)', color: 'var(--text)' }).fire({ icon: 'success', title: 'IMEI Copiado' });
-            });
-        }
-
-        function buscarCliente() {
-            let filter = document.getElementById('searchBar').value.toUpperCase();
-            let cards = document.getElementById('mainList').children;
-            for (let i = 0; i < cards.length; i++) {
-                let text = cards[i].innerText.toUpperCase();
-                cards[i].style.display = text.indexOf(filter) > -1 ? "" : "none";
-            }
-        }
-
-        function enviarCobro(nombre, telefono, monto) {
-            let telLimpio = telefono.replace(/\s+/g, '');
-            let msj = encodeURIComponent(`Hola ${nombre}, le contactamos del departamento de cobros. Le recordamos que tiene un balance pendiente de RD$ ${monto.toLocaleString()}. Por favor comuníquese con nosotros para mantener su cuenta al día y evitar la suspensión del equipo.`);
-            window.open(`https://wa.me/${telLimpio}?text=${msj}`, '_blank');
-        }
-
-        function exportarExcel() {
-            if(clientDataForExcel.length === 0) return Swal.fire({title:'Vacío', text:'No hay clientes para exportar', icon:'info', background: 'var(--card-bg)', color: 'var(--text)'});
-            let csvContent = "data:text/csv;charset=utf-8,Nombre,Apellido,Telefono,IMEI,Monto,Cuotas,Documento\n";
-            clientDataForExcel.forEach(row => { csvContent += `"${row.n}","${row.a}","${row.tel}","${row.imei}","${row.m}","${row.ins}","${row.tDoc}"\n`; });
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a"); link.setAttribute("href", encodedUri); link.setAttribute("download", "Reporte_Cartera_FireGuard.csv");
-            document.body.appendChild(link); link.click(); document.body.removeChild(link); 
-            document.getElementById('sidebar').classList.remove('active');
-        }
-
-        let cVal = "";
-        function btnCalc(v) { cVal += v; document.getElementById('calcDisplay').value = cVal; }
-        function clsCalc() { cVal = ""; document.getElementById('calcDisplay').value = ""; }
-        function resCalc() { try { cVal = eval(cVal).toString(); } catch(e) { cVal = "Error"; } document.getElementById('calcDisplay').value = cVal; if(cVal==="Error") cVal=""; }
-
-        function access() {
-            const terms = document.getElementById('termsCheck').checked;
-            if(!terms) {
-                return Swal.fire({ icon: 'warning', title: 'Atención', text: 'Debes aceptar los Términos y Condiciones para ingresar al sistema.', confirmButtonColor: '#2563eb', background: 'var(--card-bg)', color: 'var(--text)' });
-            }
-            const val = document.getElementById('passInput').value.trim();
-            if(val === MASTER_PASS || val === PARTNER_PASS) {
-                localStorage.setItem('session', val === MASTER_PASS ? 'ADMIN' : 'PARTNER');
-                location.reload();
-            } else {
-                localStorage.clear(); document.getElementById('passInput').value = ''; 
-                Swal.fire({ icon: 'error', title: 'Acceso Denegado', text: 'Clave Incorrecta', confirmButtonColor: '#2563eb', background: 'var(--card-bg)', color: 'var(--text)' });
-            }
-        }
-
-        async function compress(file) {
-            return new Promise(r => {
-                const reader = new FileReader(); reader.readAsDataURL(file);
-                reader.onload = (e) => {
-                    const img = new Image(); img.src = e.target.result;
-                    img.onload = () => {
-                        const canvas = document.createElement('canvas'); canvas.width = 500; canvas.height = (img.height * 500) / img.width;
-                        canvas.getContext('2d').drawImage(img, 0, 0, 500, canvas.height); r(canvas.toDataURL('image/jpeg', 0.5));
-                    }
+            })
+            .then(response => {
+                if(response.ok) {
+                    const msj = accion === 'lock' ? "🔒 DISPOSITIVO BLOQUEADO" : "🔓 ACCESO RESTAURADO";
+                    mostrarToast(msj, "success");
+                } else {
+                    mostrarToast("❌ Error de comunicación con el servidor", "error");
                 }
+            })
+            .catch(error => {
+                mostrarToast("❌ Error de red", "error");
             });
         }
 
-        async function saveClient() {
-            const btn = document.getElementById('saveBtn'); const type = document.getElementById('docType').value;
-            const f1 = document.getElementById('fEq').files[0]; const f2 = document.getElementById('fFr').files[0]; const f3 = document.getElementById('fBk').files[0];
-            if(!f1 || !f2 || (type !== 'Pasaporte' && !f3)) return Swal.fire({title:'Error', text:'Sube todas las fotos requeridas', icon:'warning', background: 'var(--card-bg)', color: 'var(--text)'});
-
-            btn.disabled = true; btn.innerText = "Sincronizando...";
-            try {
-                const img1 = await compress(f1); const img2 = await compress(f2); const img3 = f3 ? await compress(f3) : ""; 
-                await db.collection("clientes").add({
-                    n: document.getElementById('fn').value, a: document.getElementById('ln').value,
-                    tDoc: type, tel: document.getElementById('country').value + document.getElementById('tel').value,
-                    imei: document.getElementById('imei').value, m: parseFloat(document.getElementById('amt').value) || 0,
-                    ins: document.getElementById('ins').value || "1", img1, img2, img3, date: new Date()
-                });
-                Swal.fire({title:'Éxito', text:'Cliente Sincronizado', icon:'success', background: 'var(--card-bg)', color: 'var(--text)'}).then(() => location.reload());
-            } catch(e) { btn.disabled = false; btn.innerText = "Reintentar"; }
+        // Sistema de notificaciones elegantes
+        function mostrarToast(mensaje, tipo) {
+            const toast = document.getElementById("toast");
+            toast.innerText = mensaje;
+            toast.className = "show " + tipo;
+            setTimeout(function(){ toast.className = toast.className.replace("show " + tipo, ""); }, 4000);
         }
-
-        function init() {
-            db.collection("clientes").orderBy("date", "desc").onSnapshot(snap => {
-                const list = document.getElementById('mainList');
-                let total = 0; list.innerHTML = ""; clientDataForExcel = [];
-                snap.forEach(doc => {
-                    const d = doc.data(); total += d.m; clientDataForExcel.push(d);
-                    list.innerHTML += `
-                        <div class="p-4 border border-gray-500/20 rounded-2xl bg-black/5 flex flex-col md:flex-row justify-between items-start md:items-center shadow-sm gap-4">
-                            <div class="w-full md:w-1/2">
-                                <p class="text-xs font-black uppercase truncate">${d.n} ${d.a}</p>
-                                <p class="text-[9px] text-gray-500 font-bold mt-1"><i class="fab fa-whatsapp text-green-500"></i> ${d.tel}</p>
-                                <p class="text-[9px] text-blue-500 font-black truncate">${d.tDoc} | IMEI: ${d.imei} <i class="fas fa-copy ml-1 text-gray-400 hover:text-blue-500 cursor-pointer text-sm" onclick="copiarIMEI('${d.imei}')" title="Copiar IMEI"></i> | ${d.ins} Cuotas</p>
-                                <p class="text-sm mt-1 font-black text-blue-600">RD$ ${d.m.toLocaleString()}</p>
-                            </div>
-                            
-                            <div class="flex flex-wrap gap-2 w-full md:w-auto justify-end">
-                                <button onclick="enviarCobro('${d.n}', '${d.tel}', ${d.m})" class="w-10 h-10 rounded-xl bg-green-500/10 text-green-500 hover:bg-green-500 hover:text-white transition-all flex items-center justify-center" title="Enviar Cobro por WhatsApp"><i class="fab fa-whatsapp text-lg"></i></button>
-                                <button onclick="editar('${doc.id}')" class="w-10 h-10 rounded-xl bg-gray-500/10 text-gray-400 hover:text-blue-500 flex items-center justify-center" title="Editar"><i class="fas fa-edit"></i></button>
-                                <button onclick="borrar('${doc.id}')" class="w-10 h-10 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500/30 flex items-center justify-center" title="Eliminar"><i class="fas fa-trash"></i></button>
-                                <button onclick="desbloquear('${d.imei}')" class="w-12 h-12 rounded-xl bg-gradient-to-tr from-emerald-500 to-green-400 text-white flex items-center justify-center shadow-lg shadow-green-500/40 active:scale-95 transition-all" title="Desbloquear"><i class="fas fa-unlock"></i></button>
-                                <button onclick="bloquear('${d.imei}')" class="w-12 h-12 rounded-xl bg-gradient-to-tr from-orange-600 to-orange-400 text-white flex items-center justify-center shadow-lg shadow-orange-500/40 active:scale-95 transition-all" title="Bloquear"><i class="fas fa-lock"></i></button>
-                            </div>
-                        </div>`;
-                });
-                document.getElementById('totalCap').innerText = "RD$ " + total.toLocaleString();
-            });
-        }
-
-        function bloquear(imei) { Swal.fire({ title: '¿BLOQUEAR EQUIPO?', text: 'IMEI: ' + imei, icon: 'warning', showCancelButton: true, confirmButtonColor: '#ea580c', confirmButtonText: 'SÍ, APAGAR', background: 'var(--card-bg)', color: 'var(--text)' }).then(r => { if(r.isConfirmed) { pusher.subscribe('private-canal-seguridad').trigger('client-orden-bloqueo', { action: 'lock', imei: imei }); Swal.fire({title:'¡Bloqueo Enviado!', icon:'success', background: 'var(--card-bg)', color: 'var(--text)'}); } }); }
-        function desbloquear(imei) { Swal.fire({ title: '¿DESBLOQUEAR EQUIPO?', text: 'IMEI: ' + imei, icon: 'info', showCancelButton: true, confirmButtonColor: '#10b981', confirmButtonText: 'SÍ, DESBLOQUEAR', background: 'var(--card-bg)', color: 'var(--text)' }).then(r => { if(r.isConfirmed) { pusher.subscribe('private-canal-seguridad').trigger('client-orden-bloqueo', { action: 'unlock', imei: imei }); Swal.fire({title:'¡Desbloqueo Enviado!', icon:'success', background: 'var(--card-bg)', color: 'var(--text)'}); } }); }
-
-        async function editar(id) {
-            const doc = await db.collection("clientes").doc(id).get(); const d = doc.data();
-            const { value: form } = await Swal.fire({ title: 'Editar Cliente', html: `<input id="e-n" class="swal2-input" value="${d.n}" placeholder="Nombre"><input id="e-imei" class="swal2-input" value="${d.imei}" placeholder="IMEI">`, focusConfirm: false, background: 'var(--card-bg)', color: 'var(--text)', preConfirm: () => [document.getElementById('e-n').value, document.getElementById('e-imei').value] });
-            if(form) await db.collection("clientes").doc(id).update({ n: form[0], imei: form[1] });
-        }
-
-        function borrar(id) { Swal.fire({ title: '¿ELIMINAR CLIENTE?', text: 'Esta acción no se puede deshacer.', icon: 'error', showCancelButton: true, confirmButtonColor: '#ef4444', confirmButtonText: 'SÍ, ELIMINAR', background: 'var(--card-bg)', color: 'var(--text)' }).then(async r => { if(r.isConfirmed) { await db.collection("clientes").doc(id).delete(); } }); }
-        function logout() { localStorage.clear(); document.getElementById('passInput').value = ''; location.reload(); }
-
-        const ses = localStorage.getItem('session');
-        if(ses) { document.getElementById('loginGate').classList.add('hidden-force'); document.getElementById('appContent').classList.remove('hidden-force'); init(); }
     </script>
 </body>
 </html>
