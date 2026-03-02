@@ -3,350 +3,502 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FireGuard Elite Panel | IntegratCore Corp</title>
+    <title>IntegratCore Corp | FireGuard MDM Pro</title>
     <style>
-        /* ================= ESTILOS GLOBALES (GRADO MILITAR) ================= */
+        /* Diseño Ultra Premium (Efecto Cristal y Neón) */
         :root {
-            --bg-dark: #0a0a0a;
-            --panel-dark: #151515;
-            --text-light: #e0e0e0;
-            --text-muted: #888888;
-            --accent-blue: #0066cc;
-            --danger-red: #d32f2f;
-            --success-green: #2e7d32;
-            --border-color: #2a2a2a;
+            --primary: #3b82f6; --primary-hover: #2563eb;
+            --bg-body: #080f1e; --bg-card: rgba(15, 23, 42, 0.7);
+            --text-dark: #f8fafc; --text-muted: #94a3b8;
+            --border: rgba(51, 65, 85, 0.5); --sidebar-bg: #030712;
+            --danger: #ef4444; --success: #10b981; --warning: #f59e0b;
         }
-        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-dark); color: var(--text-light); overflow-x: hidden; }
-        * { box-sizing: border-box; }
-        
-        button { cursor: pointer; border: none; border-radius: 6px; padding: 12px 18px; font-weight: bold; color: white; transition: all 0.3s ease; letter-spacing: 0.5px; }
-        button:hover { transform: translateY(-1px); box-shadow: 0 4px 8px rgba(0,0,0,0.3); }
-        
-        input, select { width: 100%; padding: 12px; margin-top: 6px; margin-bottom: 18px; border-radius: 6px; border: 1px solid var(--border-color); background-color: #1e1e1e; color: white; font-size: 14px; }
-        input:focus, select:focus { outline: none; border-color: var(--accent-blue); box-shadow: 0 0 5px rgba(0, 102, 204, 0.5); }
 
-        /* ================= PANTALLA DE LOGIN (MULTI-ADMIN) ================= */
-        #loginScreen { display: flex; justify-content: center; align-items: center; height: 100vh; background: radial-gradient(circle at center, #1a1a1a 0%, #000000 100%); }
-        .login-box { background: var(--panel-dark); padding: 40px; border-radius: 12px; width: 90%; max-width: 420px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); border: 1px solid var(--border-color); }
-        .login-box h2 { text-align: center; color: var(--text-light); margin-bottom: 5px; font-size: 24px; }
-        .login-box p { text-align: center; color: var(--accent-blue); font-size: 12px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 25px; }
-        .btn-blue { background-color: var(--accent-blue); width: 100%; font-size: 16px; margin-top: 10px; }
-        .btn-blue:hover { background-color: #005bb5; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; transition: 0.3s; }
+        body { background-color: var(--bg-body); color: var(--text-dark); overflow-x: hidden; background-image: radial-gradient(circle at top right, #1e3a8a 0%, #080f1e 40%); background-attachment: fixed; }
 
-        /* ================= DASHBOARD & LAYOUT ================= */
-        #dashboardScreen { display: none; display: flex; flex-direction: column; height: 100vh; }
-        
-        /* Navbar */
-        .navbar { background-color: var(--panel-dark); padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); z-index: 20; box-shadow: 0 2px 10px rgba(0,0,0,0.5); }
-        .menu-toggle { font-size: 24px; background: none; color: white; border: none; padding: 0; display: none; box-shadow: none; }
-        .brand-title { font-weight: 800; font-size: 20px; color: var(--text-light); letter-spacing: 1px; }
-        .brand-title span { color: var(--accent-blue); }
-        .badge { font-size: 12px; background: #2a2a2a; padding: 6px 12px; border-radius: 20px; border: 1px solid #333; font-weight: bold; }
+        /* Efecto Cristal (Glassmorphism) */
+        .glass-panel { background: var(--bg-card); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--border); border-radius: 12px; }
 
-        /* Contenedor Principal */
-        .main-container { display: flex; flex: 1; overflow: hidden; position: relative; }
-        
-        /* Menú Lateral (Sidebar) */
-        .sidebar { width: 260px; background-color: var(--panel-dark); padding: 25px 20px; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; }
-        .sidebar h3 { color: var(--text-muted); font-size: 12px; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 15px; }
-        .sidebar ul { list-style: none; padding: 0; margin: 0; flex-grow: 1; }
-        .sidebar ul li { padding: 14px 15px; margin-bottom: 5px; border-radius: 6px; cursor: pointer; color: var(--text-light); transition: 0.2s; display: flex; align-items: center; gap: 10px; font-size: 15px; }
-        .sidebar ul li:hover { background-color: #1e1e1e; color: var(--accent-blue); }
-        .sidebar ul li.active-nav { background-color: rgba(0, 102, 204, 0.1); color: var(--accent-blue); border-left: 3px solid var(--accent-blue); }
-        .btn-logout { background-color: transparent; border: 1px solid var(--danger-red); color: var(--danger-red); width: 100%; margin-top: 20px; }
-        .btn-logout:hover { background-color: rgba(211, 47, 47, 0.1); }
-        
-        /* Área de Contenido */
-        .content { flex: 1; padding: 30px; overflow-y: auto; background-color: var(--bg-dark); }
-        .card { background-color: var(--panel-dark); padding: 30px; border-radius: 10px; margin-bottom: 25px; border: 1px solid var(--border-color); box-shadow: 0 4px 6px rgba(0,0,0,0.3); animation: fadeIn 0.4s ease-out; }
-        .card h2 { margin-top: 0; color: var(--text-light); font-size: 22px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; margin-bottom: 20px; }
-        
-        /* Animaciones */
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* Pantalla de Login Restringida */
+        #authScreen { display: flex; height: 100vh; align-items: center; justify-content: center; position: absolute; top: 0; left: 0; width: 100%; z-index: 1000; background: var(--bg-body); background-image: radial-gradient(circle at center, #1e293b 0%, #080f1e 100%); }
+        .auth-card { padding: 40px; width: 90%; max-width: 420px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); text-align: center; position: relative; overflow: hidden; }
+        .auth-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: linear-gradient(90deg, var(--primary), var(--success)); }
+        .auth-title { font-size: 28px; font-weight: 800; margin-bottom: 5px; letter-spacing: 1px; }
+        .auth-subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 20px; }
+        .auth-input { width: 100%; padding: 14px; margin-bottom: 15px; border: 1px solid var(--border); border-radius: 8px; background: rgba(0,0,0,0.3); color: white; outline: none; font-size: 15px; }
+        .auth-input:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(59, 130, 246, 0.3); }
+        .btn-full { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); }
+        .btn-full:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6); }
+        .auth-links { margin-top: 20px; font-size: 13px; color: var(--text-muted); cursor: pointer; }
+        .auth-links span:hover { color: var(--primary); text-decoration: underline; }
 
-        /* ================= COMPONENTES ESPECÍFICOS ================= */
-        .btn-red { background-color: var(--danger-red); width: 100%; font-size: 16px; margin-top: 15px; padding: 15px; }
-        .btn-red:hover { background-color: #b71c1c; }
-        
-        /* Lista de Equipos */
-        .user-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #1a1a1a; margin-bottom: 12px; border-radius: 8px; border: 1px solid #2a2a2a; transition: 0.2s; }
-        .user-item:hover { border-color: #444; }
-        .action-icons span { cursor: pointer; margin-left: 15px; font-size: 18px; transition: 0.2s; opacity: 0.7; }
-        .action-icons span:hover { opacity: 1; transform: scale(1.1); }
-        
-        /* Upload Dinámico */
-        .doc-upload-group { display: none; background: #151515; padding: 20px; border-radius: 8px; border: 1px dashed #444; margin-bottom: 20px; }
-        .doc-upload-group.active { display: block; animation: fadeIn 0.3s; }
-        .file-input-wrapper { margin-bottom: 15px; }
-        .file-input-wrapper input[type="file"] { border: none; padding: 10px 0; background: transparent; }
+        /* Layout Principal */
+        #appLayout { display: none; height: 100vh; flex-direction: column; }
+        .app-container { display: flex; flex: 1; overflow: hidden; position: relative; }
 
-        /* Botones de Soporte */
-        .btn-whatsapp { display: block; background-color: #25D366; color: white; padding: 15px; text-align: center; text-decoration: none; border-radius: 6px; font-weight: bold; margin-bottom: 15px; transition: 0.3s; }
-        .btn-whatsapp:hover { background-color: #1da851; transform: translateY(-2px); }
-        .btn-email { display: block; background-color: #2a2a2a; color: white; padding: 15px; text-align: center; text-decoration: none; border-radius: 6px; font-weight: bold; border: 1px solid #444; transition: 0.3s; }
-        .btn-email:hover { background-color: #333; transform: translateY(-2px); }
+        /* Sidebar con Soporte */
+        .sidebar { width: 270px; background-color: var(--sidebar-bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; z-index: 100; transition: transform 0.3s ease; }
+        .logo-container { padding: 25px 20px; border-bottom: 1px solid var(--border); }
+        .logo-container h2 { background: linear-gradient(90deg, #60a5fa, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .nav-menu { flex: 1; padding-top: 20px; }
+        .nav-item { padding: 16px 25px; cursor: pointer; display: flex; align-items: center; gap: 12px; color: var(--text-muted); font-weight: 500; border-left: 3px solid transparent; font-size: 15px; }
+        .nav-item:hover, .nav-item.active { background: rgba(59, 130, 246, 0.1); color: white; border-left-color: var(--primary); }
+        .support-card { margin: 20px; padding: 15px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 8px; text-align: center; cursor: pointer; }
+        .support-card:hover { background: rgba(16, 185, 129, 0.2); }
 
-        /* ================= RESPONSIVE DESIGN (MÓVILES) ================= */
-        @media (max-width: 768px) {
+        /* Topbar & Main Content */
+        .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
+        .topbar { height: 70px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 30px; background: rgba(3, 7, 18, 0.8); backdrop-filter: blur(10px); z-index: 90; }
+        .menu-toggle { display: none; background: none; border: none; color: white; font-size: 24px; cursor: pointer; }
+        .clock { font-family: monospace; font-size: 16px; color: var(--primary); background: rgba(59,130,246,0.1); padding: 5px 12px; border-radius: 20px; border: 1px solid rgba(59,130,246,0.3); }
+        .content-area { padding: 30px; max-width: 1400px; margin: 0 auto; width: 100%; flex: 1; }
+        
+        /* Views */
+        .view-section { display: none; animation: fadeIn 0.4s ease; }
+        .view-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Cards & Grids */
+        .grid-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-bottom: 35px; }
+        .stat-card { padding: 25px; }
+        .stat-value { font-size: 32px; font-weight: 800; color: white; margin-top: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .stat-icon { font-size: 40px; opacity: 0.2; }
+
+        /* Tablas de Préstamos */
+        .panel { padding: 25px; margin-bottom: 25px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th { padding: 15px; text-align: left; border-bottom: 2px solid var(--border); color: var(--text-muted); font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
+        td { padding: 18px 15px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+        tr:hover td { background: rgba(255,255,255,0.05); }
+        .badge { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; display: inline-block; }
+        .badge.active { background: rgba(16,185,129,0.15); color: var(--success); border: 1px solid rgba(16,185,129,0.3); }
+        
+        .btn-action { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 12px; color: white; transition: 0.2s; display: inline-flex; align-items: center; gap: 5px; margin-right: 5px; }
+        .btn-lock { background: rgba(239, 68, 68, 0.2); color: var(--danger); border: 1px solid var(--danger); }
+        .btn-lock:hover { background: var(--danger); color: white; box-shadow: 0 0 15px rgba(239, 68, 68, 0.4); }
+        .btn-unlock { background: rgba(16, 185, 129, 0.2); color: var(--success); border: 1px solid var(--success); }
+        .btn-unlock:hover { background: var(--success); color: white; box-shadow: 0 0 15px rgba(16, 185, 129, 0.4); }
+        .btn-delete { background: transparent; color: var(--text-muted); border: 1px solid var(--border); padding: 8px; border-radius: 6px; }
+        .btn-delete:hover { background: var(--danger); color: white; border-color: var(--danger); }
+
+        /* Subida Dinámica de Documentos */
+        .doc-section { display: none; margin-top: 15px; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 8px; border: 1px dashed var(--border); }
+        .doc-section.active { display: block; animation: fadeIn 0.3s; }
+        .file-label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 5px; margin-top: 10px; }
+        .file-input { width: 100%; color: var(--text-dark); font-size: 13px; }
+
+        /* Footer */
+        .footer { text-align: center; padding: 20px; font-size: 13px; color: var(--text-muted); border-top: 1px solid var(--border); background: var(--sidebar-bg); }
+
+        /* Toast */
+        #toast { position: fixed; bottom: 30px; right: 30px; padding: 16px 30px; border-radius: 10px; color: white; font-weight: 600; font-size: 15px; transform: translateX(150%); transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); z-index: 9999; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        #toast.show { transform: translateX(0); }
+        .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: white; animation: spin 1s ease-in-out infinite; margin-right: 5px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* RESPONSIVE DESIGN */
+        .overlay { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 95; backdrop-filter: blur(2px); }
+        
+        @media (max-width: 900px) {
             .menu-toggle { display: block; }
-            .sidebar { position: absolute; height: 100%; transform: translateX(-100%); z-index: 99; box-shadow: none; }
-            .sidebar.active { transform: translateX(0); box-shadow: 5px 0 25px rgba(0,0,0,0.9); }
-            .content { padding: 15px; }
-            .card { padding: 20px; }
-            
-            /* Overlay oscuro al abrir el menú en móvil */
-            .overlay { display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 98; }
+            .sidebar { position: absolute; height: 100%; transform: translateX(-100%); box-shadow: 10px 0 30px rgba(0,0,0,0.8); }
+            .sidebar.active { transform: translateX(0); }
             .overlay.active { display: block; }
+            .topbar { padding: 0 15px; }
+            .content-area { padding: 15px; }
+            .grid-cards { grid-template-columns: 1fr; }
+            .panel { padding: 15px; }
+            /* Ajuste de tabla en móvil */
+            th, td { padding: 10px; font-size: 12px; }
+            .btn-action { padding: 6px 10px; font-size: 11px; margin-bottom: 5px; }
         }
     </style>
 </head>
 <body>
 
-    <div id="loginScreen">
-        <div class="login-box">
-            <h2>FireGuard Elite</h2>
-            <p>IntegratCore Corp</p>
+    <div id="mobileOverlay" class="overlay" onclick="toggleMenu()"></div>
+
+    <div id="authScreen">
+        <div class="auth-card glass-panel" id="loginForm">
+            <h2 class="auth-title">🛡️ FireGuard</h2>
+            <p class="auth-subtitle">Sistema Core - IntegratCore Corp</p>
             
-            <label>Nivel de Autorización</label>
-            <select id="loginType">
-                <option value="master">Administrador Maestro (IntegratCore)</option>
-                <option value="client">Franquicia / Tienda Afiliada</option>
+            <select id="loginType" class="auth-input" style="color: var(--text-muted);">
+                <option value="master">Nivel: Administrador Maestro</option>
+                <option value="client">Nivel: Tienda / Franquicia</option>
             </select>
 
-            <label>Usuario / ID de Credencial</label>
-            <input type="text" id="username" placeholder="Ingrese su usuario" autocomplete="off">
+            <input type="text" id="loginUser" class="auth-input" placeholder="Usuario ID (Ej. admin)" autocomplete="off">
+            <input type="password" id="loginPass" class="auth-input" placeholder="Contraseña de Acceso" autocomplete="new-password">
             
-            <label>Código de Seguridad</label>
-            <input type="password" id="password" placeholder="••••••••••••" autocomplete="new-password">
+            <button class="btn-full" onclick="procesarLogin()">AUTENTICAR SISTEMA</button>
             
-            <button class="btn-blue" onclick="iniciarSesion()">AUTENTICAR</button>
+            <div class="auth-links">
+                <span onclick="mostrarOlvidoPass()">¿Olvidó su contraseña?</span>
+            </div>
+        </div>
+
+        <div class="auth-card glass-panel" id="forgotForm" style="display: none;">
+            <h2 class="auth-title">Recuperación</h2>
+            <p class="auth-subtitle">Protocolo de Seguridad Activado</p>
+            <div style="padding: 20px; background: rgba(59,130,246,0.1); border: 1px solid var(--primary); border-radius: 8px; margin-bottom: 20px; color: white; font-size: 14px;">
+                Se enviarán las instrucciones de restablecimiento de administrador al correo oficial:<br><br>
+                <strong style="color: var(--primary); font-size: 16px;">contact@integratcore.com</strong>
+            </div>
+            <button class="btn-full" onclick="enviarRecuperacion()">ENVIAR ENLACE</button>
+            <div class="auth-links" style="margin-top: 15px;">
+                <span onclick="volverLogin()">Volver al Login</span>
+            </div>
         </div>
     </div>
 
-    <div id="dashboardScreen">
-        
-        <div class="navbar">
-            <button class="menu-toggle" onclick="toggleMenu()">☰</button>
-            <div class="brand-title">FireGuard <span>Elite</span></div>
-            <div id="userBadge" class="badge">Admin</div>
-        </div>
-
-        <div class="main-container">
-            <div class="overlay" id="mobileOverlay" onclick="toggleMenu()"></div>
-
-            <div class="sidebar" id="sidebar">
-                <h3>Centro de Comando</h3>
-                <ul id="menuList">
-                    <li onclick="mostrarSeccion('panelBloqueo', this)" class="active-nav">🛡️ Kiosco / Bloqueo</li>
-                    <li onclick="mostrarSeccion('registroCliente', this)">📝 Alta de Clientes</li>
-                    <li onclick="mostrarSeccion('gestionUsuarios', this)">📱 Gestión de Flota</li>
-                    <li style="border-top: 1px solid var(--border-color); margin-top: 15px; padding-top: 20px;" onclick="mostrarSeccion('soporteTecnico', this)">🎧 Soporte y API</li>
-                </ul>
-                <button class="btn-logout" onclick="cerrarSesion()">CERRAR SESIÓN</button>
-            </div>
-
-            <div class="content">
+    <div id="appLayout">
+        <div class="app-container">
+            
+            <aside class="sidebar" id="sidebar">
+                <div class="logo-container">
+                    <h2>🛡️ FireGuard MDM</h2>
+                    <p style="font-size: 12px; color: var(--text-muted); margin-top: 5px; letter-spacing: 2px;">INTEGRATCORE CORP</p>
+                </div>
+                <nav class="nav-menu">
+                    <div class="nav-item active" onclick="cambiarVista('dashboard', this)">📊 Panel Operativo</div>
+                    <div class="nav-item" onclick="cambiarVista('clientes', this)">👥 Cartera y Bloqueos</div>
+                    <div class="nav-item" onclick="cambiarVista('config', this)">⚙️ Conexión API</div>
+                </nav>
                 
-                <div id="panelBloqueo" class="card">
-                    <h2>Panel de Bloqueo Táctico</h2>
-                    <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 25px;">Ejecute la orden de restricción total sobre el dispositivo remoto. El equipo quedará inoperable hasta recibir la orden de liberación.</p>
-                    
-                    <label>IMEI o ID Único del Dispositivo</label>
-                    <input type="text" id="targetImei" placeholder="Ej: 354678091234567">
-                    
-                    <label>Número Celular (SIM Instalada)</label>
-                    <input type="tel" placeholder="Ej: +1 809 555 1234">
-                    
-                    <button class="btn-red" onclick="simularBloqueo()">🚨 EJECUTAR RESTRICCIÓN TOTAL</button>
+                <div class="support-card" onclick="window.open('https://wa.me/18094051812', '_blank')">
+                    <div style="font-size: 24px; margin-bottom: 5px;">🎧</div>
+                    <div style="color: var(--success); font-weight: bold; font-size: 14px;">Soporte Técnico</div>
+                    <div style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">WhatsApp: 18094051812</div>
                 </div>
 
-                <div id="registroCliente" class="card" style="display: none;">
-                    <h2>Registro de Nuevo Financiamiento</h2>
+                <div class="nav-item" style="color: var(--danger); border-top: 1px solid var(--border);" onclick="cerrarSesion()">🚪 Cerrar Sesión Segura</div>
+            </aside>
+
+            <main class="main-content">
+                <header class="topbar">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+                        <span style="display: inline-block; width: 10px; height: 10px; background: var(--success); border-radius: 50%; box-shadow: 0 0 10px var(--success);"></span>
+                        <span style="font-weight: 600; letter-spacing: 1px; font-size: 14px;" class="hide-mobile">SISTEMA EN LÍNEA</span>
+                    </div>
+                    <div class="clock" id="relojSistema">00:00:00</div>
+                </header>
+
+                <div class="content-area">
                     
-                    <label>Prefijo Internacional</label>
-                    <select>
-                        <option value="+1-809">República Dominicana (+1 809/829/849)</option>
-                        <option value="+1">Estados Unidos (+1)</option>
-                        <option value="+52">México (+52)</option>
-                        <option value="+57">Colombia (+57)</option>
-                        <option value="otro">Otro Prefijo...</option>
-                    </select>
-
-                    <label>Nombre Completo del Titular</label>
-                    <input type="text" placeholder="Ingrese el nombre legal">
-
-                    <label>Verificación de Identidad</label>
-                    <select id="tipoDocumento" onchange="cambiarFormularioDoc()">
-                        <option value="ninguno">Seleccione un método de validación...</option>
-                        <option value="cedula">Cédula de Identidad y Electoral</option>
-                        <option value="pasaporte">Pasaporte Internacional</option>
-                    </select>
-
-                    <div id="zonaCedula" class="doc-upload-group">
-                        <p style="margin-top:0; font-size: 14px; color: var(--accent-blue); font-weight: bold;">Cédula (Ambas caras requeridas)</p>
-                        <div class="file-input-wrapper">
-                            <label style="font-size: 12px; color: var(--text-muted);">Captura Frontal:</label>
-                            <input type="file" accept="image/*">
+                    <div id="vista-dashboard" class="view-section active">
+                        <h2 style="font-size: 28px; margin-bottom: 5px;">Centro de Mando Financiero</h2>
+                        <p style="color: var(--text-muted); margin-bottom: 30px;">Análisis de cartera y dispositivos gestionados por MDM.</p>
+                        
+                        <div class="grid-cards">
+                            <div class="stat-card glass-panel" style="border-top: 4px solid var(--primary);">
+                                <h3 style="color: var(--text-muted); font-size: 14px; text-transform: uppercase;">Capital Asegurado</h3>
+                                <div class="stat-value" id="statPrestamos">
+                                    $0.00 <span class="stat-icon">💰</span>
+                                </div>
+                            </div>
+                            <div class="stat-card glass-panel" style="border-top: 4px solid var(--success);">
+                                <h3 style="color: var(--text-muted); font-size: 14px; text-transform: uppercase;">Dispositivos Activos</h3>
+                                <div class="stat-value" id="statEquipos">
+                                    0 <span class="stat-icon">📱</span>
+                                </div>
+                            </div>
+                            <div class="stat-card glass-panel" style="border-top: 4px solid var(--danger);">
+                                <h3 style="color: var(--text-muted); font-size: 14px; text-transform: uppercase;">Bloqueos Críticos</h3>
+                                <div class="stat-value" style="color: var(--danger);">
+                                    0 <span class="stat-icon">🔒</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="file-input-wrapper">
-                            <label style="font-size: 12px; color: var(--text-muted);">Captura Reverso:</label>
-                            <input type="file" accept="image/*">
+
+                        <div class="panel glass-panel">
+                            <h3 style="margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">📡 Tráfico de Red MDM</h3>
+                            <div style="background: rgba(0,0,0,0.5); padding: 15px; border-radius: 8px; font-family: monospace; color: var(--success); font-size: 13px; height: 120px; overflow: hidden;">
+                                > Iniciando enlace seguro con servidores externos...<br>
+                                > Protocolo de cifrado AES-256 establecido.<br>
+                                > Sincronizando perfiles de Scalefusion (0ms de latencia)...<br>
+                                > <span style="color: var(--primary)">IntegratCore v4.0 estable. Esperando comandos...</span>
+                            </div>
                         </div>
                     </div>
 
-                    <div id="zonaPasaporte" class="doc-upload-group">
-                        <p style="margin-top:0; font-size: 14px; color: var(--accent-blue); font-weight: bold;">Pasaporte (Página de datos biométricos)</p>
-                        <div class="file-input-wrapper">
-                            <label style="font-size: 12px; color: var(--text-muted);">Captura Principal:</label>
-                            <input type="file" accept="image/*">
+                    <div id="vista-clientes" class="view-section">
+                        <h2 style="font-size: 28px; margin-bottom: 5px;">Gestión de Garantías</h2>
+                        <p style="color: var(--text-muted); margin-bottom: 30px;">Vincula el código IMEI/ID y los documentos al préstamo.</p>
+
+                        <div class="panel glass-panel">
+                            <h3 style="margin-bottom: 20px;">➕ Registrar Nuevo Contrato</h3>
+                            
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px;">
+                                <select id="cliPais" class="auth-input" style="margin:0;">
+                                    <option value="+1-809">🇩🇴 Rep. Dominicana (+1 809/829)</option>
+                                    <option value="+1">🇺🇸 Estados Unidos (+1)</option>
+                                    <option value="+52">🇲🇽 México (+52)</option>
+                                    <option value="+57">🇨🇴 Colombia (+57)</option>
+                                </select>
+                                <input type="text" id="cliNombre" class="auth-input" placeholder="Nombre Completo del Cliente" style="margin:0;">
+                                <input type="number" id="cliMonto" class="auth-input" placeholder="Monto del Préstamo (USD/DOP)" style="margin:0;">
+                                <input type="text" id="cliDispositivo" class="auth-input" placeholder="Modelo de Equipo (Ej. Moto G06)" style="margin:0;">
+                                <input type="text" id="cliDeviceID" class="auth-input" placeholder="Device ID de Scalefusion" style="margin:0; border-color: var(--warning);">
+                                
+                                <select id="cliTipoDoc" class="auth-input" style="margin:0;" onchange="cambiarDocumentos()">
+                                    <option value="none">📑 Seleccionar Documento...</option>
+                                    <option value="cedula">Cédula de Identidad</option>
+                                    <option value="pasaporte">Pasaporte</option>
+                                </select>
+                            </div>
+
+                            <div id="zonaCedula" class="doc-section">
+                                <span style="color: var(--primary); font-weight: bold; font-size: 13px;">📸 Cédula de Identidad</span>
+                                <label class="file-label">Foto Frontal:</label>
+                                <input type="file" class="file-input" accept="image/*">
+                                <label class="file-label">Foto Reverso:</label>
+                                <input type="file" class="file-input" accept="image/*">
+                            </div>
+                            <div id="zonaPasaporte" class="doc-section">
+                                <span style="color: var(--primary); font-weight: bold; font-size: 13px;">📸 Pasaporte</span>
+                                <label class="file-label">Página de Datos Biométricos:</label>
+                                <input type="file" class="file-input" accept="image/*">
+                            </div>
+
+                            <button class="btn-full" style="margin-top: 20px; width: auto; padding: 12px 30px;" onclick="agregarCliente()">GUARDAR Y VINCULAR EQUIPO</button>
+                        </div>
+
+                        <div class="panel glass-panel" style="overflow-x: auto;">
+                            <h3 style="margin-bottom: 20px;">Cartera de Clientes Protegida</h3>
+                            <table id="tablaClientes">
+                                <thead>
+                                    <tr>
+                                        <th>Cliente / Deudor</th>
+                                        <th>Capital Riesgo</th>
+                                        <th>Garantía (Equipo)</th>
+                                        <th>Panel de Control MDM</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="listaClientes">
+                                    </tbody>
+                            </table>
                         </div>
                     </div>
 
-                    <button class="btn-blue" style="margin-top: 20px;">Registrar Expediente</button>
-                </div>
-
-                <div id="gestionUsuarios" class="card" style="display: none;">
-                    <h2>Monitoreo de Equipos</h2>
-                    
-                    <div class="user-item">
-                        <div>
-                            <strong>Motorola Moto G06</strong><br>
-                            <span style="font-size: 13px; color: var(--text-muted);">Titular: Esposa</span><br>
-                            <span style="font-size: 12px; color: var(--success-green); font-weight: bold;">🟢 CONECTADO - +1 829-555-0192</span>
-                        </div>
-                        <div class="action-icons">
-                            <span title="Editar Expediente">✏️</span>
-                            <span title="Desvincular Equipo">🗑️</span>
+                    <div id="vista-config" class="view-section">
+                        <h2 style="font-size: 28px; margin-bottom: 5px;">Ajustes del Núcleo</h2>
+                        <div class="panel glass-panel">
+                            <h3 style="color: var(--warning); margin-bottom: 10px;">⚠️ Llave de Integración MDM</h3>
+                            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Este token permite la comunicación con los celulares.</p>
+                            
+                            <label style="display: block; font-size: 12px; margin-bottom: 5px; color: var(--text-muted);">API Token de Producción:</label>
+                            <input type="password" id="sysApiKey" class="auth-input" placeholder="Pega aquí el código de tu API Key...">
+                            <button class="btn-full" style="width: auto; padding: 12px 30px;" onclick="guardarAPI()">GUARDAR EN CACHÉ SEGURA</button>
                         </div>
                     </div>
 
-                    <div class="user-item">
-                        <div>
-                            <strong>Samsung Galaxy A14</strong><br>
-                            <span style="font-size: 13px; color: var(--text-muted);">Titular: Cliente 002</span><br>
-                            <span style="font-size: 12px; color: var(--danger-red); font-weight: bold;">🔴 RESTRINGIDO - +1 809-555-8833</span>
-                        </div>
-                        <div class="action-icons">
-                            <span title="Editar Expediente">✏️</span>
-                            <span title="Desvincular Equipo">🗑️</span>
-                        </div>
-                    </div>
                 </div>
 
-                <div id="soporteTecnico" class="card" style="display: none;">
-                    <h2>Central de Soporte IntegratCore</h2>
-                    <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 25px;">¿Experimenta problemas de conectividad o requiere ajustes en su API de Scalefusion? Nuestro equipo de ingenieros está a su disposición.</p>
-                    
-                    <a href="https://wa.me/18090000000" target="_blank" class="btn-whatsapp">
-                        🟢 Contactar Ingeniería vía WhatsApp
-                    </a>
-                    
-                    <a href="mailto:soporte@integratcore.com" class="btn-email">
-                        ✉️ Abrir Ticket por Correo
-                    </a>
-                </div>
-
-            </div>
+                <footer class="footer">
+                    <strong>INTEGRATCORE CORP</strong><br>
+                    Creado y Desarrollado por <strong>NICOLAS R.</strong> © 2026.<br>
+                    <span style="font-size: 11px; opacity: 0.6; margin-top: 5px; display: inline-block;">Soporte Empresarial: contact@integratcore.com | FireGuard MDM Pro v4.0</span>
+                </footer>
+            </main>
         </div>
     </div>
+
+    <div id="toast">Notificación</div>
 
     <script>
-        // Elementos del DOM
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('mobileOverlay');
+        // RELOJ
+        setInterval(() => {
+            const ahora = new Date();
+            document.getElementById('relojSistema').innerText = ahora.toLocaleTimeString();
+        }, 1000);
 
-        // Menú Hamburguesa Responsivo
+        // MENÚ MÓVIL
         function toggleMenu() {
-            sidebar.classList.toggle('active');
-            overlay.classList.toggle('active');
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('mobileOverlay').classList.toggle('active');
         }
 
-        // Navegación fluida
-        function mostrarSeccion(idSeccion, elementoClick) {
-            // Ocultar todas las tarjetas
-            document.querySelectorAll('.content > .card').forEach(card => card.style.display = 'none');
-            // Mostrar la seleccionada
-            document.getElementById(idSeccion).style.display = 'block';
+        // MOSTRAR DOCUMENTOS
+        function cambiarDocumentos() {
+            const tipo = document.getElementById('cliTipoDoc').value;
+            document.getElementById('zonaCedula').classList.remove('active');
+            document.getElementById('zonaPasaporte').classList.remove('active');
             
-            // Efecto visual en el menú lateral
-            if(elementoClick) {
-                document.querySelectorAll('.sidebar li').forEach(li => li.classList.remove('active-nav'));
-                elementoClick.classList.add('active-nav');
-            }
-
-            // Cerrar menú en móviles automáticamente
-            if(window.innerWidth <= 768) {
-                toggleMenu();
-            }
+            if(tipo === 'cedula') document.getElementById('zonaCedula').classList.add('active');
+            if(tipo === 'pasaporte') document.getElementById('zonaPasaporte').classList.add('active');
         }
 
-        // Multi-Admin Login
-        function iniciarSesion() {
-            const userType = document.getElementById('loginType').value;
-            const badge = document.getElementById('userBadge');
-            
-            if(userType === 'master') {
-                badge.innerText = "⭐ Root: IntegratCore";
-                badge.style.color = "gold";
-                badge.style.borderColor = "gold";
+        // AUTENTICACIÓN
+        function procesarLogin() {
+            const user = document.getElementById('loginUser').value;
+            const pass = document.getElementById('loginPass').value;
+
+            if(user === 'admin' && pass === '12345') {
+                document.getElementById('authScreen').style.display = 'none';
+                document.getElementById('appLayout').style.display = 'flex';
+                cargarDatosDashboard();
+                mostrarToast("✅ Acceso concedido.", "#10b981");
             } else {
-                badge.innerText = "👤 Tienda Autorizada";
-                badge.style.color = "white";
-                badge.style.borderColor = "#444";
+                mostrarToast("❌ ERROR: Credenciales incorrectas.", "#ef4444");
+                document.getElementById('loginPass').value = ''; 
             }
-
-            document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('dashboardScreen').style.display = 'flex';
         }
 
-        // Logout y limpieza estricta (Solución Orden #1)
+        function mostrarOlvidoPass() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('forgotForm').style.display = 'block';
+        }
+        function volverLogin() {
+            document.getElementById('forgotForm').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'block';
+        }
+        function enviarRecuperacion() {
+            mostrarToast("📧 Instrucciones enviadas al correo oficial.", "#3b82f6");
+            setTimeout(volverLogin, 2000);
+        }
+
         function cerrarSesion() {
-            document.getElementById('username').value = '';
-            document.getElementById('password').value = '';
-            document.getElementById('targetImei').value = ''; // Limpia el formulario de bloqueo también
+            document.getElementById('appLayout').style.display = 'none';
+            document.getElementById('authScreen').style.display = 'flex';
             
-            document.getElementById('dashboardScreen').style.display = 'none';
-            document.getElementById('loginScreen').style.display = 'flex';
+            // MEJORA: Destrucción de caché de inputs
+            document.getElementById('loginPass').value = '';
+            document.getElementById('loginUser').value = '';
+            
+            mostrarToast("🔒 Sesión cerrada de forma segura.", "#f59e0b");
         }
 
-        // Lógica de Documentos Dinámicos
-        function cambiarFormularioDoc() {
-            const tipo = document.getElementById('tipoDocumento').value;
-            const zonaCedula = document.getElementById('zonaCedula');
-            const zonaPasaporte = document.getElementById('zonaPasaporte');
+        function cambiarVista(vista, elementoMenu) {
+            document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById('vista-' + vista).classList.add('active');
+            if(elementoMenu) elementoMenu.classList.add('active');
             
-            zonaCedula.classList.remove('active');
-            zonaPasaporte.classList.remove('active');
-
-            if(tipo === 'cedula') zonaCedula.classList.add('active');
-            else if (tipo === 'pasaporte') zonaPasaporte.classList.add('active');
+            // Auto-cerrar menú en móviles
+            if(window.innerWidth <= 900) toggleMenu();
         }
 
-        // Simulación Segura de Bloqueo (Sin exponer la API)
-        function simularBloqueo() {
-            const imei = document.getElementById('targetImei').value;
-            if(!imei) {
-                alert("⚠️ PROTOCOLO DENEGADO: Ingrese un IMEI válido primero.");
-                return;
+        function mostrarToast(mensaje, colorHex) {
+            const toast = document.getElementById('toast');
+            toast.innerText = mensaje;
+            toast.style.backgroundColor = colorHex;
+            toast.style.borderLeft = `5px solid rgba(255,255,255,0.5)`;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 4000);
+        }
+
+        // LÓGICA CORE
+        let clientes = JSON.parse(localStorage.getItem('ic_clientes_v4')) || [];
+
+        function cargarDatosDashboard() {
+            if(localStorage.getItem('ic_apikey_v4')) {
+                document.getElementById('sysApiKey').value = localStorage.getItem('ic_apikey_v4');
             }
+            actualizarTablaYStats();
+        }
+
+        function guardarAPI() {
+            const api = document.getElementById('sysApiKey').value;
+            localStorage.setItem('ic_apikey_v4', api);
+            mostrarToast("✅ API Key guardada.", "#10b981");
+        }
+
+        function agregarCliente() {
+            const nombre = document.getElementById('cliNombre').value;
+            const monto = parseFloat(document.getElementById('cliMonto').value);
+            const disp = document.getElementById('cliDispositivo').value;
+            const devId = document.getElementById('cliDeviceID').value;
+            const pais = document.getElementById('cliPais').value;
+
+            if(!nombre || !monto || !devId) return mostrarToast("⚠️ Complete todos los campos clave.", "#f59e0b");
+
+            clientes.push({ id: Date.now(), nombre, monto, disp, devId, pais });
+            localStorage.setItem('ic_clientes_v4', JSON.stringify(clientes));
             
-            // Simulación visual de proceso en el servidor
-            let btn = document.querySelector('.btn-red');
-            let textoOriginal = btn.innerText;
-            btn.innerText = "⏳ ENVIANDO ORDEN AL SERVIDOR...";
-            btn.style.backgroundColor = "#ff9800";
-            
-            setTimeout(() => {
-                btn.innerText = "✅ EQUIPO BLOQUEADO";
-                btn.style.backgroundColor = "var(--success-green)";
-                alert(`ORDEN CONFIRMADA.\nEl servidor remoto ha restringido el equipo IMEI: ${imei}.`);
-                
-                setTimeout(() => {
-                    btn.innerText = textoOriginal;
-                    btn.style.backgroundColor = "var(--danger-red)";
-                    document.getElementById('targetImei').value = '';
-                }, 3000);
-            }, 1500);
+            // Limpiar
+            document.getElementById('cliNombre').value = ''; document.getElementById('cliMonto').value = '';
+            document.getElementById('cliDispositivo').value = ''; document.getElementById('cliDeviceID').value = '';
+            document.getElementById('cliTipoDoc').value = 'none'; cambiarDocumentos();
+
+            actualizarTablaYStats();
+            mostrarToast("💼 Equipo asegurado bajo MDM.", "#10b981");
+        }
+
+        // MEJORA: Eliminar cliente específico
+        function eliminarCliente(id) {
+            if(confirm("¿Está seguro de eliminar este expediente? El equipo ya no será gestionado desde este panel.")) {
+                clientes = clientes.filter(c => c.id !== id);
+                localStorage.setItem('ic_clientes_v4', JSON.stringify(clientes));
+                actualizarTablaYStats();
+                mostrarToast("🗑️ Expediente eliminado.", "#f59e0b");
+            }
+        }
+
+        function actualizarTablaYStats() {
+            const tbody = document.getElementById('listaClientes');
+            tbody.innerHTML = '';
+            let totalPrestado = 0;
+
+            clientes.forEach(cli => {
+                totalPrestado += cli.monto;
+                const tr = document.createElement('tr');
+                // MEJORA: Se agregó el botón Eliminar (🗑️) en las acciones
+                tr.innerHTML = `
+                    <td>
+                        <strong style="color: white; font-size: 14px;">${cli.nombre}</strong><br>
+                        <span style="font-size: 11px; color: var(--text-muted);">${cli.pais || ''}</span>
+                    </td>
+                    <td style="color: var(--success); font-weight: bold;">$${cli.monto.toLocaleString()}</td>
+                    <td>
+                        <div style="font-weight: 500;">${cli.disp}</div>
+                        <div style="font-size: 11px; color: var(--text-muted); font-family: monospace;">ID: ${cli.devId}</div>
+                    </td>
+                    <td>
+                        <button class="btn-action btn-lock" onclick="ordenMDM('${cli.devId}', 'lock', this)">🔒 Bloquear</button>
+                        <button class="btn-action btn-unlock" onclick="ordenMDM('${cli.devId}', 'unlock', this)">🔓 Restaurar</button>
+                        <button class="btn-action btn-delete" onclick="eliminarCliente(${cli.id})" title="Eliminar Registro">🗑️</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('statPrestamos').innerText = "$" + totalPrestado.toLocaleString();
+            document.getElementById('statEquipos').innerText = clientes.length;
+        }
+
+        // ORDEN A SCALEFUSION (Igual a su código original)
+        function ordenMDM(deviceId, accion, btnElement) {
+            const apiKey = localStorage.getItem('ic_apikey_v4');
+            if(!apiKey) return mostrarToast("❌ No has configurado la API Key.", "#ef4444");
+
+            const textoOriginal = btnElement.innerHTML;
+            btnElement.innerHTML = `<div class="spinner"></div>`;
+            btnElement.disabled = true;
+
+            fetch(`https://api.scalefusion.com/api/v1/devices/${deviceId}/${accion}.json`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Token ${apiKey}`,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(res => {
+                btnElement.innerHTML = textoOriginal;
+                btnElement.disabled = false;
+                if(res.ok) {
+                    mostrarToast(accion === 'lock' ? "🔒 IMPACTO CONFIRMADO." : "🔓 ACCESO RESTAURADO.", "#10b981");
+                } else {
+                    mostrarToast("❌ El servidor de Scalefusion rechazó la orden.", "#ef4444");
+                }
+            })
+            .catch(e => {
+                btnElement.innerHTML = textoOriginal;
+                btnElement.disabled = false;
+                mostrarToast("❌ Error de comunicación.", "#ef4444");
+            });
         }
     </script>
 </body>
