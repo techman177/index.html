@@ -501,5 +501,41 @@
             });
         }
     </script>
+    <script>
+  // Función para mandar la orden de bloqueo a Scalefusion
+  async function mandarBloqueo(deviceId) {
+    // 1. Configuración (Usa comillas invertidas ` para que el ID funcione en el link)
+    const apiKey = "9af702bab50a4f4fb8dd1124827b9ce4"; 
+    const url = `https://api.scalefusion.com/api/v1/devices/${deviceId}/lock.json`;
+
+    console.log("Iniciando bloqueo para:", deviceId);
+
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Token ${apiKey}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      // 2. Respuesta al usuario
+      if (response.ok) {
+        alert("✅ IMPACTO CONFIRMADO: El equipo " + deviceId + " ha sido bloqueado.");
+      } else {
+        const errorData = await response.json();
+        console.error("Detalle del error:", errorData);
+        alert("❌ LA ORDEN FALLÓ: Verifica si el Device ID es correcto o si la API Key caducó.");
+      }
+    } catch (error) {
+      console.error("Error de red:", error);
+      alert("📡 ERROR DE CONEXIÓN: No se pudo contactar con Scalefusion.");
+    }
+  }
+
+  // Hacer que la función sea global para que los botones de tu tabla puedan usarla
+  window.mandarBloqueo = mandarBloqueo;
+</script>
 </body>
 </html>
+
