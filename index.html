@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IntegratCore Corp | FireGuard MDM Pro</title>
     <style>
-        /* Diseño Ultra Premium (Efecto Cristal y Neón) */
         :root {
             --primary: #3b82f6; --primary-hover: #2563eb;
             --bg-body: #080f1e; --bg-card: rgba(15, 23, 42, 0.7);
@@ -17,102 +16,71 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; transition: 0.3s; }
         body { background-color: var(--bg-body); color: var(--text-dark); overflow-x: hidden; background-image: radial-gradient(circle at top right, #1e3a8a 0%, #080f1e 40%); background-attachment: fixed; }
 
-        /* Efecto Cristal (Glassmorphism) */
         .glass-panel { background: var(--bg-card); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--border); border-radius: 12px; }
 
-        /* Pantalla de Login Restringida */
+        /* Login */
         #authScreen { display: flex; height: 100vh; align-items: center; justify-content: center; position: absolute; top: 0; left: 0; width: 100%; z-index: 1000; background: var(--bg-body); background-image: radial-gradient(circle at center, #1e293b 0%, #080f1e 100%); }
-        .auth-card { padding: 40px; width: 90%; max-width: 420px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); text-align: center; position: relative; overflow: hidden; }
-        .auth-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: linear-gradient(90deg, var(--primary), var(--success)); }
+        .auth-card { padding: 40px; width: 90%; max-width: 420px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); text-align: center; position: relative; border-top: 4px solid var(--primary); }
         .auth-title { font-size: 28px; font-weight: 800; margin-bottom: 5px; letter-spacing: 1px; }
         .auth-subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 20px; }
-        .auth-input { width: 100%; padding: 14px; margin-bottom: 15px; border: 1px solid var(--border); border-radius: 8px; background: rgba(0,0,0,0.3); color: white; outline: none; font-size: 15px; }
+        .auth-input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid var(--border); border-radius: 8px; background: rgba(0,0,0,0.3); color: white; outline: none; font-size: 14px; }
         .auth-input:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(59, 130, 246, 0.3); }
-        .btn-full { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); }
+        
+        .btn-full { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; }
         .btn-full:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6); }
-        .auth-links { margin-top: 20px; font-size: 13px; color: var(--text-muted); cursor: pointer; }
-        .auth-links span:hover { color: var(--primary); text-decoration: underline; }
 
-        /* Layout Principal */
+        /* Layout */
         #appLayout { display: none; height: 100vh; flex-direction: column; }
         .app-container { display: flex; flex: 1; overflow: hidden; position: relative; }
 
-        /* Sidebar con Soporte */
         .sidebar { width: 270px; background-color: var(--sidebar-bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; z-index: 100; transition: transform 0.3s ease; }
         .logo-container { padding: 25px 20px; border-bottom: 1px solid var(--border); }
         .logo-container h2 { background: linear-gradient(90deg, #60a5fa, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
         .nav-menu { flex: 1; padding-top: 20px; }
-        .nav-item { padding: 16px 25px; cursor: pointer; display: flex; align-items: center; gap: 12px; color: var(--text-muted); font-weight: 500; border-left: 3px solid transparent; font-size: 15px; }
+        .nav-item { padding: 16px 25px; cursor: pointer; display: flex; align-items: center; gap: 12px; color: var(--text-muted); font-weight: 500; border-left: 3px solid transparent; }
         .nav-item:hover, .nav-item.active { background: rgba(59, 130, 246, 0.1); color: white; border-left-color: var(--primary); }
-        .support-card { margin: 20px; padding: 15px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 8px; text-align: center; cursor: pointer; }
-        .support-card:hover { background: rgba(16, 185, 129, 0.2); }
 
-        /* Topbar & Main Content */
         .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
         .topbar { height: 70px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 30px; background: rgba(3, 7, 18, 0.8); backdrop-filter: blur(10px); z-index: 90; }
         .menu-toggle { display: none; background: none; border: none; color: white; font-size: 24px; cursor: pointer; }
         .clock { font-family: monospace; font-size: 16px; color: var(--primary); background: rgba(59,130,246,0.1); padding: 5px 12px; border-radius: 20px; border: 1px solid rgba(59,130,246,0.3); }
         .content-area { padding: 30px; max-width: 1400px; margin: 0 auto; width: 100%; flex: 1; }
         
-        /* Views */
         .view-section { display: none; animation: fadeIn 0.4s ease; }
         .view-section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Cards & Grids */
+        /* Cards */
         .grid-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-bottom: 35px; }
         .stat-card { padding: 25px; }
         .stat-value { font-size: 32px; font-weight: 800; color: white; margin-top: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .stat-icon { font-size: 40px; opacity: 0.2; }
 
-        /* Tablas de Préstamos */
-        .panel { padding: 25px; margin-bottom: 25px; }
+        /* Tables */
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th { padding: 15px; text-align: left; border-bottom: 2px solid var(--border); color: var(--text-muted); font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
+        th { padding: 15px; text-align: left; border-bottom: 2px solid var(--border); color: var(--text-muted); font-size: 12px; text-transform: uppercase; }
         td { padding: 18px 15px; border-bottom: 1px solid var(--border); vertical-align: middle; }
-        tr:hover td { background: rgba(255,255,255,0.05); }
-        .badge { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; display: inline-block; }
-        .badge.active { background: rgba(16,185,129,0.15); color: var(--success); border: 1px solid rgba(16,185,129,0.3); }
         
-        .btn-action { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 12px; color: white; transition: 0.2s; display: inline-flex; align-items: center; gap: 5px; margin-right: 5px; }
+        .btn-action { padding: 8px 12px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 11px; color: white; margin-right: 5px; }
         .btn-lock { background: rgba(239, 68, 68, 0.2); color: var(--danger); border: 1px solid var(--danger); }
-        .btn-lock:hover { background: var(--danger); color: white; box-shadow: 0 0 15px rgba(239, 68, 68, 0.4); }
+        .btn-lock:hover { background: var(--danger); color: white; }
         .btn-unlock { background: rgba(16, 185, 129, 0.2); color: var(--success); border: 1px solid var(--success); }
-        .btn-unlock:hover { background: var(--success); color: white; box-shadow: 0 0 15px rgba(16, 185, 129, 0.4); }
-        .btn-delete { background: transparent; color: var(--text-muted); border: 1px solid var(--border); padding: 8px; border-radius: 6px; }
-        .btn-delete:hover { background: var(--danger); color: white; border-color: var(--danger); }
+        .btn-unlock:hover { background: var(--success); color: white; }
 
-        /* Subida Dinámica de Documentos */
         .doc-section { display: none; margin-top: 15px; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 8px; border: 1px dashed var(--border); }
-        .doc-section.active { display: block; animation: fadeIn 0.3s; }
-        .file-label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 5px; margin-top: 10px; }
-        .file-input { width: 100%; color: var(--text-dark); font-size: 13px; }
+        .doc-section.active { display: block; }
 
-        /* Footer */
-        .footer { text-align: center; padding: 20px; font-size: 13px; color: var(--text-muted); border-top: 1px solid var(--border); background: var(--sidebar-bg); }
-
-        /* Toast */
-        #toast { position: fixed; bottom: 30px; right: 30px; padding: 16px 30px; border-radius: 10px; color: white; font-weight: 600; font-size: 15px; transform: translateX(150%); transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); z-index: 9999; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        #toast { position: fixed; bottom: 30px; right: 30px; padding: 16px 30px; border-radius: 10px; color: white; font-weight: 600; z-index: 9999; transform: translateX(150%); transition: 0.4s; }
         #toast.show { transform: translateX(0); }
-        .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: white; animation: spin 1s ease-in-out infinite; margin-right: 5px; }
-        @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* RESPONSIVE DESIGN */
-        .overlay { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 95; backdrop-filter: blur(2px); }
-        
         @media (max-width: 900px) {
             .menu-toggle { display: block; }
-            .sidebar { position: absolute; height: 100%; transform: translateX(-100%); box-shadow: 10px 0 30px rgba(0,0,0,0.8); }
-            .sidebar.active { transform: translateX(0); }
+            .sidebar { position: absolute; height: 100%; transform: translateX(-100%); }
+            .sidebar.active { transform: translateX(0); box-shadow: 10px 0 30px #000; }
             .overlay.active { display: block; }
             .topbar { padding: 0 15px; }
-            .content-area { padding: 15px; }
             .grid-cards { grid-template-columns: 1fr; }
-            .panel { padding: 15px; }
-            /* Ajuste de tabla en móvil */
-            th, td { padding: 10px; font-size: 12px; }
-            .btn-action { padding: 6px 10px; font-size: 11px; margin-bottom: 5px; }
         }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -120,188 +88,124 @@
     <div id="mobileOverlay" class="overlay" onclick="toggleMenu()"></div>
 
     <div id="authScreen">
-        <div class="auth-card glass-panel" id="loginForm">
+        <div class="auth-card glass-panel">
             <h2 class="auth-title">🛡️ FireGuard</h2>
-            <p class="auth-subtitle">Sistema Core - IntegratCore Corp</p>
+            <p class="auth-subtitle">IntegratCore Corp - MDM Secure</p>
             
-            <select id="loginType" class="auth-input" style="color: var(--text-muted);">
-                <option value="master">Nivel: Administrador Maestro</option>
-                <option value="client">Nivel: Tienda / Franquicia</option>
+            <select id="loginType" class="auth-input">
+                <option value="master">Administrador Maestro</option>
+                <option value="client">Tienda / Franquicia</option>
             </select>
 
-            <input type="text" id="loginUser" class="auth-input" placeholder="Usuario ID (Ej. admin)" autocomplete="off">
-            <input type="password" id="loginPass" class="auth-input" placeholder="Contraseña de Acceso" autocomplete="new-password">
+            <input type="text" id="loginUser" class="auth-input" placeholder="Usuario ID">
+            <input type="password" id="loginPass" class="auth-input" placeholder="Contraseña">
             
             <button class="btn-full" onclick="procesarLogin()">AUTENTICAR SISTEMA</button>
-            
-            <div class="auth-links">
-                <span onclick="mostrarOlvidoPass()">¿Olvidó su contraseña?</span>
-            </div>
-        </div>
-
-        <div class="auth-card glass-panel" id="forgotForm" style="display: none;">
-            <h2 class="auth-title">Recuperación</h2>
-            <p class="auth-subtitle">Protocolo de Seguridad Activado</p>
-            <div style="padding: 20px; background: rgba(59,130,246,0.1); border: 1px solid var(--primary); border-radius: 8px; margin-bottom: 20px; color: white; font-size: 14px;">
-                Se enviarán las instrucciones de restablecimiento de administrador al correo oficial:<br><br>
-                <strong style="color: var(--primary); font-size: 16px;">contact@integratcore.com</strong>
-            </div>
-            <button class="btn-full" onclick="enviarRecuperacion()">ENVIAR ENLACE</button>
-            <div class="auth-links" style="margin-top: 15px;">
-                <span onclick="volverLogin()">Volver al Login</span>
-            </div>
         </div>
     </div>
 
     <div id="appLayout">
         <div class="app-container">
-            
             <aside class="sidebar" id="sidebar">
                 <div class="logo-container">
-                    <h2>🛡️ FireGuard MDM</h2>
-                    <p style="font-size: 12px; color: var(--text-muted); margin-top: 5px; letter-spacing: 2px;">INTEGRATCORE CORP</p>
+                    <h2>🛡️ FireGuard</h2>
+                    <p style="font-size: 10px; color: var(--text-muted); letter-spacing: 2px;">INTEGRATCORE CORP</p>
                 </div>
                 <nav class="nav-menu">
                     <div class="nav-item active" onclick="cambiarVista('dashboard', this)">📊 Panel Operativo</div>
                     <div class="nav-item" onclick="cambiarVista('clientes', this)">👥 Cartera y Bloqueos</div>
                     <div class="nav-item" onclick="cambiarVista('config', this)">⚙️ Conexión API</div>
                 </nav>
-                
                 <div class="support-card" onclick="window.open('https://wa.me/18094051812', '_blank')">
-                    <div style="font-size: 24px; margin-bottom: 5px;">🎧</div>
-                    <div style="color: var(--success); font-weight: bold; font-size: 14px;">Soporte Técnico</div>
-                    <div style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">WhatsApp: 18094051812</div>
+                    <div style="color: var(--success); font-weight: bold; font-size: 14px;">Soporte Técnico 🎧</div>
                 </div>
-
-                <div class="nav-item" style="color: var(--danger); border-top: 1px solid var(--border);" onclick="cerrarSesion()">🚪 Cerrar Sesión Segura</div>
+                <div class="nav-item" style="color: var(--danger); border-top: 1px solid var(--border);" onclick="cerrarSesion()">🚪 Cerrar Sesión</div>
             </aside>
 
             <main class="main-content">
                 <header class="topbar">
-                    <div style="display: flex; align-items: center; gap: 15px;">
-                        <button class="menu-toggle" onclick="toggleMenu()">☰</button>
-                        <span style="display: inline-block; width: 10px; height: 10px; background: var(--success); border-radius: 50%; box-shadow: 0 0 10px var(--success);"></span>
-                        <span style="font-weight: 600; letter-spacing: 1px; font-size: 14px;" class="hide-mobile">SISTEMA EN LÍNEA</span>
-                    </div>
+                    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
                     <div class="clock" id="relojSistema">00:00:00</div>
                 </header>
 
                 <div class="content-area">
                     
                     <div id="vista-dashboard" class="view-section active">
-                        <h2 style="font-size: 28px; margin-bottom: 5px;">Centro de Mando Financiero</h2>
-                        <p style="color: var(--text-muted); margin-bottom: 30px;">Análisis de cartera y dispositivos gestionados por MDM.</p>
-                        
                         <div class="grid-cards">
                             <div class="stat-card glass-panel" style="border-top: 4px solid var(--primary);">
-                                <h3 style="color: var(--text-muted); font-size: 14px; text-transform: uppercase;">Capital Asegurado</h3>
-                                <div class="stat-value" id="statPrestamos">
-                                    $0.00 <span class="stat-icon">💰</span>
-                                </div>
+                                <small>CAPITAL ASEGURADO</small>
+                                <div class="stat-value" id="statPrestamos">$0.00 💰</div>
                             </div>
                             <div class="stat-card glass-panel" style="border-top: 4px solid var(--success);">
-                                <h3 style="color: var(--text-muted); font-size: 14px; text-transform: uppercase;">Dispositivos Activos</h3>
-                                <div class="stat-value" id="statEquipos">
-                                    0 <span class="stat-icon">📱</span>
-                                </div>
-                            </div>
-                            <div class="stat-card glass-panel" style="border-top: 4px solid var(--danger);">
-                                <h3 style="color: var(--text-muted); font-size: 14px; text-transform: uppercase;">Bloqueos Críticos</h3>
-                                <div class="stat-value" style="color: var(--danger);">
-                                    0 <span class="stat-icon">🔒</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="panel glass-panel">
-                            <h3 style="margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">📡 Tráfico de Red MDM</h3>
-                            <div style="background: rgba(0,0,0,0.5); padding: 15px; border-radius: 8px; font-family: monospace; color: var(--success); font-size: 13px; height: 120px; overflow: hidden;">
-                                > Iniciando enlace seguro con servidores externos...<br>
-                                > Protocolo de cifrado AES-256 establecido.<br>
-                                > Sincronizando perfiles de Scalefusion (0ms de latencia)...<br>
-                                > <span style="color: var(--primary)">IntegratCore v4.0 estable. Esperando comandos...</span>
+                                <small>EQUIPOS ACTIVOS</small>
+                                <div class="stat-value" id="statEquipos">0 📱</div>
                             </div>
                         </div>
                     </div>
 
                     <div id="vista-clientes" class="view-section">
-                        <h2 style="font-size: 28px; margin-bottom: 5px;">Gestión de Garantías</h2>
-                        <p style="color: var(--text-muted); margin-bottom: 30px;">Vincula el código IMEI/ID y los documentos al préstamo.</p>
-
                         <div class="panel glass-panel">
-                            <h3 style="margin-bottom: 20px;">➕ Registrar Nuevo Contrato</h3>
-                            
-                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px;">
+                            <h3>➕ Nuevo Contrato de Garantía</h3>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top:15px;">
+                                
                                 <select id="cliPais" class="auth-input" style="margin:0;">
+                                    <option value="+599">🇨🇼 Curazao (+599)</option>
                                     <option value="+1-809">🇩🇴 Rep. Dominicana (+1 809/829)</option>
-                                    <option value="+1">🇺🇸 Estados Unidos (+1)</option>
-                                    <option value="+52">🇲🇽 México (+52)</option>
                                     <option value="+57">🇨🇴 Colombia (+57)</option>
+                                    <option value="+52">🇲🇽 México (+52)</option>
+                                    <option value="+1">🇺🇸 USA (+1)</option>
+                                    <option value="+58">🇻🇪 Venezuela (+58)</option>
+                                    <option value="+507">🇵🇦 Panamá (+507)</option>
                                 </select>
-                                <input type="text" id="cliNombre" class="auth-input" placeholder="Nombre Completo del Cliente" style="margin:0;">
-                                <input type="number" id="cliMonto" class="auth-input" placeholder="Monto del Préstamo (USD/DOP)" style="margin:0;">
-                                <input type="text" id="cliDispositivo" class="auth-input" placeholder="Modelo de Equipo (Ej. Moto G06)" style="margin:0;">
-                                <input type="text" id="cliDeviceID" class="auth-input" placeholder="Device ID de Scalefusion" style="margin:0; border-color: var(--warning);">
+
+                                <input type="text" id="cliNombre" class="auth-input" placeholder="Nombre Completo" style="margin:0;">
+                                <input type="tel" id="cliTelefono" class="auth-input" placeholder="Número de Celular" style="margin:0;">
+                                <input type="number" id="cliMonto" class="auth-input" placeholder="Monto Préstamo" style="margin:0;">
+                                <input type="text" id="cliDispositivo" class="auth-input" placeholder="Modelo (Ej: Moto G06)" style="margin:0;">
+                                <input type="text" id="cliDeviceID" class="auth-input" placeholder="IMEI / Device ID" style="margin:0; border-color: var(--warning);">
                                 
                                 <select id="cliTipoDoc" class="auth-input" style="margin:0;" onchange="cambiarDocumentos()">
                                     <option value="none">📑 Seleccionar Documento...</option>
-                                    <option value="cedula">Cédula de Identidad</option>
+                                    <option value="cedula">Cédula</option>
                                     <option value="pasaporte">Pasaporte</option>
                                 </select>
                             </div>
 
                             <div id="zonaCedula" class="doc-section">
-                                <span style="color: var(--primary); font-weight: bold; font-size: 13px;">📸 Cédula de Identidad</span>
-                                <label class="file-label">Foto Frontal:</label>
-                                <input type="file" class="file-input" accept="image/*">
-                                <label class="file-label">Foto Reverso:</label>
-                                <input type="file" class="file-input" accept="image/*">
+                                <label class="file-label">Foto Frontal:</label><input type="file" class="file-input" accept="image/*">
                             </div>
                             <div id="zonaPasaporte" class="doc-section">
-                                <span style="color: var(--primary); font-weight: bold; font-size: 13px;">📸 Pasaporte</span>
-                                <label class="file-label">Página de Datos Biométricos:</label>
-                                <input type="file" class="file-input" accept="image/*">
+                                <label class="file-label">Paso principal:</label><input type="file" class="file-input" accept="image/*">
                             </div>
 
-                            <button class="btn-full" style="margin-top: 20px; width: auto; padding: 12px 30px;" onclick="agregarCliente()">GUARDAR Y VINCULAR EQUIPO</button>
+                            <button class="btn-full" style="margin-top: 20px; width: auto; padding: 12px 30px;" onclick="agregarCliente()">GUARDAR EXPEDIENTE</button>
                         </div>
 
-                        <div class="panel glass-panel" style="overflow-x: auto;">
-                            <h3 style="margin-bottom: 20px;">Cartera de Clientes Protegida</h3>
+                        <div class="panel glass-panel" style="overflow-x: auto; margin-top:20px;">
                             <table id="tablaClientes">
                                 <thead>
                                     <tr>
-                                        <th>Cliente / Deudor</th>
-                                        <th>Capital Riesgo</th>
-                                        <th>Garantía (Equipo)</th>
-                                        <th>Panel de Control MDM</th>
+                                        <th>Cliente</th>
+                                        <th>Contacto</th>
+                                        <th>Garantía (ID)</th>
+                                        <th>Acciones MDM</th>
                                     </tr>
                                 </thead>
-                                <tbody id="listaClientes">
-                                    </tbody>
+                                <tbody id="listaClientes"></tbody>
                             </table>
                         </div>
                     </div>
 
                     <div id="vista-config" class="view-section">
-                        <h2 style="font-size: 28px; margin-bottom: 5px;">Ajustes del Núcleo</h2>
                         <div class="panel glass-panel">
-                            <h3 style="color: var(--warning); margin-bottom: 10px;">⚠️ Llave de Integración MDM</h3>
-                            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Este token permite la comunicación con los celulares.</p>
-                            
-                            <label style="display: block; font-size: 12px; margin-bottom: 5px; color: var(--text-muted);">API Token de Producción:</label>
-                            <input type="password" id="sysApiKey" class="auth-input" placeholder="Pega aquí el código de tu API Key...">
-                            <button class="btn-full" style="width: auto; padding: 12px 30px;" onclick="guardarAPI()">GUARDAR EN CACHÉ SEGURA</button>
+                            <h3>⚙️ Configuración del Núcleo</h3>
+                            <label>API Token de Scalefusion:</label>
+                            <input type="password" id="sysApiKey" class="auth-input" placeholder="Pega tu API Key aquí">
+                            <button class="btn-full" style="width: auto;" onclick="guardarAPI()">ACTUALIZAR LLAVE</button>
                         </div>
                     </div>
 
                 </div>
-
-                <footer class="footer">
-                    <strong>INTEGRATCORE CORP</strong><br>
-                    Creado y Desarrollado por <strong>NICOLAS R.</strong> © 2026.<br>
-                    <span style="font-size: 11px; opacity: 0.6; margin-top: 5px; display: inline-block;">Soporte Empresarial: contact@integratcore.com | FireGuard MDM Pro v4.0</span>
-                </footer>
             </main>
         </div>
     </div>
@@ -310,87 +214,44 @@
 
     <script>
         // RELOJ
-        setInterval(() => {
-            const ahora = new Date();
-            document.getElementById('relojSistema').innerText = ahora.toLocaleTimeString();
-        }, 1000);
+        setInterval(() => { document.getElementById('relojSistema').innerText = new Date().toLocaleTimeString(); }, 1000);
 
-        // MENÚ MÓVIL
         function toggleMenu() {
             document.getElementById('sidebar').classList.toggle('active');
             document.getElementById('mobileOverlay').classList.toggle('active');
         }
 
-        // MOSTRAR DOCUMENTOS
-        function cambiarDocumentos() {
-            const tipo = document.getElementById('cliTipoDoc').value;
-            document.getElementById('zonaCedula').classList.remove('active');
-            document.getElementById('zonaPasaporte').classList.remove('active');
-            
-            if(tipo === 'cedula') document.getElementById('zonaCedula').classList.add('active');
-            if(tipo === 'pasaporte') document.getElementById('zonaPasaporte').classList.add('active');
-        }
-
-        // AUTENTICACIÓN
-        function procesarLogin() {
-            const user = document.getElementById('loginUser').value;
-            const pass = document.getElementById('loginPass').value;
-
-            if(user === 'admin' && pass === '12345') {
-                document.getElementById('authScreen').style.display = 'none';
-                document.getElementById('appLayout').style.display = 'flex';
-                cargarDatosDashboard();
-                mostrarToast("✅ Acceso concedido.", "#10b981");
-            } else {
-                mostrarToast("❌ ERROR: Credenciales incorrectas.", "#ef4444");
-                document.getElementById('loginPass').value = ''; 
-            }
-        }
-
-        function mostrarOlvidoPass() {
-            document.getElementById('loginForm').style.display = 'none';
-            document.getElementById('forgotForm').style.display = 'block';
-        }
-        function volverLogin() {
-            document.getElementById('forgotForm').style.display = 'none';
-            document.getElementById('loginForm').style.display = 'block';
-        }
-        function enviarRecuperacion() {
-            mostrarToast("📧 Instrucciones enviadas al correo oficial.", "#3b82f6");
-            setTimeout(volverLogin, 2000);
-        }
-
-        function cerrarSesion() {
-            document.getElementById('appLayout').style.display = 'none';
-            document.getElementById('authScreen').style.display = 'flex';
-            
-            // MEJORA: Destrucción de caché de inputs
-            document.getElementById('loginPass').value = '';
-            document.getElementById('loginUser').value = '';
-            
-            mostrarToast("🔒 Sesión cerrada de forma segura.", "#f59e0b");
-        }
-
-        function cambiarVista(vista, elementoMenu) {
-            document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+        function cambiarVista(v, el) {
+            document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById('vista-' + vista).classList.add('active');
-            if(elementoMenu) elementoMenu.classList.add('active');
-            
-            // Auto-cerrar menú en móviles
+            document.getElementById('vista-' + v).classList.add('active');
+            if(el) el.classList.add('active');
             if(window.innerWidth <= 900) toggleMenu();
         }
 
-        function mostrarToast(mensaje, colorHex) {
-            const toast = document.getElementById('toast');
-            toast.innerText = mensaje;
-            toast.style.backgroundColor = colorHex;
-            toast.style.borderLeft = `5px solid rgba(255,255,255,0.5)`;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 4000);
+        function cambiarDocumentos() {
+            const t = document.getElementById('cliTipoDoc').value;
+            document.getElementById('zonaCedula').classList.toggle('active', t === 'cedula');
+            document.getElementById('zonaPasaporte').classList.toggle('active', t === 'pasaporte');
         }
 
-        // LÓGICA CORE
+        // AUTH
+        function procesarLogin() {
+            const u = document.getElementById('loginUser').value;
+            const p = document.getElementById('loginPass').value;
+            if(u === 'admin' && p === '12345') {
+                document.getElementById('authScreen').style.display = 'none';
+                document.getElementById('appLayout').style.display = 'flex';
+                cargarDatosDashboard();
+                mostrarToast("✅ Conectado al satélite FireGuard.", "#10b981");
+            } else {
+                mostrarToast("❌ Acceso denegado.", "#ef4444");
+            }
+        }
+
+        function cerrarSesion() { location.reload(); }
+
+        // CORE LOGIC
         let clientes = JSON.parse(localStorage.getItem('ic_clientes_v4')) || [];
 
         function cargarDatosDashboard() {
@@ -401,141 +262,122 @@
         }
 
         function guardarAPI() {
-            const api = document.getElementById('sysApiKey').value;
-            localStorage.setItem('ic_apikey_v4', api);
-            mostrarToast("✅ API Key guardada.", "#10b981");
+            localStorage.setItem('ic_apikey_v4', document.getElementById('sysApiKey').value);
+            mostrarToast("🔑 API Actualizada.", "#3b82f6");
         }
 
+        // FIX: Función de guardado corregida y robusta
         function agregarCliente() {
-            const nombre = document.getElementById('cliNombre').value;
-            const monto = parseFloat(document.getElementById('cliMonto').value);
-            const disp = document.getElementById('cliDispositivo').value;
-            const devId = document.getElementById('cliDeviceID').value;
-            const pais = document.getElementById('cliPais').value;
+            try {
+                const nombre = document.getElementById('cliNombre').value;
+                const monto = parseFloat(document.getElementById('cliMonto').value);
+                const devId = document.getElementById('cliDeviceID').value;
+                const tel = document.getElementById('cliTelefono').value;
+                const pais = document.getElementById('cliPais').value;
+                const modelo = document.getElementById('cliDispositivo').value;
 
-            if(!nombre || !monto || !devId) return mostrarToast("⚠️ Complete todos los campos clave.", "#f59e0b");
+                if(!nombre || isNaN(monto) || !devId) {
+                    mostrarToast("⚠️ Error: Faltan datos obligatorios.", "#f59e0b");
+                    return;
+                }
 
-            clientes.push({ id: Date.now(), nombre, monto, disp, devId, pais });
-            localStorage.setItem('ic_clientes_v4', JSON.stringify(clientes));
-            
-            // Limpiar
-            document.getElementById('cliNombre').value = ''; document.getElementById('cliMonto').value = '';
-            document.getElementById('cliDispositivo').value = ''; document.getElementById('cliDeviceID').value = '';
-            document.getElementById('cliTipoDoc').value = 'none'; cambiarDocumentos();
+                const nuevo = { id: Date.now(), nombre, monto, devId, tel, pais, modelo };
+                clientes.push(nuevo);
+                localStorage.setItem('ic_clientes_v4', JSON.stringify(clientes));
+                
+                // Limpiar campos
+                document.getElementById('cliNombre').value = '';
+                document.getElementById('cliMonto').value = '';
+                document.getElementById('cliDeviceID').value = '';
+                document.getElementById('cliTelefono').value = '';
 
-            actualizarTablaYStats();
-            mostrarToast("💼 Equipo asegurado bajo MDM.", "#10b981");
+                actualizarTablaYStats();
+                mostrarToast("✅ Expediente Guardado.", "#10b981");
+            } catch(e) {
+                console.error(e);
+                mostrarToast("❌ Error al procesar datos.", "#ef4444");
+            }
         }
 
-        // MEJORA: Eliminar cliente específico
         function eliminarCliente(id) {
-            if(confirm("¿Está seguro de eliminar este expediente? El equipo ya no será gestionado desde este panel.")) {
+            if(confirm("¿Eliminar expediente?")) {
                 clientes = clientes.filter(c => c.id !== id);
                 localStorage.setItem('ic_clientes_v4', JSON.stringify(clientes));
                 actualizarTablaYStats();
-                mostrarToast("🗑️ Expediente eliminado.", "#f59e0b");
             }
         }
 
         function actualizarTablaYStats() {
             const tbody = document.getElementById('listaClientes');
             tbody.innerHTML = '';
-            let totalPrestado = 0;
+            let total = 0;
 
-            clientes.forEach(cli => {
-                totalPrestado += cli.monto;
+            clientes.forEach(c => {
+                total += c.monto;
                 const tr = document.createElement('tr');
-                // MEJORA: Se agregó el botón Eliminar (🗑️) en las acciones
                 tr.innerHTML = `
+                    <td><strong>${c.nombre}</strong></td>
+                    <td><small>${c.pais} ${c.tel}</small></td>
+                    <td>${c.modelo}<br><small>${c.devId}</small></td>
                     <td>
-                        <strong style="color: white; font-size: 14px;">${cli.nombre}</strong><br>
-                        <span style="font-size: 11px; color: var(--text-muted);">${cli.pais || ''}</span>
-                    </td>
-                    <td style="color: var(--success); font-weight: bold;">$${cli.monto.toLocaleString()}</td>
-                    <td>
-                        <div style="font-weight: 500;">${cli.disp}</div>
-                        <div style="font-size: 11px; color: var(--text-muted); font-family: monospace;">ID: ${cli.devId}</div>
-                    </td>
-                    <td>
-                        <button class="btn-action btn-lock" onclick="ordenMDM('${cli.devId}', 'lock', this)">🔒 Bloquear</button>
-                        <button class="btn-action btn-unlock" onclick="ordenMDM('${cli.devId}', 'unlock', this)">🔓 Restaurar</button>
-                        <button class="btn-action btn-delete" onclick="eliminarCliente(${cli.id})" title="Eliminar Registro">🗑️</button>
+                        <button class="btn-action btn-lock" onclick="mandarBloqueo('${c.devId}')">🔒 BLOQUEAR</button>
+                        <button class="btn-action btn-unlock" onclick="mandarAccion('${c.devId}', 'unlock')">🔓 ABRIR</button>
+                        <button onclick="eliminarCliente(${c.id})" style="background:none; border:none; color:gray; cursor:pointer;">🗑️</button>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
 
-            document.getElementById('statPrestamos').innerText = "$" + totalPrestado.toLocaleString();
-            document.getElementById('statEquipos').innerText = clientes.length;
+            document.getElementById('statPrestamos').innerText = "$" + total.toLocaleString() + " 💰";
+            document.getElementById('statEquipos').innerText = clientes.length + " 📱";
         }
 
-        // ORDEN A SCALEFUSION (Igual a su código original)
-        function ordenMDM(deviceId, accion, btnElement) {
-            const apiKey = localStorage.getItem('ic_apikey_v4');
-            if(!apiKey) return mostrarToast("❌ No has configurado la API Key.", "#ef4444");
+        // MOTOR DE BLOQUEO ELITE (Sincronizado)
+        async function mandarBloqueo(deviceId) {
+            const apiKey = localStorage.getItem('ic_apikey_v4') || "9af702bab50a4f4fb8dd1124827b9ce4";
+            const url = `https://api.scalefusion.com/api/v1/devices/${deviceId}/lock.json`;
+            
+            mostrarToast("⏳ Enviando comando de bloqueo...", "#warning");
 
-            const textoOriginal = btnElement.innerHTML;
-            btnElement.innerHTML = `<div class="spinner"></div>`;
-            btnElement.disabled = true;
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Token ${apiKey}`, 'Content-Type': 'application/json' }
+                });
 
-            fetch(`https://api.scalefusion.com/api/v1/devices/${deviceId}/${accion}.json`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Token ${apiKey}`,
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(res => {
-                btnElement.innerHTML = textoOriginal;
-                btnElement.disabled = false;
-                if(res.ok) {
-                    mostrarToast(accion === 'lock' ? "🔒 IMPACTO CONFIRMADO." : "🔓 ACCESO RESTAURADO.", "#10b981");
+                if (response.ok) {
+                    mostrarToast("✅ IMPACTO CONFIRMADO: Equipo Bloqueado.", "#10b981");
                 } else {
-                    mostrarToast("❌ El servidor de Scalefusion rechazó la orden.", "#ef4444");
+                    mostrarToast("❌ Error de Scalefusion. Revisa la API.", "#ef4444");
                 }
-            })
-            .catch(e => {
-                btnElement.innerHTML = textoOriginal;
-                btnElement.disabled = false;
-                mostrarToast("❌ Error de comunicación.", "#ef4444");
-            });
+            } catch (error) {
+                mostrarToast("📡 Error de red.", "#ef4444");
+            }
         }
+
+        // Función para otras acciones (Unlock, etc)
+        async function mandarAccion(deviceId, accion) {
+            const apiKey = localStorage.getItem('ic_apikey_v4') || "9af702bab50a4f4fb8dd1124827b9ce4";
+            const url = `https://api.scalefusion.com/api/v1/devices/${deviceId}/${accion}.json`;
+            
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Token ${apiKey}`, 'Content-Type': 'application/json' }
+                });
+                if (response.ok) mostrarToast("✅ Orden ejecutada correctamente.", "#10b981");
+                else mostrarToast("❌ Falló la comunicación.", "#ef4444");
+            } catch (e) { mostrarToast("📡 Error de red.", "#ef4444"); }
+        }
+
+        function mostrarToast(m, c) {
+            const t = document.getElementById('toast');
+            t.innerText = m; t.style.background = c;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
+        window.mandarBloqueo = mandarBloqueo;
     </script>
-    <script>
-  // Función para mandar la orden de bloqueo a Scalefusion
-  async function mandarBloqueo(deviceId) {
-    // 1. Configuración (Usa comillas invertidas ` para que el ID funcione en el link)
-    const apiKey = "9af702bab50a4f4fb8dd1124827b9ce4"; 
-    const url = `https://api.scalefusion.com/api/v1/devices/${deviceId}/lock.json`;
-
-    console.log("Iniciando bloqueo para:", deviceId);
-
-    try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Token ${apiKey}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      // 2. Respuesta al usuario
-      if (response.ok) {
-        alert("✅ IMPACTO CONFIRMADO: El equipo " + deviceId + " ha sido bloqueado.");
-      } else {
-        const errorData = await response.json();
-        console.error("Detalle del error:", errorData);
-        alert("❌ LA ORDEN FALLÓ: Verifica si el Device ID es correcto o si la API Key caducó.");
-      }
-    } catch (error) {
-      console.error("Error de red:", error);
-      alert("📡 ERROR DE CONEXIÓN: No se pudo contactar con Scalefusion.");
-    }
-  }
-
-  // Hacer que la función sea global para que los botones de tu tabla puedan usarla
-  window.mandarBloqueo = mandarBloqueo;
-</script>
 </body>
 </html>
-
