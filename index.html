@@ -3,300 +3,429 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FireGuard Pro | IntegratCore Corp</title>
+    <title>FireGuard MDM Pro | IntegratCore Corp</title>
     <style>
+        /* PROTOCOLO VISUAL: ELITE DARK MODE */
         :root {
-            --primary: #3b82f6; --bg-body: #050a14; --bg-card: rgba(15, 23, 42, 0.8);
-            --text-dark: #f8fafc; --text-muted: #94a3b8; --border: rgba(51, 65, 85, 0.5);
-            --danger: #ff4444; --success: #00ff88; --warning: #ffaa00;
+            --primary: #3b82f6; --primary-hover: #2563eb;
+            --bg-body: #050a14; --bg-panel: rgba(15, 23, 42, 0.7);
+            --text-light: #f8fafc; --text-muted: #94a3b8;
+            --border: rgba(51, 65, 85, 0.5); --sidebar-bg: #020617;
+            --danger: #ef4444; --danger-glow: #ff0000;
+            --success: #10b981; --success-glow: #00ff88;
+            --warning: #f59e0b;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
-        body { background-color: var(--bg-body); color: var(--text-dark); overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
+        /* 1. ESTRUCTURA BASE */
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        body { background-color: var(--bg-body); color: var(--text-light); overflow-x: hidden; background-image: radial-gradient(circle at top right, #1e3a8a 0%, #050a14 40%); background-attachment: fixed; }
 
-        .glass { background: var(--bg-card); backdrop-filter: blur(15px); border: 1px solid var(--border); border-radius: 16px; }
+        .glass { background: var(--bg-panel); backdrop-filter: blur(15px); border: 1px solid var(--border); border-radius: 16px; }
 
-        /* LOGIN ESTRÍCTO */
-        #authScreen { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: var(--bg-body); z-index: 5000; }
-        .auth-card { width: 90%; max-width: 380px; padding: 30px; text-align: center; border-top: 4px solid var(--primary); }
-        .input-pro { width: 100%; padding: 14px; margin-bottom: 15px; background: rgba(0,0,0,0.5); border: 1px solid var(--border); border-radius: 10px; color: white; outline: none; font-size: 16px; }
+        /* 2. AUTENTICACIÓN (SECURITY) */
+        #authScreen { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: var(--bg-body); z-index: 5000; padding: 20px; }
+        .auth-card { width: 100%; max-width: 420px; padding: 40px; text-align: center; border-top: 5px solid var(--primary); }
+        .auth-logo img { width: 120px; margin-bottom: 20px; filter: drop-shadow(0 0 10px var(--primary)); }
+        .auth-input { width: 100%; padding: 15px; margin-bottom: 20px; border-radius: 12px; border: 1px solid var(--border); background: rgba(0,0,0,0.5); color: white; outline: none; font-size: 16px; }
 
-        /* LAYOUT DINÁMICO */
+        /* 3. LAYOUT PRINCIPAL (MOBILE READY) */
         #appLayout { display: none; min-height: 100vh; flex-direction: column; }
+        .app-container { display: flex; flex: 1; }
+
+        .sidebar { width: 280px; background-color: var(--sidebar-bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; z-index: 2000; transition: 0.4s; }
+        .sidebar-logo { padding: 30px; border-bottom: 1px solid var(--border); text-align: center; }
+        .sidebar-logo img { width: 150px; }
         
-        .sidebar { 
-            width: 280px; background: #020617; position: fixed; height: 100vh; 
-            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 2000; transform: translateX(-100%); 
+        .nav-menu { flex: 1; padding: 20px 0; }
+        .nav-item { padding: 16px 25px; cursor: pointer; display: flex; align-items: center; gap: 15px; color: var(--text-muted); border-left: 4px solid transparent; }
+        .nav-item:hover, .nav-item.active { background: rgba(59, 130, 246, 0.1); color: white; border-left-color: var(--primary); }
+
+        .topbar { height: 75px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 25px; background: rgba(3, 7, 18, 0.85); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 1000; }
+        .menu-toggle { display: none; background: none; border: none; color: white; font-size: 28px; cursor: pointer; }
+        .clock { font-family: monospace; font-size: 18px; color: var(--primary); font-weight: bold; background: rgba(59,130,246,0.1); padding: 5px 15px; border-radius: 30px; }
+
+        /* 4. CONTENIDO (VISTAS) */
+        .main-content { flex: 1; padding: 30px; overflow-y: auto; }
+        .view-section { display: none; animation: fadeIn 0.4s ease; }
+        .view-section.active { display: block; }
+
+        /* CARDS Y DASHBOARD */
+        .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 25px; margin-bottom: 40px; }
+        .stat-card { padding: 30px; text-align: center; }
+        .stat-card h3 { font-size: 12px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 10px; }
+        .stat-card .val { font-size: 35px; font-weight: 800; color: white; }
+
+        /* 5. TABLA Y SEMÁFORO (ELITE FIX) */
+        .table-container { margin-top: 25px; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; min-width: 900px; }
+        th { padding: 18px; text-align: left; border-bottom: 2px solid var(--border); color: var(--text-muted); font-size: 11px; text-transform: uppercase; }
+        td { padding: 20px 18px; border-bottom: 1px solid var(--border); font-size: 14px; vertical-align: middle; }
+
+        .row-atraso { background: rgba(239, 68, 68, 0.05); }
+        .status-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 8px; }
+        .dot-red { background: var(--danger); box-shadow: 0 0 10px var(--danger-glow); }
+        .dot-green { background: var(--success); box-shadow: 0 0 10px var(--success-glow); }
+
+        .btn-action { padding: 10px 15px; border-radius: 8px; border: none; color: white; font-weight: bold; cursor: pointer; font-size: 11px; margin-right: 5px; }
+        .btn-lock { background: rgba(239, 68, 68, 0.2); color: var(--danger); border: 1px solid var(--danger); }
+        .btn-unlock { background: rgba(16, 185, 129, 0.2); color: var(--success); border: 1px solid var(--success); }
+        .btn-icon { background: none; border: none; color: var(--primary); cursor: pointer; margin-left: 8px; font-size: 16px; }
+
+        /* 6. FORMULARIOS DINÁMICOS */
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+        .doc-section { display: none; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 12px; border: 1px dashed var(--border); margin-top: 20px; }
+        .doc-section.active { display: block; }
+
+        /* 7. RESPONSIVIDAD 100% (MÓVILES) */
+        @media (max-width: 900px) {
+            .menu-toggle { display: block; }
+            .sidebar { position: fixed; height: 100vh; transform: translateX(-100%); width: 280px; box-shadow: 10px 0 40px #000; }
+            .sidebar.active { transform: translateX(0); }
+            .main-content { padding: 20px; }
+            
+            /* TABLA A CARDS EN MÓVIL */
+            table, thead, tbody, th, td, tr { display: block; }
+            thead tr { position: absolute; top: -9999px; left: -9999px; }
+            tr { border: 1px solid var(--border); border-radius: 12px; margin-bottom: 20px; padding: 10px; }
+            td { border: none; padding: 12px 5px; position: relative; padding-left: 45%; text-align: right; }
+            td:before { content: attr(data-label); position: absolute; left: 10px; width: 40%; text-align: left; font-weight: bold; color: var(--text-muted); font-size: 11px; text-transform: uppercase; }
+            .btn-action { width: 48%; margin-top: 10px; }
+            
+            .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 1500; backdrop-filter: blur(3px); }
+            .overlay.active { display: block; }
         }
-        .sidebar.active { transform: translateX(0); }
 
-        .topbar { 
-            height: 70px; background: rgba(2, 6, 23, 0.9); border-bottom: 1px solid var(--border);
-            display: flex; align-items: center; justify-content: space-between; padding: 0 20px;
-            position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(10px);
-        }
+        #toast { position: fixed; bottom: 30px; right: 30px; padding: 15px 30px; border-radius: 12px; color: white; font-weight: bold; z-index: 9999; transform: translateX(150%); transition: 0.5s; }
+        #toast.show { transform: translateX(0); }
 
-        .main-content { padding: 20px; max-width: 1200px; margin: 0 auto; width: 100%; }
-
-        /* CARDS Y CLIENTES */
-        .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 25px; }
-        .stat-card { padding: 20px; text-align: center; border-bottom: 3px solid var(--primary); }
-        
-        /* BUSCADOR */
-        .search-bar { width: 100%; padding: 12px 20px; margin-bottom: 20px; border-radius: 30px; background: var(--bg-card); border: 1px solid var(--border); color: white; }
-
-        /* TABLA / TARJETAS RESPONSIVAS */
-        .client-card { 
-            margin-bottom: 15px; padding: 20px; display: grid; grid-template-columns: 1fr auto; gap: 10px;
-            transition: 0.3s; position: relative; overflow: hidden;
-        }
-        .status-atraso { border-left: 5px solid var(--danger); background: rgba(255, 68, 68, 0.05); }
-        .status-aldia { border-left: 5px solid var(--success); }
-        
-        .badge { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
-        .badge-atraso { background: var(--danger); color: white; box-shadow: 0 0 10px rgba(255, 68, 68, 0.4); }
-        .badge-aldia { background: var(--success); color: #000; }
-
-        .btn-mdm { padding: 10px; border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; flex: 1; font-size: 12px; }
-        .btn-lock { background: rgba(255, 68, 68, 0.2); color: var(--danger); border: 1px solid var(--danger); }
-        .btn-unlock { background: rgba(0, 255, 136, 0.1); color: var(--success); border: 1px solid var(--success); }
-
-        /* OVERLAY MÓVIL */
-        .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1500; }
-        .overlay.active { display: block; }
-
-        @media (min-width: 901px) {
-            .sidebar { transform: translateX(0); }
-            .topbar { margin-left: 280px; }
-            .main-content { margin-left: 280px; }
-            .menu-btn { display: none; }
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
+    <div id="mobileOverlay" class="overlay" onclick="toggleMenu()"></div>
+
     <div id="authScreen">
         <div class="auth-card glass">
-            <h1 style="color:var(--primary); margin-bottom:10px;">🛡️ FIREGUARD</h1>
-            <p style="color:var(--text-muted); font-size:13px; margin-bottom:25px;">SISTEMA DE SEGURIDAD MDM</p>
-            <input type="text" id="loginUser" class="input-pro" placeholder="Usuario">
-            <input type="password" id="loginPass" class="input-pro" placeholder="Contraseña" autocomplete="new-password">
-            <button onclick="login()" style="width:100%; padding:15px; background:var(--primary); border:none; border-radius:10px; color:white; font-weight:bold; cursor:pointer;">INICIAR SESIÓN</button>
+            <div class="auth-logo">
+                <img src="logo.png" alt="IntegratCore Logo" onerror="this.src='https://via.placeholder.com/150?text=IntegratCore'">
+            </div>
+            <h2 style="margin-bottom: 5px;">Protocolo FireGuard</h2>
+            <p style="color:var(--text-muted); font-size:13px; margin-bottom:30px;">INTEGRATCORE CORP SECURITY</p>
+            <input type="text" id="loginUser" class="auth-input" placeholder="ID de Administrador">
+            <input type="password" id="loginPass" class="auth-input" placeholder="Contraseña de Acceso" autocomplete="new-password">
+            <button class="auth-input" style="background:var(--primary); font-weight:bold; border:none; cursor:pointer;" onclick="procesarLogin()">AUTENTICAR SISTEMA</button>
         </div>
     </div>
 
-    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
-
     <div id="appLayout">
-        <aside class="sidebar" id="sidebar">
-            <div style="padding:30px; border-bottom:1px solid var(--border);">
-                <h2 style="color:var(--primary);">FireGuard</h2>
-                <small style="color:var(--text-muted);">INTEGRATCORE CORP</small>
-            </div>
-            <nav style="padding:20px;">
-                <div style="padding:15px; cursor:pointer; color:var(--primary);" onclick="showTab('dashboard')">📊 Panel Principal</div>
-                <div style="padding:15px; cursor:pointer;" onclick="showTab('clientes')">👥 Gestión Clientes</div>
-                <div style="padding:15px; cursor:pointer;" onclick="showTab('config')">⚙️ Configuración API</div>
-                <div style="padding:15px; cursor:pointer; color:var(--danger); margin-top:50px;" onclick="logout()">🚪 Cerrar Sesión</div>
-            </nav>
-        </aside>
-
-        <header class="topbar">
-            <button class="menu-btn" onclick="toggleMenu()" style="background:none; border:none; color:white; font-size:24px;">☰</button>
-            <div id="reloj" style="font-family:monospace; color:var(--primary);">00:00:00</div>
-        </header>
-
-        <main class="main-content">
+        <div class="app-container">
             
-            <div id="tab-dashboard">
-                <div class="stat-grid">
-                    <div class="glass stat-card">
-                        <small style="color:var(--text-muted);">CARTERA TOTAL</small>
-                        <h2 id="totalCapital">$0.00</h2>
+            <aside class="sidebar" id="sidebar">
+                <div class="sidebar-logo">
+                    <img src="logo.png" alt="Logo" onerror="this.style.display='none'">
+                    <h2 style="font-size: 18px; margin-top: 10px;">FireGuard <span>Pro</span></h2>
+                </div>
+                <nav class="nav-menu">
+                    <div class="nav-item active" onclick="cambiarVista('dashboard', this)">📊 Centro de Operaciones</div>
+                    <div class="nav-item" onclick="cambiarVista('clientes', this)">👥 Registro de Cartera</div>
+                    <div class="nav-item" onclick="cambiarVista('config', this)">⚙️ Configuración API</div>
+                </nav>
+                <div style="padding: 20px; border-top: 1px solid var(--border);" onclick="cerrarSesion()">
+                    <div class="nav-item" style="color: var(--danger);">🚪 Cerrar Sesión Segura</div>
+                </div>
+            </aside>
+
+            <main class="main-content">
+                
+                <header class="topbar">
+                    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span class="status-dot dot-green"></span>
+                        <span style="font-weight: bold; font-size: 12px; letter-spacing: 1px;">SISTEMA EN LÍNEA</span>
                     </div>
-                    <div class="glass stat-card" style="border-bottom-color:var(--danger);">
-                        <small style="color:var(--text-muted);">EN ATRASO</small>
-                        <h2 id="totalAtraso" style="color:var(--danger);">$0.00</h2>
+                    <div class="clock" id="reloj">00:00:00</div>
+                </header>
+
+                <div id="vista-dashboard" class="view-section active">
+                    <div class="stat-grid">
+                        <div class="glass stat-card">
+                            <h3>Monto Total Protegido</h3>
+                            <div class="val" id="statMonto">$0.00</div>
+                        </div>
+                        <div class="glass stat-card" style="border-bottom: 4px solid var(--danger);">
+                            <h3>Cartera en Atraso</h3>
+                            <div class="val" id="statAtraso" style="color: var(--danger);">$0.00</div>
+                        </div>
+                        <div class="glass stat-card" style="border-bottom: 4px solid var(--success);">
+                            <h3>Equipos Blindados</h3>
+                            <div class="val" id="statEquipos">0</div>
+                        </div>
+                    </div>
+
+                    <div class="glass" style="padding: 20px; margin-bottom: 25px;">
+                        <input type="text" id="buscador" class="auth-input" placeholder="🔍 Buscar por nombre o IMEI..." onkeyup="filtrarClientes()" style="margin:0;">
+                    </div>
+
+                    <div class="glass table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Cliente / Titular</th>
+                                    <th>Monto</th>
+                                    <th>Garantía (Device ID)</th>
+                                    <th>Estatus de Pago</th>
+                                    <th>Acciones MDM</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tablaClientes"></tbody>
+                        </table>
                     </div>
                 </div>
 
-                <input type="text" class="search-bar" id="search" placeholder="🔍 Buscar por nombre o IMEI..." onkeyup="filterClients()">
+                <div id="vista-clientes" class="view-section">
+                    <div class="glass" style="padding: 30px;">
+                        <h2 style="margin-bottom: 25px;">➕ Registrar Nuevo Financiamiento</h2>
+                        <div class="form-grid">
+                            <div>
+                                <label style="font-size: 12px; color: var(--text-muted);">País</label>
+                                <select id="cliPais" class="auth-input">
+                                    <option value="+599">Curazao (+599)</option>
+                                    <option value="+1-809">Rep. Dom (+1)</option>
+                                    <option value="+52">México (+52)</option>
+                                </select>
+                            </div>
+                            <input type="text" id="cliNombre" class="auth-input" placeholder="Nombre completo">
+                            <input type="number" id="cliMonto" class="auth-input" placeholder="Monto $">
+                            <input type="text" id="cliImei" class="auth-input" placeholder="Device ID de Scalefusion">
+                            <div>
+                                <label style="font-size: 12px; color: var(--text-muted);">Identificación</label>
+                                <select id="cliDocType" class="auth-input" onchange="toggleDocs()">
+                                    <option value="none">Tipo de documento...</option>
+                                    <option value="cedula">Cédula</option>
+                                    <option value="pasaporte">Pasaporte</option>
+                                </select>
+                            </div>
+                        </div>
 
-                <div id="clientList">
+                        <div id="zonaCedula" class="doc-section">
+                            <p style="color:var(--primary); font-weight:bold; margin-bottom:15px;">📸 Captura de Cédula</p>
+                            <div style="display:flex; gap:15px; flex-wrap:wrap;">
+                                <div style="flex:1; min-width:200px;">
+                                    <label style="font-size:11px;">PARTE FRONTAL:</label>
+                                    <input type="file" class="auth-input">
+                                </div>
+                                <div style="flex:1; min-width:200px;">
+                                    <label style="font-size:11px;">PARTE TRASERA:</label>
+                                    <input type="file" class="auth-input">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="zonaPasaporte" class="doc-section">
+                            <label style="font-size:11px;">PÁGINA PRINCIPAL:</label>
+                            <input type="file" class="auth-input">
+                        </div>
+
+                        <button class="auth-input" style="background:var(--primary); font-weight:bold; border:none; cursor:pointer; margin-top:20px;" onclick="guardarCliente()">GUARDAR Y VINCULAR EQUIPO</button>
                     </div>
-            </div>
-
-            <div id="tab-config" style="display:none;">
-                <div class="glass" style="padding:30px;">
-                    <h3>Configuración de Seguridad</h3>
-                    <p style="font-size:12px; color:var(--text-muted); margin-bottom:15px;">API Key de Scalefusion</p>
-                    <input type="password" id="apiKeyInput" class="input-pro" placeholder="Pega tu API Key aquí">
-                    <button onclick="saveApiKey()" style="padding:10px 20px; background:var(--primary); border:none; border-radius:8px; color:white;">Guardar Llave</button>
                 </div>
-            </div>
 
-            <div id="tab-clientes" style="display:none;">
-                <div class="glass" style="padding:25px;">
-                    <h3>Nuevo Financiamiento</h3>
-                    <input type="text" id="regNombre" class="input-pro" placeholder="Nombre completo">
-                    <input type="number" id="regMonto" class="input-pro" placeholder="Monto $">
-                    <input type="text" id="regImei" class="input-pro" placeholder="Device ID Scalefusion">
-                    <select id="regStatus" class="input-pro">
-                        <option value="aldia">Estado: Al Día</option>
-                        <option value="atraso">Estado: Atraso</option>
-                    </select>
-                    <button onclick="addClient()" class="btn-full" style="padding:15px; background:var(--success); color:black;">VINCULAR EQUIPO</button>
+                <div id="vista-config" class="view-section">
+                    <div class="glass" style="padding:30px;">
+                        <h2>⚙️ Centro de Integración Scalefusion</h2>
+                        <p style="color:var(--text-muted); font-size:14px; margin-top:10px;">Configure la llave maestra para las órdenes de bloqueo.</p>
+                        <div style="max-width:500px; margin-top:30px;">
+                            <label style="font-size:12px;">API Token de Producción</label>
+                            <input type="password" id="apiKeyInput" class="auth-input" placeholder="Pega tu API Key aquí">
+                            <button class="auth-input" style="background:var(--primary); border:none; cursor:pointer; font-weight:bold;" onclick="guardarAPI()">ACTUALIZAR CONEXIÓN</button>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-        </main>
+            </main>
+        </div>
     </div>
 
+    <div id="toast">Mensaje del Sistema</div>
+
     <script>
-        // MOTOR DE DATOS
-        let clients = JSON.parse(localStorage.getItem('fg_data')) || [];
-        
-        // RELOJ
+        // 1. MOTOR DE PERSISTENCIA
+        let db = JSON.parse(localStorage.getItem('fireguard_v7')) || [];
+
+        // 2. RELOJ
         setInterval(() => { document.getElementById('reloj').innerText = new Date().toLocaleTimeString(); }, 1000);
 
-        // NAVEGACIÓN
+        // 3. NAVEGACIÓN
         function toggleMenu() {
             document.getElementById('sidebar').classList.toggle('active');
-            document.getElementById('overlay').classList.toggle('active');
+            document.getElementById('mobileOverlay').classList.toggle('active');
         }
 
-        function showTab(tab) {
-            document.getElementById('tab-dashboard').style.display = tab === 'dashboard' ? 'block' : 'none';
-            document.getElementById('tab-clientes').style.display = tab === 'clientes' ? 'block' : 'none';
-            document.getElementById('tab-config').style.display = tab === 'config' ? 'block' : 'none';
+        function cambiarVista(vista, el) {
+            document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById('vista-' + vista).classList.add('active');
+            if(el) el.classList.add('active');
             if(window.innerWidth < 900) toggleMenu();
         }
 
-        // SEGURIDAD: LOGIN Y LOGOUT
-        function login() {
+        function toggleDocs() {
+            const t = document.getElementById('cliDocType').value;
+            document.getElementById('zonaCedula').classList.toggle('active', t === 'cedula');
+            document.getElementById('zonaPasaporte').classList.toggle('active', t === 'pasaporte');
+        }
+
+        // 4. SEGURIDAD (LOGIN/LOGOUT)
+        function procesarLogin() {
             const u = document.getElementById('loginUser').value;
             const p = document.getElementById('loginPass').value;
             if(u === 'admin' && p === '12345') {
                 document.getElementById('authScreen').style.display = 'none';
                 document.getElementById('appLayout').style.display = 'flex';
-                renderClients();
-            } else { alert("Acceso Denegado"); }
+                renderTable();
+                mostrarToast("✅ SISTEMA AUTENTICADO", "var(--success)");
+            } else {
+                mostrarToast("❌ ACCESO DENEGADO", "var(--danger)");
+                document.getElementById('loginPass').value = ''; 
+            }
         }
 
-        function logout() {
-            // Limpieza de seguridad total
-            document.getElementById('loginPass').value = "";
-            document.getElementById('loginUser').value = "";
+        function cerrarSesion() {
+            document.getElementById('loginPass').value = '';
+            document.getElementById('loginUser').value = '';
             document.getElementById('appLayout').style.display = 'none';
             document.getElementById('authScreen').style.display = 'flex';
         }
 
-        // GESTIÓN DE CLIENTES
-        function addClient() {
-            const client = {
+        // 5. GESTIÓN DE CLIENTES
+        function guardarCliente() {
+            const cli = {
                 id: Date.now(),
-                nombre: document.getElementById('regNombre').value,
-                monto: parseFloat(document.getElementById('regMonto').value) || 0,
-                imei: document.getElementById('regImei').value,
-                status: document.getElementById('regStatus').value,
-                notas: ""
+                nombre: document.getElementById('cliNombre').value,
+                monto: parseFloat(document.getElementById('cliMonto').value) || 0,
+                imei: document.getElementById('cliImei').value,
+                status: 'aldia',
+                notas: 'Sin observaciones'
             };
-            if(!client.nombre || !client.imei) return alert("Faltan datos");
-            clients.push(client);
-            save();
-            showTab('dashboard');
+            if(!cli.nombre || !cli.imei) return alert("Faltan datos críticos");
+            db.push(cli);
+            saveDB();
+            cambiarVista('dashboard');
+            document.getElementById('cliNombre').value = '';
+            document.getElementById('cliMonto').value = '';
+            document.getElementById('cliImei').value = '';
+        }
+
+        function editarNombre(id) {
+            const i = db.findIndex(x => x.id === id);
+            const n = prompt("Editar nombre del titular:", db[i].nombre);
+            if(n) { db[i].nombre = n; saveDB(); }
+        }
+
+        function editarNotas(id) {
+            const i = db.findIndex(x => x.id === id);
+            const n = prompt("Actualizar nota de pago:", db[i].notas);
+            if(n !== null) { db[i].notas = n; saveDB(); }
         }
 
         function toggleStatus(id) {
-            const c = clients.find(x => x.id === id);
-            c.status = c.status === 'aldia' ? 'atraso' : 'aldia';
-            save();
+            const i = db.findIndex(x => x.id === id);
+            db[i].status = (db[i].status === 'aldia') ? 'atraso' : 'aldia';
+            saveDB();
         }
 
-        function editNote(id) {
-            const c = clients.find(x => x.id === id);
-            const n = prompt("Nota de pago:", c.notas);
-            if(n !== null) { c.notas = n; save(); }
+        function eliminarCliente(id) {
+            if(confirm("¿Eliminar registro? Se perderá el control desde el panel.")) {
+                db = db.filter(x => x.id !== id);
+                saveDB();
+            }
         }
 
-        function save() {
-            localStorage.setItem('fg_data', JSON.stringify(clients));
-            renderClients();
+        function saveDB() {
+            localStorage.setItem('fireguard_v7', JSON.stringify(db));
+            renderTable();
         }
 
-        function renderClients(filtered = null) {
-            const list = filtered || clients;
-            const container = document.getElementById('clientList');
-            container.innerHTML = "";
+        // 6. RENDERIZACIÓN ELITE
+        function renderTable(filtrado = null) {
+            const data = filtrado || db;
+            const tbody = document.getElementById('tablaClientes');
+            tbody.innerHTML = '';
             let total = 0; let atraso = 0;
 
-            list.forEach(c => {
+            data.forEach(c => {
                 total += c.monto;
                 if(c.status === 'atraso') atraso += c.monto;
 
-                const card = document.createElement('div');
-                card.className = `glass client-card ${c.status === 'atraso' ? 'status-atraso' : 'status-aldia'}`;
-                card.innerHTML = `
-                    <div>
-                        <h4 style="display:flex; align-items:center; gap:10px;">
-                            ${c.nombre} 
-                            <span class="badge ${c.status === 'atraso' ? 'badge-atraso' : 'badge-aldia'}">${c.status}</span>
-                        </h4>
-                        <p style="font-size:12px; color:var(--text-muted); margin:5px 0;">IMEI: ${c.imei}</p>
-                        <p style="color:var(--success); font-weight:bold;">$${c.monto.toLocaleString()}</p>
-                        <p style="font-size:11px; color:var(--warning); cursor:pointer;" onclick="editNote(${c.id})">📝 ${c.notas || 'Agregar nota...'}</p>
-                    </div>
-                    <div style="display:flex; flex-direction:column; gap:8px;">
-                        <button class="btn-mdm btn-lock" onclick="mandarAccion('${c.imei}', 'lock')">BLOQUEAR</button>
-                        <button class="btn-mdm btn-unlock" onclick="mandarAccion('${c.imei}', 'unlock')">LIBERAR</button>
-                        <button onclick="toggleStatus(${c.id})" style="background:none; border:1px solid #333; color:white; font-size:10px; padding:5px; border-radius:5px;">Cambiar Estado</button>
-                        <button onclick="deleteClient(${c.id})" style="background:none; border:none; color:gray; font-size:10px;">Eliminar</button>
-                    </div>
+                const tr = document.createElement('tr');
+                if(c.status === 'atraso') tr.className = 'row-atraso';
+                
+                tr.innerHTML = `
+                    <td data-label="Cliente">
+                        <b>${c.nombre}</b> <button class="btn-icon" onclick="editarNombre(${c.id})">✏️</button>
+                    </td>
+                    <td data-label="Monto" style="color:var(--success); font-weight:bold;">$${c.monto.toLocaleString()}</td>
+                    <td data-label="Garantía"><small>${c.imei}</small></td>
+                    <td data-label="Estado">
+                        <span class="status-dot ${c.status === 'atraso' ? 'dot-red' : 'dot-green'}"></span>
+                        <span style="cursor:pointer" onclick="toggleStatus(${c.id})">${c.status === 'atraso' ? '⚠️ ATRASADO' : '✅ AL DÍA'}</span>
+                        <div style="font-size:10px; color:var(--warning); margin-top:5px; cursor:pointer;" onclick="editarNotas(${c.id})">📝 ${c.notas}</div>
+                    </td>
+                    <td data-label="Acciones">
+                        <button class="btn-action btn-lock" onclick="mandarAccion('${c.imei}', 'lock')">🔒 BLOQUEAR</button>
+                        <button class="btn-action btn-unlock" onclick="mandarAccion('${c.imei}', 'unlock')">🔓 ABRIR</button>
+                        <button class="btn-icon" onclick="eliminarCliente(${c.id})" style="color:#666;">🗑️</button>
+                    </td>
                 `;
-                container.appendChild(card);
+                tbody.appendChild(tr);
             });
 
-            document.getElementById('totalCapital').innerText = "$" + total.toLocaleString();
-            document.getElementById('totalAtraso').innerText = "$" + atraso.toLocaleString();
+            document.getElementById('statMonto').innerText = "$" + total.toLocaleString();
+            document.getElementById('statAtraso').innerText = "$" + atraso.toLocaleString();
+            document.getElementById('statEquipos').innerText = data.length;
         }
 
-        function deleteClient(id) {
-            if(confirm("¿Borrar cliente?")) {
-                clients = clients.filter(x => x.id !== id);
-                save();
-            }
-        }
-
-        function filterClients() {
-            const text = document.getElementById('search').value.toLowerCase();
-            const f = clients.filter(c => c.nombre.toLowerCase().includes(text) || c.imei.includes(text));
-            renderClients(f);
-        }
-
-        // MOTOR SCALEFUSION (ARREGLO DE RED)
-        async function mandarAccion(imei, accion) {
-            const key = localStorage.getItem('fg_key') || "9af702bab50a4f4fb8dd1124827b9ce4";
-            const url = `https://api.scalefusion.com/api/v1/devices/${imei}/${accion}.json`;
+        // 7. MOTOR DE BLOQUEO (FIX RED)
+        async function mandarAccion(deviceId, accion) {
+            // ARREGLO SCOPE Y RED: Uso de backticks y API dinámica
+            const apiKey = localStorage.getItem('fireguard_api_v7') || "9af702bab50a4f4fb8dd1124827b9ce4";
+            const url = `https://api.scalefusion.com/api/v1/devices/${deviceId}/${accion}.json`;
             
-            alert(`⏳ Conectando con Scalefusion... Orden: ${accion.toUpperCase()}`);
+            mostrarToast(`📡 ENVIANDO ORDEN: ${accion.toUpperCase()}`, "var(--primary)");
 
             try {
-                const r = await fetch(url, {
+                const response = await fetch(url, {
                     method: 'POST',
-                    headers: { 'Authorization': `Token ${key}`, 'Content-Type': 'application/json' }
+                    headers: { 'Authorization': `Token ${apiKey}`, 'Content-Type': 'application/json' }
                 });
-                if(r.ok) alert("✅ IMPACTO CONFIRMADO.");
-                else alert("❌ Error: Verifica el IMEI o la API Key.");
-            } catch(e) {
-                alert("📡 Error de red.");
+                if (response.ok) mostrarToast("✅ IMPACTO CONFIRMADO", "var(--success)");
+                else mostrarToast("❌ ERROR DE AUTORIZACIÓN", "var(--danger)");
+            } catch (e) {
+                mostrarToast("📡 ERROR DE CONEXIÓN", "var(--danger)");
             }
         }
 
-        function saveApiKey() {
-            const val = document.getElementById('apiKeyInput').value;
-            localStorage.setItem('fg_key', val);
-            alert("Llave guardada con éxito");
+        function filtrarClientes() {
+            const q = document.getElementById('buscador').value.toLowerCase();
+            const f = db.filter(x => x.nombre.toLowerCase().includes(q) || x.imei.toLowerCase().includes(q));
+            renderTable(f);
         }
+
+        function guardarAPI() {
+            localStorage.setItem('fireguard_api_v7', document.getElementById('apiKeyInput').value);
+            mostrarToast("🔑 LLAVE ACTUALIZADA", "var(--primary)");
+        }
+
+        function mostrarToast(m, c) {
+            const t = document.getElementById('toast');
+            t.innerText = m; t.style.background = c;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
+        // Carga inicial
+        if(localStorage.getItem('fireguard_api_v7')) document.getElementById('apiKeyInput').value = localStorage.getItem('fireguard_api_v7');
     </script>
 </body>
 </html>
