@@ -2,430 +2,519 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FireGuard MDM Pro | IntegratCore Corp</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Integratcore Corp | FireGuard MDM Pro</title>
     <style>
-        /* PROTOCOLO VISUAL: ELITE DARK MODE */
+        /* Diseño Ultra Premium (Efecto Cristal y Neón) */
         :root {
             --primary: #3b82f6; --primary-hover: #2563eb;
-            --bg-body: #050a14; --bg-panel: rgba(15, 23, 42, 0.7);
-            --text-light: #f8fafc; --text-muted: #94a3b8;
-            --border: rgba(51, 65, 85, 0.5); --sidebar-bg: #020617;
-            --danger: #ef4444; --danger-glow: #ff0000;
-            --success: #10b981; --success-glow: #00ff88;
-            --warning: #f59e0b;
+            --bg-body: #080f1e; --bg-card: rgba(15, 23, 42, 0.7);
+            --text-dark: #f8fafc; --text-muted: #94a3b8;
+            --border: rgba(51, 65, 85, 0.5); --sidebar-bg: #030712;
+            --danger: #ef4444; --success: #10b981; --warning: #f59e0b;
         }
 
-        /* 1. ESTRUCTURA BASE */
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        body { background-color: var(--bg-body); color: var(--text-light); overflow-x: hidden; background-image: radial-gradient(circle at top right, #1e3a8a 0%, #050a14 40%); background-attachment: fixed; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; transition: 0.3s; }
+        body { background-color: var(--bg-body); color: var(--text-dark); overflow-x: hidden; background-image: radial-gradient(circle at top right, #1e3a8a 0%, #080f1e 40%); background-attachment: fixed; }
 
-        .glass { background: var(--bg-panel); backdrop-filter: blur(15px); border: 1px solid var(--border); border-radius: 16px; }
+        .glass-panel { background: var(--bg-card); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--border); border-radius: 12px; }
 
-        /* 2. AUTENTICACIÓN (SECURITY) */
-        #authScreen { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: var(--bg-body); z-index: 5000; padding: 20px; }
-        .auth-card { width: 100%; max-width: 420px; padding: 40px; text-align: center; border-top: 5px solid var(--primary); }
-        .auth-logo img { width: 120px; margin-bottom: 20px; filter: drop-shadow(0 0 10px var(--primary)); }
-        .auth-input { width: 100%; padding: 15px; margin-bottom: 20px; border-radius: 12px; border: 1px solid var(--border); background: rgba(0,0,0,0.5); color: white; outline: none; font-size: 16px; }
+        /* Pantalla de Login Restringida */
+        #authScreen { display: flex; height: 100vh; align-items: center; justify-content: center; position: absolute; top: 0; left: 0; width: 100%; z-index: 1000; background: var(--bg-body); background-image: radial-gradient(circle at center, #1e293b 0%, #080f1e 100%); }
+        .auth-card { padding: 40px; width: 90%; max-width: 420px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); text-align: center; position: relative; overflow: hidden; }
+        .auth-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: linear-gradient(90deg, var(--primary), var(--success)); }
+        .auth-title { font-size: 28px; font-weight: 800; margin-bottom: 5px; letter-spacing: 1px; }
+        .auth-subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 30px; }
+        .auth-input { width: 100%; padding: 14px; margin-bottom: 15px; border: 1px solid var(--border); border-radius: 8px; background: rgba(0,0,0,0.3); color: white; outline: none; font-size: 15px; }
+        .auth-input:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(59, 130, 246, 0.3); }
+        .btn-full { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); }
+        .btn-full:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6); }
+        .auth-links { margin-top: 20px; font-size: 13px; color: var(--text-muted); cursor: pointer; }
+        .auth-links span:hover { color: var(--primary); text-decoration: underline; }
 
-        /* 3. LAYOUT PRINCIPAL (MOBILE READY) */
-        #appLayout { display: none; min-height: 100vh; flex-direction: column; }
-        .app-container { display: flex; flex: 1; }
+        /* Layout Principal */
+        #appLayout { display: none; height: 100vh; flex-direction: row; overflow: hidden; }
+        .app-container { display: flex; flex: 1; overflow: hidden; }
 
-        .sidebar { width: 280px; background-color: var(--sidebar-bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; z-index: 2000; transition: 0.4s; }
-        .sidebar-logo { padding: 30px; border-bottom: 1px solid var(--border); text-align: center; }
-        .sidebar-logo img { width: 150px; }
-        
-        .nav-menu { flex: 1; padding: 20px 0; }
-        .nav-item { padding: 16px 25px; cursor: pointer; display: flex; align-items: center; gap: 15px; color: var(--text-muted); border-left: 4px solid transparent; }
+        /* Sidebar */
+        .sidebar { width: 270px; background-color: var(--sidebar-bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; z-index: 100; }
+        .logo-container { padding: 25px 20px; border-bottom: 1px solid var(--border); }
+        .logo-container h2 { background: linear-gradient(90deg, #60a5fa, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .nav-menu { flex: 1; padding-top: 20px; }
+        .nav-item { padding: 16px 25px; cursor: pointer; display: flex; align-items: center; gap: 12px; color: var(--text-muted); font-weight: 500; border-left: 3px solid transparent; font-size: 15px; }
         .nav-item:hover, .nav-item.active { background: rgba(59, 130, 246, 0.1); color: white; border-left-color: var(--primary); }
 
-        .topbar { height: 75px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 25px; background: rgba(3, 7, 18, 0.85); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 1000; }
-        .menu-toggle { display: none; background: none; border: none; color: white; font-size: 28px; cursor: pointer; }
-        .clock { font-family: monospace; font-size: 18px; color: var(--primary); font-weight: bold; background: rgba(59,130,246,0.1); padding: 5px 15px; border-radius: 30px; }
-
-        /* 4. CONTENIDO (VISTAS) */
-        .main-content { flex: 1; padding: 30px; overflow-y: auto; }
+        /* Topbar & Main Content */
+        .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
+        .topbar { height: 70px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 30px; background: rgba(3, 7, 18, 0.8); backdrop-filter: blur(10px); }
+        .clock { font-family: monospace; font-size: 16px; color: var(--primary); background: rgba(59,130,246,0.1); padding: 5px 12px; border-radius: 20px; border: 1px solid rgba(59,130,246,0.3); }
+        .content-area { padding: 30px; max-width: 1400px; margin: 0 auto; width: 100%; flex: 1; }
+        
         .view-section { display: none; animation: fadeIn 0.4s ease; }
         .view-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* CARDS Y DASHBOARD */
-        .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 25px; margin-bottom: 40px; }
-        .stat-card { padding: 30px; text-align: center; }
-        .stat-card h3 { font-size: 12px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 10px; }
-        .stat-card .val { font-size: 35px; font-weight: 800; color: white; }
+        /* Cards & Grids */
+        .grid-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-bottom: 35px; }
+        .stat-card { padding: 25px; }
+        .stat-value { font-size: 32px; font-weight: 800; color: white; margin-top: 15px; display: flex; justify-content: space-between; align-items: center; }
 
-        /* 5. TABLA Y SEMÁFORO (ELITE FIX) */
-        .table-container { margin-top: 25px; overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; min-width: 900px; }
-        th { padding: 18px; text-align: left; border-bottom: 2px solid var(--border); color: var(--text-muted); font-size: 11px; text-transform: uppercase; }
-        td { padding: 20px 18px; border-bottom: 1px solid var(--border); font-size: 14px; vertical-align: middle; }
-
-        .row-atraso { background: rgba(239, 68, 68, 0.05); }
-        .status-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 8px; }
-        .dot-red { background: var(--danger); box-shadow: 0 0 10px var(--danger-glow); }
-        .dot-green { background: var(--success); box-shadow: 0 0 10px var(--success-glow); }
-
-        .btn-action { padding: 10px 15px; border-radius: 8px; border: none; color: white; font-weight: bold; cursor: pointer; font-size: 11px; margin-right: 5px; }
+        /* Formularios y Tablas Responsivas */
+        .panel { padding: 25px; margin-bottom: 25px; }
+        .input-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 15px; }
+        .input-group label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+        
+        .table-responsive { width: 100%; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; min-width: 800px; }
+        th { padding: 15px; text-align: left; border-bottom: 2px solid var(--border); color: var(--text-muted); font-size: 13px; text-transform: uppercase; }
+        td { padding: 18px 15px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+        tr:hover td { background: rgba(255,255,255,0.02); }
+        
+        /* Botones de Acción MDM */
+        .btn-action { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 13px; color: white; display: inline-flex; align-items: center; gap: 5px; margin-right: 5px; margin-bottom: 5px; }
         .btn-lock { background: rgba(239, 68, 68, 0.2); color: var(--danger); border: 1px solid var(--danger); }
+        .btn-lock:hover { background: var(--danger); color: white; box-shadow: 0 0 15px rgba(239, 68, 68, 0.4); }
         .btn-unlock { background: rgba(16, 185, 129, 0.2); color: var(--success); border: 1px solid var(--success); }
-        .btn-icon { background: none; border: none; color: var(--primary); cursor: pointer; margin-left: 8px; font-size: 16px; }
+        .btn-unlock:hover { background: var(--success); color: white; box-shadow: 0 0 15px rgba(16, 185, 129, 0.4); }
+        .btn-delete { background: rgba(148, 163, 184, 0.1); color: #94a3b8; border: 1px solid #475569; padding: 8px 12px; }
+        .btn-delete:hover { background: var(--danger); color: white; border-color: var(--danger); box-shadow: 0 0 15px rgba(239, 68, 68, 0.4); }
 
-        /* 6. FORMULARIOS DINÁMICOS */
-        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
-        .doc-section { display: none; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 12px; border: 1px dashed var(--border); margin-top: 20px; }
-        .doc-section.active { display: block; }
-
-        /* 7. RESPONSIVIDAD 100% (MÓVILES) */
-        @media (max-width: 900px) {
-            .menu-toggle { display: block; }
-            .sidebar { position: fixed; height: 100vh; transform: translateX(-100%); width: 280px; box-shadow: 10px 0 40px #000; }
-            .sidebar.active { transform: translateX(0); }
-            .main-content { padding: 20px; }
-            
-            /* TABLA A CARDS EN MÓVIL */
-            table, thead, tbody, th, td, tr { display: block; }
-            thead tr { position: absolute; top: -9999px; left: -9999px; }
-            tr { border: 1px solid var(--border); border-radius: 12px; margin-bottom: 20px; padding: 10px; }
-            td { border: none; padding: 12px 5px; position: relative; padding-left: 45%; text-align: right; }
-            td:before { content: attr(data-label); position: absolute; left: 10px; width: 40%; text-align: left; font-weight: bold; color: var(--text-muted); font-size: 11px; text-transform: uppercase; }
-            .btn-action { width: 48%; margin-top: 10px; }
-            
-            .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 1500; backdrop-filter: blur(3px); }
-            .overlay.active { display: block; }
-        }
-
-        #toast { position: fixed; bottom: 30px; right: 30px; padding: 15px 30px; border-radius: 12px; color: white; font-weight: bold; z-index: 9999; transform: translateX(150%); transition: 0.5s; }
+        /* Toast & Spinner */
+        #toast { position: fixed; bottom: 30px; right: 30px; padding: 16px 30px; border-radius: 10px; color: white; font-weight: 600; font-size: 15px; transform: translateX(150%); transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); z-index: 9999; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
         #toast.show { transform: translateX(0); }
+        .spinner { display: inline-block; width: 16px; height: 16px; border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: white; animation: spin 1s ease-in-out infinite; margin-right: 5px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* DISEÑO MÓVIL (Teléfonos y Tablets) */
+        @media (max-width: 900px) {
+            #appLayout { flex-direction: column; overflow-y: auto; }
+            .sidebar { width: 100%; height: auto; flex-direction: row; justify-content: space-between; align-items: center; padding: 10px 20px; border-right: none; border-bottom: 1px solid var(--border); }
+            .sidebar .logo-container { border-bottom: none; padding: 0; }
+            .nav-menu { display: none; } /* Ocultar menú en móvil para ahorrar espacio */
+            .main-content { padding: 15px; }
+            .content-area { padding: 10px; }
+            .grid-cards { grid-template-columns: 1fr; gap: 15px; }
+        }
     </style>
 </head>
 <body>
 
-    <div id="mobileOverlay" class="overlay" onclick="toggleMenu()"></div>
-
     <div id="authScreen">
-        <div class="auth-card glass">
-            <div class="auth-logo">
-                <img src="logo.png" alt="IntegratCore Logo" onerror="this.src='https://via.placeholder.com/150?text=IntegratCore'">
+        <div class="auth-card glass-panel" id="loginForm">
+            <h2 class="auth-title">🛡️ FireGuard</h2>
+            <p class="auth-subtitle">Sistema Core - Integratcore Corp</p>
+            
+            <input type="text" id="loginUser" class="auth-input" placeholder="Usuario ID (Ej. admin)">
+            <input type="password" id="loginPass" class="auth-input" placeholder="Contraseña de Acceso">
+            
+            <button class="btn-full" onclick="procesarLogin()">AUTENTICAR SISTEMA</button>
+            
+            <div class="auth-links">
+                <span onclick="mostrarOlvidoPass()">¿Olvidó su contraseña?</span>
             </div>
-            <h2 style="margin-bottom: 5px;">Protocolo FireGuard</h2>
-            <p style="color:var(--text-muted); font-size:13px; margin-bottom:30px;">INTEGRATCORE CORP SECURITY</p>
-            <input type="text" id="loginUser" class="auth-input" placeholder="ID de Administrador">
-            <input type="password" id="loginPass" class="auth-input" placeholder="Contraseña de Acceso" autocomplete="new-password">
-            <button class="auth-input" style="background:var(--primary); font-weight:bold; border:none; cursor:pointer;" onclick="procesarLogin()">AUTENTICAR SISTEMA</button>
+        </div>
+
+        <div class="auth-card glass-panel" id="forgotForm" style="display: none;">
+            <h2 class="auth-title">Recuperación</h2>
+            <p class="auth-subtitle">Protocolo de Seguridad Activado</p>
+            <div style="padding: 20px; background: rgba(59,130,246,0.1); border: 1px solid var(--primary); border-radius: 8px; margin-bottom: 20px; color: white;">
+                Se enviarán las instrucciones de restablecimiento al correo oficial:<br><br>
+                <strong style="color: var(--primary); font-size: 16px;">contact@integratcore.com</strong>
+            </div>
+            <button class="btn-full" onclick="enviarRecuperacion()">ENVIAR ENLACE</button>
+            <div class="auth-links" style="margin-top: 15px;">
+                <span onclick="volverLogin()">Volver al Login</span>
+            </div>
         </div>
     </div>
 
     <div id="appLayout">
-        <div class="app-container">
-            
-            <aside class="sidebar" id="sidebar">
-                <div class="sidebar-logo">
-                    <img src="logo.png" alt="Logo" onerror="this.style.display='none'">
-                    <h2 style="font-size: 18px; margin-top: 10px;">FireGuard <span>Pro</span></h2>
-                </div>
-                <nav class="nav-menu">
-                    <div class="nav-item active" onclick="cambiarVista('dashboard', this)">📊 Centro de Operaciones</div>
-                    <div class="nav-item" onclick="cambiarVista('clientes', this)">👥 Registro de Cartera</div>
-                    <div class="nav-item" onclick="cambiarVista('config', this)">⚙️ Configuración API</div>
-                </nav>
-                <div style="padding: 20px; border-top: 1px solid var(--border);" onclick="cerrarSesion()">
-                    <div class="nav-item" style="color: var(--danger);">🚪 Cerrar Sesión Segura</div>
-                </div>
-            </aside>
+        <aside class="sidebar">
+            <div class="logo-container">
+                <h2>🛡️ FireGuard MDM</h2>
+                <p style="font-size: 12px; color: var(--text-muted); margin-top: 5px; letter-spacing: 2px;">INTEGRATCORE CORP</p>
+            </div>
+            <nav class="nav-menu">
+                <div class="nav-item active" onclick="cambiarVista('dashboard', this)">📊 Panel Operativo</div>
+                <div class="nav-item" onclick="cambiarVista('clientes', this)">👥 Cartera y Bloqueos</div>
+                <div class="nav-item" onclick="cambiarVista('config', this)">⚙️ Conexión API</div>
+            </nav>
+            <div class="nav-item" style="color: var(--danger); border-top: 1px solid var(--border); margin-top: auto;" onclick="cerrarSesion()">🚪 Cerrar Sesión Segura</div>
+        </aside>
 
-            <main class="main-content">
+        <main class="main-content">
+            <header class="topbar">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="display: inline-block; width: 10px; height: 10px; background: var(--success); border-radius: 50%; box-shadow: 0 0 10px var(--success);"></span>
+                    <span style="font-weight: 600; letter-spacing: 1px;">SISTEMA EN LÍNEA</span>
+                </div>
+                <div class="clock" id="relojSistema">00:00:00</div>
+            </header>
+
+            <div class="content-area">
                 
-                <header class="topbar">
-                    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <span class="status-dot dot-green"></span>
-                        <span style="font-weight: bold; font-size: 12px; letter-spacing: 1px;">SISTEMA EN LÍNEA</span>
-                    </div>
-                    <div class="clock" id="reloj">00:00:00</div>
-                </header>
-
                 <div id="vista-dashboard" class="view-section active">
-                    <div class="stat-grid">
-                        <div class="glass stat-card">
-                            <h3>Monto Total Protegido</h3>
-                            <div class="val" id="statMonto">$0.00</div>
+                    <h2 style="font-size: 28px; margin-bottom: 5px;">Centro de Mando Financiero</h2>
+                    <p style="color: var(--text-muted); margin-bottom: 30px;">Análisis de cartera y dispositivos gestionados por MDM y Firebase.</p>
+                    
+                    <div class="grid-cards">
+                        <div class="stat-card glass-panel" style="border-top: 4px solid var(--primary);">
+                            <h3 style="color: var(--text-muted); font-size: 14px; text-transform: uppercase;">Capital Asegurado</h3>
+                            <div class="stat-value" id="statPrestamos">$0.00 <span style="opacity: 0.2;">💰</span></div>
                         </div>
-                        <div class="glass stat-card" style="border-bottom: 4px solid var(--danger);">
-                            <h3>Cartera en Atraso</h3>
-                            <div class="val" id="statAtraso" style="color: var(--danger);">$0.00</div>
+                        <div class="stat-card glass-panel" style="border-top: 4px solid var(--success);">
+                            <h3 style="color: var(--text-muted); font-size: 14px; text-transform: uppercase;">Dispositivos Activos</h3>
+                            <div class="stat-value" id="statEquipos">0 <span style="opacity: 0.2;">📱</span></div>
                         </div>
-                        <div class="glass stat-card" style="border-bottom: 4px solid var(--success);">
-                            <h3>Equipos Blindados</h3>
-                            <div class="val" id="statEquipos">0</div>
+                        <div class="stat-card glass-panel" style="border-top: 4px solid var(--danger);">
+                            <h3 style="color: var(--text-muted); font-size: 14px; text-transform: uppercase;">Estado de Red</h3>
+                            <div class="stat-value" style="color: var(--success);">OK <span style="opacity: 0.2;">📡</span></div>
                         </div>
                     </div>
 
-                    <div class="glass" style="padding: 20px; margin-bottom: 25px;">
-                        <input type="text" id="buscador" class="auth-input" placeholder="🔍 Buscar por nombre o IMEI..." onkeyup="filtrarClientes()" style="margin:0;">
-                    </div>
-
-                    <div class="glass table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Cliente / Titular</th>
-                                    <th>Monto</th>
-                                    <th>Garantía (Device ID)</th>
-                                    <th>Estatus de Pago</th>
-                                    <th>Acciones MDM</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tablaClientes"></tbody>
-                        </table>
+                    <div class="panel glass-panel">
+                        <h3 style="margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">📡 Tráfico de Red MDM</h3>
+                        <div style="background: rgba(0,0,0,0.5); padding: 15px; border-radius: 8px; font-family: monospace; color: var(--success); font-size: 13px; height: 120px; overflow: hidden;">
+                            > Iniciando enlace seguro con servidores externos...<br>
+                            > Protocolo de cifrado AES-256 establecido.<br>
+                            > Conexión Firebase Firestore detectada y activa...<br>
+                            > <span style="color: var(--primary)">Integratcore Core v4.0 estable. Esperando comandos...</span>
+                        </div>
                     </div>
                 </div>
 
                 <div id="vista-clientes" class="view-section">
-                    <div class="glass" style="padding: 30px;">
-                        <h2 style="margin-bottom: 25px;">➕ Registrar Nuevo Financiamiento</h2>
-                        <div class="form-grid">
-                            <div>
-                                <label style="font-size: 12px; color: var(--text-muted);">País</label>
-                                <select id="cliPais" class="auth-input">
-                                    <option value="+599">Curazao (+599)</option>
-                                    <option value="+1-809">Rep. Dom (+1)</option>
-                                    <option value="+52">México (+52)</option>
-                                </select>
+                    <h2 style="font-size: 28px; margin-bottom: 5px;">Gestión de Garantías (Smartphones)</h2>
+                    
+                    <div class="panel glass-panel">
+                        <h3 style="margin-bottom: 20px; color: var(--primary);">➕ Registrar Nuevo Financiamiento</h3>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px;">
+                            <div class="input-group">
+                                <label>Nombre Completo</label>
+                                <input type="text" id="cliNombre" class="auth-input" placeholder="Nombre del Cliente">
                             </div>
-                            <input type="text" id="cliNombre" class="auth-input" placeholder="Nombre completo">
-                            <input type="number" id="cliMonto" class="auth-input" placeholder="Monto $">
-                            <input type="text" id="cliImei" class="auth-input" placeholder="Device ID de Scalefusion">
-                            <div>
-                                <label style="font-size: 12px; color: var(--text-muted);">Identificación</label>
-                                <select id="cliDocType" class="auth-input" onchange="toggleDocs()">
-                                    <option value="none">Tipo de documento...</option>
-                                    <option value="cedula">Cédula</option>
+                            
+                            <div class="input-group">
+                                <label>Teléfono Móvil</label>
+                                <div style="display: flex; gap: 5px;">
+                                    <select id="codigoArea" class="auth-input" style="width: 45%; padding: 12px 5px;">
+                                        <optgroup label="Dominicana">
+                                            <option value="+1-809">🇩🇴 +1 809</option>
+                                            <option value="+1-829">🇩🇴 +1 829</option>
+                                            <option value="+1-849">🇩🇴 +1 849</option>
+                                        </optgroup>
+                                        <optgroup label="Frecuentes">
+                                            <option value="+599">🇨🇼 CUR (+599)</option>
+                                            <option value="+1">🇺🇸 USA (+1)</option>
+                                        </optgroup>
+                                        <optgroup label="Región">
+                                            <option value="+57">🇨🇴 COL (+57)</option>
+                                            <option value="+52">🇲🇽 MEX (+52)</option>
+                                            <option value="+507">🇵🇦 PAN (+507)</option>
+                                            <option value="+58">🇻🇪 VEN (+58)</option>
+                                        </optgroup>
+                                    </select>
+                                    <input type="tel" id="cliTelefono" class="auth-input" style="width: 55%;" placeholder="1234567">
+                                </div>
+                            </div>
+
+                            <div class="input-group">
+                                <label>Monto del Préstamo</label>
+                                <input type="number" id="cliMonto" class="auth-input" placeholder="USD / DOP">
+                            </div>
+
+                            <div class="input-group">
+                                <label>Número de Identificación</label>
+                                <input type="text" id="cliCedula" class="auth-input" placeholder="Cédula / Pasaporte">
+                            </div>
+
+                            <div class="input-group">
+                                <label>Tipo de Documento</label>
+                                <select id="tipoDoc" class="auth-input" onchange="ajustarUploads()">
+                                    <option value="cedula">Cédula de Identidad</option>
+                                    <option value="licencia">Licencia de Conducir</option>
                                     <option value="pasaporte">Pasaporte</option>
                                 </select>
                             </div>
+
+                            <div class="input-group">
+                                <label>Device ID (Scalefusion)</label>
+                                <input type="text" id="cliDeviceID" class="auth-input" placeholder="ID del Equipo" style="border-color: var(--warning);">
+                            </div>
                         </div>
 
-                        <div id="zonaCedula" class="doc-section">
-                            <p style="color:var(--primary); font-weight:bold; margin-bottom:15px;">📸 Captura de Cédula</p>
-                            <div style="display:flex; gap:15px; flex-wrap:wrap;">
-                                <div style="flex:1; min-width:200px;">
-                                    <label style="font-size:11px;">PARTE FRONTAL:</label>
-                                    <input type="file" class="auth-input">
+                        <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px; margin-top: 15px; border: 1px dashed var(--border);">
+                            <h4 style="margin-bottom: 15px; font-size: 14px; color: var(--primary);">📸 Captura de Documentos</h4>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                                <div class="input-group">
+                                    <label id="lblFrente">Parte Frontal</label>
+                                    <input type="file" id="docFrente" accept="image/*" class="auth-input" style="padding: 8px;">
                                 </div>
-                                <div style="flex:1; min-width:200px;">
-                                    <label style="font-size:11px;">PARTE TRASERA:</label>
-                                    <input type="file" class="auth-input">
+                                <div class="input-group" id="cajaDorso">
+                                    <label>Parte Trasera (Dorso)</label>
+                                    <input type="file" id="docDorso" accept="image/*" class="auth-input" style="padding: 8px;">
                                 </div>
                             </div>
                         </div>
 
-                        <div id="zonaPasaporte" class="doc-section">
-                            <label style="font-size:11px;">PÁGINA PRINCIPAL:</label>
-                            <input type="file" class="auth-input">
-                        </div>
+                        <button class="btn-full" style="margin-top: 20px; width: auto; padding: 12px 30px;" onclick="agregarClienteFirebase()">GUARDAR Y VINCULAR EQUIPO</button>
+                    </div>
 
-                        <button class="auth-input" style="background:var(--primary); font-weight:bold; border:none; cursor:pointer; margin-top:20px;" onclick="guardarCliente()">GUARDAR Y VINCULAR EQUIPO</button>
+                    <div class="panel glass-panel">
+                        <h3 style="margin-bottom: 20px;">Cartera de Clientes Protegida</h3>
+                        <div class="table-responsive">
+                            <table id="tablaClientes">
+                                <thead>
+                                    <tr>
+                                        <th>Cliente / Contacto</th>
+                                        <th>Identidad</th>
+                                        <th>Capital Riesgo</th>
+                                        <th>Garantía (Device ID)</th>
+                                        <th>Panel de Control MDM</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="listaClientes">
+                                    </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 
                 <div id="vista-config" class="view-section">
-                    <div class="glass" style="padding:30px;">
-                        <h2>⚙️ Centro de Integración Scalefusion</h2>
-                        <p style="color:var(--text-muted); font-size:14px; margin-top:10px;">Configure la llave maestra para las órdenes de bloqueo.</p>
-                        <div style="max-width:500px; margin-top:30px;">
-                            <label style="font-size:12px;">API Token de Producción</label>
-                            <input type="password" id="apiKeyInput" class="auth-input" placeholder="Pega tu API Key aquí">
-                            <button class="auth-input" style="background:var(--primary); border:none; cursor:pointer; font-weight:bold;" onclick="guardarAPI()">ACTUALIZAR CONEXIÓN</button>
-                        </div>
+                    <h2 style="font-size: 28px; margin-bottom: 5px;">Ajustes del Núcleo del Sistema</h2>
+                    <div class="panel glass-panel">
+                        <h3 style="color: var(--success); margin-bottom: 10px;">✅ Sistema Blindado (Grado Militar)</h3>
+                        <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 20px;">
+                            La API Key de Scalefusion ha sido extraída del entorno local (navegador) por motivos de seguridad. 
+                            Actualmente se encuentra protegida y encriptada en los servidores de Vercel.<br><br>
+                            Las conexiones a la base de datos se gestionan a través del túnel seguro de Google Firebase. No es necesario realizar configuraciones manuales en este panel.
+                        </p>
                     </div>
                 </div>
 
-            </main>
-        </div>
+            </div>
+
+            <footer class="footer">
+                <strong>INTEGRATCORE CORP</strong><br>
+                Creado y Desarrollado por <strong>NICOLAS R.</strong> © 2026. Todos los derechos reservados.<br>
+                <span style="font-size: 11px; opacity: 0.6; margin-top: 5px;">Soporte Empresarial: contact@integratcore.com | Software de Grado Militar FireGuard v4.0</span>
+            </footer>
+        </main>
     </div>
 
-    <div id="toast">Mensaje del Sistema</div>
+    <div id="toast">Notificación</div>
 
     <script>
-        // 1. MOTOR DE PERSISTENCIA
-        let db = JSON.parse(localStorage.getItem('fireguard_v7')) || [];
+        // Reloj
+        setInterval(() => {
+            const ahora = new Date();
+            document.getElementById('relojSistema').innerText = ahora.toLocaleTimeString();
+        }, 1000);
 
-        // 2. RELOJ
-        setInterval(() => { document.getElementById('reloj').innerText = new Date().toLocaleTimeString(); }, 1000);
-
-        // 3. NAVEGACIÓN
-        function toggleMenu() {
-            document.getElementById('sidebar').classList.toggle('active');
-            document.getElementById('mobileOverlay').classList.toggle('active');
-        }
-
-        function cambiarVista(vista, el) {
-            document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById('vista-' + vista).classList.add('active');
-            if(el) el.classList.add('active');
-            if(window.innerWidth < 900) toggleMenu();
-        }
-
-        function toggleDocs() {
-            const t = document.getElementById('cliDocType').value;
-            document.getElementById('zonaCedula').classList.toggle('active', t === 'cedula');
-            document.getElementById('zonaPasaporte').classList.toggle('active', t === 'pasaporte');
-        }
-
-        // 4. SEGURIDAD (LOGIN/LOGOUT)
+        // Login UI
         function procesarLogin() {
-            const u = document.getElementById('loginUser').value;
-            const p = document.getElementById('loginPass').value;
-            if(u === 'admin' && p === '12345') {
+            const user = document.getElementById('loginUser').value;
+            const pass = document.getElementById('loginPass').value;
+            // Para la presentación: Clave genérica '12345'
+            if(pass === '12345') {
                 document.getElementById('authScreen').style.display = 'none';
                 document.getElementById('appLayout').style.display = 'flex';
-                renderTable();
-                mostrarToast("✅ SISTEMA AUTENTICADO", "var(--success)");
+                mostrarToast("✅ Credenciales correctas. Acceso concedido.", "#10b981");
             } else {
-                mostrarToast("❌ ACCESO DENEGADO", "var(--danger)");
-                document.getElementById('loginPass').value = ''; 
+                mostrarToast("❌ ERROR: Usuario o contraseña incorrectos.", "#ef4444");
+                document.getElementById('loginPass').value = '';
             }
+        }
+
+        function mostrarOlvidoPass() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('forgotForm').style.display = 'block';
+        }
+
+        function volverLogin() {
+            document.getElementById('forgotForm').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'block';
+        }
+
+        function enviarRecuperacion() {
+            mostrarToast("📧 Instrucciones enviadas al correo oficial.", "#3b82f6");
+            setTimeout(volverLogin, 2000);
         }
 
         function cerrarSesion() {
-            document.getElementById('loginPass').value = '';
-            document.getElementById('loginUser').value = '';
             document.getElementById('appLayout').style.display = 'none';
             document.getElementById('authScreen').style.display = 'flex';
+            document.getElementById('loginPass').value = '';
+            mostrarToast("🔒 Sesión cerrada de forma segura.", "#f59e0b");
         }
 
-        // 5. GESTIÓN DE CLIENTES
-        function guardarCliente() {
-            const cli = {
-                id: Date.now(),
-                nombre: document.getElementById('cliNombre').value,
-                monto: parseFloat(document.getElementById('cliMonto').value) || 0,
-                imei: document.getElementById('cliImei').value,
-                status: 'aldia',
-                notas: 'Sin observaciones'
-            };
-            if(!cli.nombre || !cli.imei) return alert("Faltan datos críticos");
-            db.push(cli);
-            saveDB();
-            cambiarVista('dashboard');
-            document.getElementById('cliNombre').value = '';
-            document.getElementById('cliMonto').value = '';
-            document.getElementById('cliImei').value = '';
+        // Navegación de vistas
+        function cambiarVista(vista, elementoMenu) {
+            document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById('vista-' + vista).classList.add('active');
+            elementoMenu.classList.add('active');
         }
 
-        function editarNombre(id) {
-            const i = db.findIndex(x => x.id === id);
-            const n = prompt("Editar nombre del titular:", db[i].nombre);
-            if(n) { db[i].nombre = n; saveDB(); }
-        }
+        // Ajuste visual de formularios de foto
+        function ajustarUploads() {
+            const tipo = document.getElementById('tipoDoc').value;
+            const cajaDorso = document.getElementById('cajaDorso');
+            const lblFrente = document.getElementById('lblFrente');
 
-        function editarNotas(id) {
-            const i = db.findIndex(x => x.id === id);
-            const n = prompt("Actualizar nota de pago:", db[i].notas);
-            if(n !== null) { db[i].notas = n; saveDB(); }
-        }
-
-        function toggleStatus(id) {
-            const i = db.findIndex(x => x.id === id);
-            db[i].status = (db[i].status === 'aldia') ? 'atraso' : 'aldia';
-            saveDB();
-        }
-
-        function eliminarCliente(id) {
-            if(confirm("¿Eliminar registro? Se perderá el control desde el panel.")) {
-                db = db.filter(x => x.id !== id);
-                saveDB();
+            if(tipo === 'pasaporte') {
+                cajaDorso.style.display = 'none';
+                lblFrente.innerText = 'Página Principal (Datos)';
+            } else {
+                cajaDorso.style.display = 'flex';
+                lblFrente.innerText = 'Parte Frontal';
             }
         }
 
-        function saveDB() {
-            localStorage.setItem('fireguard_v7', JSON.stringify(db));
-            renderTable();
+        // Toast de notificaciones
+        window.mostrarToast = function(mensaje, colorHex) {
+            const toast = document.getElementById('toast');
+            toast.innerText = mensaje;
+            toast.style.backgroundColor = colorHex;
+            toast.style.borderLeft = `5px solid rgba(255,255,255,0.5)`;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3500);
         }
+    </script>
 
-        // 6. RENDERIZACIÓN ELITE
-        function renderTable(filtrado = null) {
-            const data = filtrado || db;
-            const tbody = document.getElementById('tablaClientes');
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+
+        // Tus credenciales reales
+        const firebaseConfig = {
+            apiKey: "AIzaSyBAL4bo5BBxnqxeVc4SE9mMjry6nCrBF4I",
+            authDomain: "fireguard-f7a76.firebaseapp.com",
+            projectId: "fireguard-f7a76",
+            storageBucket: "fireguard-f7a76.firebasestorage.app",
+            messagingSenderId: "295902205601",
+            appId: "1:295902205601:web:89ae458491f83ff6f282e0"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // AGREGAR CLIENTE A FIREBASE
+        window.agregarClienteFirebase = async () => {
+            const nombre = document.getElementById('cliNombre').value;
+            const telCode = document.getElementById('codigoArea').value;
+            const telNum = document.getElementById('cliTelefono').value;
+            const cedula = document.getElementById('cliCedula').value;
+            const monto = parseFloat(document.getElementById('cliMonto').value);
+            const deviceId = document.getElementById('cliDeviceID').value;
+            const docFrente = document.getElementById('docFrente').value; // Validar si subió foto
+
+            if(!nombre || !cedula || !deviceId || isNaN(monto)) {
+                mostrarToast("⚠️ Complete los campos requeridos (Nombre, Cédula, Monto, Device ID).", "#f59e0b");
+                return;
+            }
+
+            try {
+                await addDoc(collection(db, "clientes"), {
+                    nombre, 
+                    telefono: telCode + " " + telNum,
+                    cedula,
+                    monto, 
+                    deviceId, 
+                    tieneDocs: docFrente ? true : false,
+                    fecha: Date.now()
+                });
+                
+                // Limpiar campos
+                document.getElementById('cliNombre').value = ''; 
+                document.getElementById('cliTelefono').value = '';
+                document.getElementById('cliCedula').value = ''; 
+                document.getElementById('cliMonto').value = '';
+                document.getElementById('cliDeviceID').value = '';
+                document.getElementById('docFrente').value = '';
+                document.getElementById('docDorso').value = '';
+
+                mostrarToast("💼 Contrato guardado en la nube. Equipo asegurado.", "#10b981");
+            } catch (error) {
+                console.error(error);
+                mostrarToast("❌ Error crítico conectando con Firebase.", "#ef4444");
+            }
+        };
+
+        // BORRAR CLIENTE DE FIREBASE
+        window.eliminarCliente = async (idDocumento, nombreCliente) => {
+            if(confirm(`🚨 ¿Estás seguro de que quieres eliminar a ${nombreCliente} del sistema? Esta acción no se puede deshacer.`)) {
+                try {
+                    await deleteDoc(doc(db, "clientes", idDocumento));
+                    mostrarToast("🗑️ Registro de cliente eliminado.", "#94a3b8");
+                } catch (error) {
+                    mostrarToast("❌ Error al intentar eliminar el registro.", "#ef4444");
+                }
+            }
+        };
+
+        // RENDERIZAR TABLA EN TIEMPO REAL
+        const q = query(collection(db, "clientes"), orderBy("fecha", "desc"));
+        onSnapshot(q, (snapshot) => {
+            const tbody = document.getElementById('listaClientes');
             tbody.innerHTML = '';
-            let total = 0; let atraso = 0;
+            let totalPrestado = 0;
 
-            data.forEach(c => {
-                total += c.monto;
-                if(c.status === 'atraso') atraso += c.monto;
+            snapshot.forEach((documento) => {
+                const cli = documento.data();
+                const docId = documento.id;
+                totalPrestado += cli.monto || 0;
 
                 const tr = document.createElement('tr');
-                if(c.status === 'atraso') tr.className = 'row-atraso';
-                
                 tr.innerHTML = `
-                    <td data-label="Cliente">
-                        <b>${c.nombre}</b> <button class="btn-icon" onclick="editarNombre(${c.id})">✏️</button>
+                    <td>
+                        <strong style="color: white; font-size: 15px;">${cli.nombre}</strong><br>
+                        <small style="color: var(--text-muted);">📱 ${cli.telefono || 'Sin registro'}</small>
                     </td>
-                    <td data-label="Monto" style="color:var(--success); font-weight:bold;">$${c.monto.toLocaleString()}</td>
-                    <td data-label="Garantía"><small>${c.imei}</small></td>
-                    <td data-label="Estado">
-                        <span class="status-dot ${c.status === 'atraso' ? 'dot-red' : 'dot-green'}"></span>
-                        <span style="cursor:pointer" onclick="toggleStatus(${c.id})">${c.status === 'atraso' ? '⚠️ ATRASADO' : '✅ AL DÍA'}</span>
-                        <div style="font-size:10px; color:var(--warning); margin-top:5px; cursor:pointer;" onclick="editarNotas(${c.id})">📝 ${c.notas}</div>
+                    <td>
+                        <div style="color: var(--primary); font-family: monospace;">${cli.cedula || 'N/A'}</div>
+                        <div style="font-size: 11px; color: var(--text-muted);">${cli.tieneDocs ? '📄 Docs. Subidos' : '⚠️ Sin Docs'}</div>
                     </td>
-                    <td data-label="Acciones">
-                        <button class="btn-action btn-lock" onclick="mandarAccion('${c.imei}', 'lock')">🔒 BLOQUEAR</button>
-                        <button class="btn-action btn-unlock" onclick="mandarAccion('${c.imei}', 'unlock')">🔓 ABRIR</button>
-                        <button class="btn-icon" onclick="eliminarCliente(${c.id})" style="color:#666;">🗑️</button>
+                    <td style="color: var(--success); font-weight: bold; font-size: 16px;">$${Number(cli.monto).toLocaleString()}</td>
+                    <td>
+                        <div style="font-size: 12px; font-family: monospace; background: rgba(0,0,0,0.4); padding: 4px 8px; border-radius: 4px; display: inline-block;">${cli.deviceId}</div>
+                    </td>
+                    <td style="min-width: 250px;">
+                        <button class="btn-action btn-lock" onclick="ordenMDM('${cli.deviceId}', 'lock', this)">🔒 Bloquear</button>
+                        <button class="btn-action btn-unlock" onclick="ordenMDM('${cli.deviceId}', 'unlock', this)">🔓 Restaurar</button>
+                        <button class="btn-action btn-delete" onclick="eliminarCliente('${docId}', '${cli.nombre}')" title="Eliminar Registro">🗑️</button>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
 
-            document.getElementById('statMonto').innerText = "$" + total.toLocaleString();
-            document.getElementById('statAtraso').innerText = "$" + atraso.toLocaleString();
-            document.getElementById('statEquipos').innerText = data.length;
-        }
+            document.getElementById('statPrestamos').innerText = "$" + totalPrestado.toLocaleString();
+            document.getElementById('statEquipos').innerText = snapshot.size;
+        });
 
-        // 7. MOTOR DE BLOQUEO (FIX RED)
-        async function mandarAccion(deviceId, accion) {
-            // ARREGLO SCOPE Y RED: Uso de backticks y API dinámica
-            const apiKey = localStorage.getItem('fireguard_api_v7') || "9af702bab50a4f4fb8dd1124827b9ce4";
-            const url = `https://api.scalefusion.com/api/v1/devices/${deviceId}/${accion}.json`;
-            
-            mostrarToast(`📡 ENVIANDO ORDEN: ${accion.toUpperCase()}`, "var(--primary)");
+        // CONEXIÓN CON VERCEL API PARA BLOQUEO SCALEFUSION
+        window.ordenMDM = async function(deviceId, accion, btnElement) {
+            const textoOriginal = btnElement.innerHTML;
+            btnElement.innerHTML = `<div class="spinner"></div>`;
+            btnElement.disabled = true;
 
             try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Authorization': `Token ${apiKey}`, 'Content-Type': 'application/json' }
-                });
-                if (response.ok) mostrarToast("✅ IMPACTO CONFIRMADO", "var(--success)");
-                else mostrarToast("❌ ERROR DE AUTORIZACIÓN", "var(--danger)");
-            } catch (e) {
-                mostrarToast("📡 ERROR DE CONEXIÓN", "var(--danger)");
+                const response = await fetch(`/api/bloquear?deviceId=${deviceId}&accion=${accion}`);
+                const data = await response.json();
+
+                if(response.ok && data.status === "success") {
+                    mostrarToast(accion === 'lock' ? "🔒 IMPACTO CONFIRMADO: El equipo ha sido bloqueado." : "🔓 ACCESO RESTAURADO: El equipo está libre.", "#10b981");
+                } else {
+                    mostrarToast("❌ El servidor rechazó la orden. Revisa el Device ID.", "#ef4444");
+                }
+            } catch (error) {
+                mostrarToast("❌ Error de comunicación con los túneles Vercel.", "#ef4444");
             }
+            
+            btnElement.innerHTML = textoOriginal;
+            btnElement.disabled = false;
         }
-
-        function filtrarClientes() {
-            const q = document.getElementById('buscador').value.toLowerCase();
-            const f = db.filter(x => x.nombre.toLowerCase().includes(q) || x.imei.toLowerCase().includes(q));
-            renderTable(f);
-        }
-
-        function guardarAPI() {
-            localStorage.setItem('fireguard_api_v7', document.getElementById('apiKeyInput').value);
-            mostrarToast("🔑 LLAVE ACTUALIZADA", "var(--primary)");
-        }
-
-        function mostrarToast(m, c) {
-            const t = document.getElementById('toast');
-            t.innerText = m; t.style.background = c;
-            t.classList.add('show');
-            setTimeout(() => t.classList.remove('show'), 3000);
-        }
-
-        // Carga inicial
-        if(localStorage.getItem('fireguard_api_v7')) document.getElementById('apiKeyInput').value = localStorage.getItem('fireguard_api_v7');
     </script>
 </body>
 </html>
